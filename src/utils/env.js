@@ -1,5 +1,11 @@
 /** Environment, preference, storage, and capability probes. */
 
+export function isConstrainedData() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!conn) return false;
+  return Boolean(conn.saveData) || /(^|-)2g$/i.test(conn.effectiveType || '');
+}
+
 export function prefersReducedMotion() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 }

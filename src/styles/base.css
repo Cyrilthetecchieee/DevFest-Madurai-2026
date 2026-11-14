@@ -74,7 +74,7 @@ body {
   z-index: var(--z-gl);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.65s ease;
+  transition: opacity 0.75s var(--ease-expo);
   display: block;
 }
 
@@ -104,6 +104,7 @@ body {
 
 #stage-bg {
   z-index: var(--z-bg);
+  transition: opacity 0.65s ease 0.2s;
 }
 
 #stage-hl {
@@ -112,12 +113,12 @@ body {
   overflow: hidden;
   pointer-events: none;
   z-index: var(--z-hl);
-  transition: opacity 0.45s ease;
+  transition: opacity 0.65s ease 0.2s;
 }
 
 #stage-fig-fallback {
   z-index: var(--z-fig);
-  transition: opacity 0.45s ease;
+  transition: opacity 0.65s ease 0.2s;
 }
 
 #lcp-poster,

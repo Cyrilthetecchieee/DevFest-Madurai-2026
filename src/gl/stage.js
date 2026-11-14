@@ -65,8 +65,13 @@ export async function mountWebGLStage({ canvas, quality }) {
     tier: initialTier,
     onLoaded() {
       figureVisibleReady = true;
-      canvas.classList.add('ready');
-      document.documentElement.classList.add('gl-active');
+      // Wait two composited animation frames before cross-fading over the static poster
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          canvas.classList.add('ready');
+          document.documentElement.classList.add('gl-active');
+        });
+      });
     },
   });
 
@@ -85,7 +90,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       drawCalls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     }),
-    forceTier: (t) => quality.forceTier(t),
+    forceTier: import.meta.env.DEV ? (t) => quality.forceTier(t) : undefined,
   };
 
   const state = {

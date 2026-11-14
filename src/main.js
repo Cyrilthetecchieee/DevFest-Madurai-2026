@@ -9,7 +9,7 @@ import './styles/base.css';
 import './styles/hud.css';
 import './styles/sections.css';
 
-import { detectWebGL, prefersReducedMotion } from './utils/env.js';
+import { detectWebGL, isConstrainedData, prefersReducedMotion } from './utils/env.js';
 import { createQualityGovernor } from './utils/quality.js';
 import { initSessionLoader } from './motion/loader.js';
 import { initHud } from './pages/hud.js';
@@ -143,8 +143,19 @@ function scheduleEnhancementsBoot() {
     ]);
 
     window.requestAnimationFrame(() => {
-      passiveLenisTimer = window.setTimeout(bootLenis, 900);
-      passiveGlTimer = window.setTimeout(bootGL, 4200);
+      const shouldDeferHeavy =
+        quality.getTier() === 'LOW' || isConstrainedData() || prefersReducedMotion();
+      if (shouldDeferHeavy) {
+        passiveLenisTimer = window.setTimeout(bootLenis, 900);
+        passiveGlTimer = window.setTimeout(bootGL, 3800);
+      } else {
+        bootLenis();
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(() => bootGL(), { timeout: 1200 });
+        } else {
+          window.setTimeout(() => bootGL(), 300);
+        }
+      }
     });
   };
 

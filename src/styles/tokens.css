@@ -75,10 +75,10 @@
   --z-bg: 1;
   --z-hl: 2;
   --z-fig: 3;
-  --z-gl: 3;
-  --z-ui: 4;
-  --z-content: 5;
-  --z-hud: 10;
+  --z-gl: 4;
+  --z-ui: 5;
+  --z-content: 6;
+  --z-hud: 12;
   --z-nav: 25;
   --z-loader: 40;
   --z-modal: 100;

@@ -51,6 +51,7 @@ export const TIER_CONFIG = Object.freeze({
 });
 
 function parseQueryTier() {
+  if (!import.meta.env.DEV) return null;
   try {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get('tier')?.toUpperCase();
@@ -182,6 +183,7 @@ export function createQualityGovernor() {
       return () => listeners.delete(cb);
     },
     forceTier(nextTier) {
+      if (!import.meta.env.DEV) return;
       if (!TIER_ORDER.includes(nextTier) || nextTier === currentTier) return;
       currentTier = nextTier;
       overBudgetMs = 0;
