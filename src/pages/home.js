@@ -12,6 +12,7 @@ import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/s
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
 import { renderCfpSection, mountCfpSection } from '../sections/cfpSection.js';
+import { renderSponsorsSection } from '../sections/sponsorsSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -39,29 +40,7 @@ export function renderHomePage() {
 
       ${renderCfpSection(sections.cfp, links)}
 
-      <section id="sponsors" class="orbe-section" aria-labelledby="heading-sponsors">
-        <span class="orbe-section-tag">${esc(sponsorsData.tag)}</span>
-        <h2 id="heading-sponsors" class="orbe-section-heading">${esc(sponsorsData.heading)}</h2>
-        <p class="orbe-section-copy">${esc(sponsorsData.copy)}</p>
-
-        <div class="orbe-grid-3" aria-label="Sponsor Placeholders">
-          ${sponsorsData.sponsors.map((s) => `
-            <div class="orbe-logo-card">
-              <img src="${esc(s.src)}" alt="${esc(s.alt)}" width="320" height="80" loading="lazy" />
-              <span class="orbe-badge-tba">${esc(s.label)}</span>
-            </div>
-          `).join('')}
-        </div>
-
-        <div class="orbe-grid-4" aria-label="Community Partners">
-          ${sponsorsData.partners.map((p) => `
-            <div class="orbe-logo-card">
-              <img src="${esc(p.src)}" alt="${esc(p.alt)}" width="220" height="72" loading="lazy" />
-              <span class="orbe-badge-tba">${esc(p.label)}</span>
-            </div>
-          `).join('')}
-        </div>
-      </section>
+      ${renderSponsorsSection()}
 
       <section id="memories" class="orbe-section" aria-labelledby="heading-memories">
         <span class="orbe-section-tag">${esc(memoriesData.homeTeaser.tag)}</span>
