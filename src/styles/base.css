@@ -23,8 +23,10 @@ body {
   width: 100%;
   min-height: 100dvh;
   overflow-x: hidden;
-  background-color: var(--navy);
-  font-family: var(--font-mono);
+  background-color: var(--navy-deep);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.6;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
