@@ -10,6 +10,7 @@ import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
+import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -33,22 +34,7 @@ export function renderHomePage() {
 
       ${renderAgendaSection()}
 
-      <section id="tickets" class="orbe-section" aria-labelledby="heading-tickets">
-        <span class="orbe-section-tag">${esc(sections.tickets.tag)}</span>
-        <h2 id="heading-tickets" class="orbe-section-heading">${esc(sections.tickets.heading)}</h2>
-        <p class="orbe-section-copy">${esc(sections.tickets.copy)}</p>
-        <p class="orbe-section-copy">${esc(sections.tickets.metaLine)}</p>
-
-        <div class="orbe-cta-row">
-          ${renderDiscoverButton({
-            label: sections.tickets.ctaLabel,
-            ariaLabel: 'Get Your Tickets',
-            href: links.tickets,
-            external: true,
-            inline: true,
-          })}
-        </div>
-      </section>
+      ${renderTicketsSection(sections.tickets, links)}
 
       <section id="cfp" class="orbe-section" aria-labelledby="heading-cfp">
         <span class="orbe-section-tag">${esc(sections.cfp.tag)}</span>
@@ -125,7 +111,9 @@ export function mountHomePage() {
   const stopVenue = mountVenueSection();
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
   const stopAgenda = mountAgendaSection();
+  const stopTickets = mountTicketsSection();
   return () => {
+    stopTickets();
     stopAgenda();
     stopSpeakers();
     stopVenue();
