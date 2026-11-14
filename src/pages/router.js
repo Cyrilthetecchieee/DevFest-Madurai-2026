@@ -1,10 +1,9 @@
 /**
  * Lightweight SPA Router — moves between Home (/), Speakers (/speakers), and Memories (/memories)
- * using View Transitions API (scoped exclusively to #app-view) or GSAP crossfade fallback,
+ * using native View Transitions API (when supported) or instant DOM swap,
  * keeping the persistent #gl-stage WebGL canvas untouched across all navigations.
  */
 import { supportsViewTransitions, prefersReducedMotion } from '../utils/env.js';
-import { stageBus } from '../motion/stageBus.js';
 import { HOME_META, renderHomePage, mountHomePage } from './home.js';
 import { SPEAKERS_META, renderSpeakersPage, mountSpeakersPage } from './speakers.js';
 import { MEMORIES_META, renderMemoriesPage, mountMemoriesPage } from './memories.js';
@@ -38,7 +37,20 @@ function updateHeadMetadata(meta) {
   if (canonicalEl) canonicalEl.setAttribute('href', `${window.location.origin}${meta.canonical}`);
 }
 
-export function createRouter({ viewRoot, hud, lenis }) {
+function scrollToHashOrTop(hash, smooth = false) {
+  const behavior = smooth && !prefersReducedMotion() ? 'smooth' : 'auto';
+  if (hash) {
+    const id = hash.startsWith('#') ? hash.slice(1) : hash;
+    const target = id ? document.getElementById(id) : null;
+    if (target) {
+      target.scrollIntoView({ behavior, block: 'start' });
+      return;
+    }
+  }
+  window.scrollTo({ top: 0, behavior });
+}
+
+export function createRouter({ viewRoot, hud }) {
   let currentKey = resolveRouteKey(window.location.pathname);
   let cleanupCurrent = () => {};
   let navToken = 0;
@@ -52,13 +64,11 @@ export function createRouter({ viewRoot, hud, lenis }) {
     updateHeadMetadata(entry.meta);
     hud.setActiveRoute(routeKey);
     cleanupCurrent = entry.mount(viewRoot) || (() => {});
-    stageBus.emit('route:applied', { routeKey });
 
-    lenis.refresh();
     if (hash) {
-      window.requestAnimationFrame(() => lenis.scrollTo(hash, { immediate: false }));
+      window.requestAnimationFrame(() => scrollToHashOrTop(hash, false));
     } else {
-      lenis.scrollTo(0, { immediate: true });
+      window.scrollTo(0, 0);
     }
   }
 
@@ -77,77 +87,18 @@ export function createRouter({ viewRoot, hud, lenis }) {
       window.history.pushState({ routeKey: nextKey }, '', `${targetUrl.pathname}${nextHash}`);
     }
 
-    // Same page hash navigation: smooth-scroll directly without re-rendering DOM
+    // Same page hash navigation: native scroll directly without re-rendering DOM
     if (nextKey === currentKey) {
-      if (nextHash) {
-        lenis.scrollTo(nextHash, { immediate: false });
-      } else {
-        lenis.scrollTo(0, { immediate: false });
-      }
+      scrollToHashOrTop(nextHash, true);
       return;
     }
 
-    // Route change: 700ms Iris / Shader Wipe synchronized with stageBus.irisProgress & persistent WebGL postFX
-    if (!prefersReducedMotion()) {
-      const { default: gsap } = await import('gsap');
-      const irisObj = { p: 0 };
-      stageBus.warpBoost = Math.max(stageBus.warpBoost, 0.75);
-
-      if (supportsViewTransitions()) {
-        const half = gsap.to(irisObj, {
-          p: 1,
-          duration: 0.34,
-          ease: 'power2.inOut',
-          onUpdate: () => { stageBus.irisProgress = irisObj.p; },
-        });
-        await half;
-        if (token !== navToken) { stageBus.irisProgress = 0; stageBus.warpBoost = 0; return; }
-        const transition = document.startViewTransition(() => {
-          applyRoute(nextKey, nextHash);
-        });
-        const reopen = gsap.to(irisObj, {
-          p: 0,
-          duration: 0.36,
-          ease: 'power3.out',
-          onUpdate: () => { stageBus.irisProgress = irisObj.p; },
-        });
-        await Promise.all([transition.finished.catch(() => {}), reopen]);
-      } else {
-        await gsap.to(irisObj, {
-          p: 1,
-          duration: 0.34,
-          ease: 'power2.inOut',
-          onUpdate: () => {
-            stageBus.irisProgress = irisObj.p;
-            const r = Math.max(0, 100 - irisObj.p * 100);
-            viewRoot.style.clipPath = `circle(${r.toFixed(1)}% at 50% 50%)`;
-            viewRoot.style.opacity = `${(1 - irisObj.p * 0.4).toFixed(2)}`;
-          },
-        });
-        if (token !== navToken) {
-          stageBus.irisProgress = 0;
-          stageBus.warpBoost = 0;
-          viewRoot.style.clipPath = '';
-          viewRoot.style.opacity = '';
-          return;
-        }
+    if (token !== navToken) return;
+    if (supportsViewTransitions() && !prefersReducedMotion()) {
+      const transition = document.startViewTransition(() => {
         applyRoute(nextKey, nextHash);
-        await gsap.to(irisObj, {
-          p: 0,
-          duration: 0.36,
-          ease: 'power3.out',
-          onUpdate: () => {
-            stageBus.irisProgress = irisObj.p;
-            const r = Math.max(0, 100 - irisObj.p * 100);
-            viewRoot.style.clipPath = `circle(${r.toFixed(1)}% at 50% 50%)`;
-            viewRoot.style.opacity = `${(1 - irisObj.p * 0.4).toFixed(2)}`;
-          },
-        });
-        viewRoot.style.clipPath = '';
-        viewRoot.style.opacity = '';
-      }
-      stageBus.irisProgress = 0;
-      stageBus.warpBoost = 0;
+      });
+      await transition.finished.catch(() => {});
     } else {
       applyRoute(nextKey, nextHash);
     }

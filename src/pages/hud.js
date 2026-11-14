@@ -1,5 +1,4 @@
 /** Pinned Mission Control HUD Chrome: Bezel SVG, Sticky Dock Handoff, Menu Drawer, Motion Toggle & Coordinates. */
-import { stageBus } from '../motion/stageBus.js';
 
 const HOME_WAYPOINTS = [
   '01 / ORBIT',
@@ -27,7 +26,6 @@ export function initHud({ onMotionChange, onNavigate }) {
   const menuToggle = document.getElementById('menu-toggle');
   const hudNav = document.getElementById('hud-nav');
   const waypointEl = document.getElementById('hud-waypoint');
-  const cmdOpenBtn = document.getElementById('cmd-open-btn');
 
   let paused = false;
   let lastScrolled = false;
@@ -203,26 +201,16 @@ export function initHud({ onMotionChange, onNavigate }) {
     }
   }
 
-  const unsubBus = stageBus.on((ev, state) => {
-    if (ev === 'scroll' || ev === 'route') {
-      syncDockState(state.scrollProgress || 0);
-    }
-  });
-
-  window.addEventListener('scroll', () => {
+  function syncFromScroll() {
     const docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     syncDockState((window.scrollY || 0) / docMax);
-  }, { passive: true });
+  }
 
-  cmdOpenBtn?.addEventListener('click', () => {
-    stageBus.emit('command-palette:toggle', { source: 'hud' });
-  });
+  window.addEventListener('scroll', syncFromScroll, { passive: true });
 
   function setActiveRoute(routeKey) {
     activeRouteKey = routeKey || 'home';
-    stageBus.routeKey = activeRouteKey;
-    stageBus.emit('route', { routeKey: activeRouteKey });
-    syncDockState(stageBus.scrollProgress || 0);
+    syncFromScroll();
     if (!hudNav) return;
     hudNav.querySelectorAll('.hud-nav-link').forEach((el) => {
       const targetRoute = el.dataset.route;
@@ -230,5 +218,10 @@ export function initHud({ onMotionChange, onNavigate }) {
     });
   }
 
-  return { setActiveRoute, closeMenu, isPaused: () => paused, destroy: () => unsubBus() };
+  return {
+    setActiveRoute,
+    closeMenu,
+    isPaused: () => paused,
+    destroy: () => window.removeEventListener('scroll', syncFromScroll),
+  };
 }

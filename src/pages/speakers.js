@@ -1,8 +1,7 @@
 /** Speakers Page View & Constellation/Track Controller */
 import eventData from '../data/event.json';
 import { esc, renderHeroStage, renderDiscoverButton } from '../utils/dom.js';
-import { initSectionMotion } from '../motion/tokens.js';
-import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
+import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersPreview.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 
 export const SPEAKERS_META = {
@@ -74,12 +73,10 @@ export function renderSpeakersPage() {
 }
 
 export function mountSpeakersPage(root) {
-  const stopMotion = initSectionMotion(root || document);
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers-directory', isPage: true });
   const stopFooter = mountStageFooter(root || document);
   return () => {
     stopFooter();
     stopSpeakers();
-    stopMotion();
   };
 }

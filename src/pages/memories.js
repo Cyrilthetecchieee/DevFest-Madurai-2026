@@ -2,7 +2,6 @@
 import eventData from '../data/event.json';
 import memoriesData from '../data/memories.json';
 import { esc, renderHeroStage, renderDiscoverButton, renderPicture } from '../utils/dom.js';
-import { initSectionMotion } from '../motion/tokens.js';
 import { mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 
@@ -30,7 +29,7 @@ export function renderMemoriesPage() {
         <p class="stage-lead">${esc(community.copy)}</p>
 
         <div class="mem-community-layout">
-          <div class="mem-featured-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
+          <div class="mem-featured-frame" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
             ${renderPicture({ ...community.featured, sizes: '(max-width: 820px) 92vw, 52vw' })}
             <div class="mem-caption-bar">
               <span>${esc(community.featured.title)}</span>
@@ -40,7 +39,7 @@ export function renderMemoriesPage() {
 
           <div class="mem-community-stack">
             ${community.stack.map((item) => `
-              <div class="mem-sub-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(item.title)}" data-img="${esc(getLightboxImageUrl(item))}" data-caption="${esc(item.lightboxCaption)}">
+              <div class="mem-sub-frame" tabindex="0" role="button" aria-label="Open photo: ${esc(item.title)}" data-img="${esc(getLightboxImageUrl(item))}" data-caption="${esc(item.lightboxCaption)}">
                 ${renderPicture({ ...item, sizes: '(max-width: 820px) 92vw, 32vw' })}
                 <div class="mem-caption-bar">
                   <span>${esc(item.title)}</span>
@@ -68,7 +67,7 @@ export function renderMemoriesPage() {
               <p class="stage-lead orbe-section-copy-flush">${esc(ed.copy)}</p>
               <div class="mem-edition-grid">
                 ${ed.cards.map((card) => `
-                  <div class="mem-edition-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+                  <div class="mem-edition-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
                     ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 26vw' })}
                     <div class="mem-caption-bar">
                       <span>${esc(card.title)}</span>
@@ -88,7 +87,7 @@ export function renderMemoriesPage() {
         <p class="stage-lead">${esc(gallery.copy)}</p>
 
         <div class="mem-cinematic-gallery">
-          <div class="mem-panoramic-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic1.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic1))}" data-caption="${esc(gallery.panoramic1.lightboxCaption)}">
+          <div class="mem-panoramic-card" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic1.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic1))}" data-caption="${esc(gallery.panoramic1.lightboxCaption)}">
             ${renderPicture({ ...gallery.panoramic1, sizes: '(max-width: 820px) 92vw, 84vw' })}
             <div class="mem-panoramic-overlay">
               <div>
@@ -101,7 +100,7 @@ export function renderMemoriesPage() {
 
           <div class="mem-diptych-grid">
             ${gallery.diptych.map((card) => `
-              <div class="mem-diptych-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+              <div class="mem-diptych-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
                 ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 42vw' })}
                 <div class="mem-caption-bar">
                   <span>${esc(card.title)}</span>
@@ -111,7 +110,7 @@ export function renderMemoriesPage() {
             `).join('')}
           </div>
 
-          <div class="mem-panoramic-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic2.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic2))}" data-caption="${esc(gallery.panoramic2.lightboxCaption)}">
+          <div class="mem-panoramic-card" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic2.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic2))}" data-caption="${esc(gallery.panoramic2.lightboxCaption)}">
             ${renderPicture({ ...gallery.panoramic2, sizes: '(max-width: 820px) 92vw, 84vw' })}
             <div class="mem-panoramic-overlay">
               <div>
@@ -131,7 +130,7 @@ export function renderMemoriesPage() {
 
         <div class="mem-human-grid">
           ${human.cards.map((card) => `
-            <div class="mem-human-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+            <div class="mem-human-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
               ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 28vw' })}
               <div class="mem-human-title">${esc(card.title)}</div>
               <p class="mem-human-text">${esc(card.text)}</p>
@@ -192,7 +191,6 @@ export function mountMemoriesPage(root) {
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
 
-  const stopMotion = initSectionMotion(root || document);
   const stopInteraction = mountMemoriesInteraction(root || document);
   const stopFooter = mountStageFooter(root || document);
 
@@ -204,6 +202,5 @@ export function mountMemoriesPage(root) {
     window.removeEventListener('scroll', updateProgress);
     stopFooter();
     stopInteraction();
-    stopMotion();
   };
 }

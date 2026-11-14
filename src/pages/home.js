@@ -2,10 +2,9 @@
 import eventData from '../data/event.json';
 import { renderHeroStage } from '../utils/dom.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
-import { initSectionMotion } from '../motion/tokens.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
-import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
+import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersPreview.js';
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
 import { renderCfpSection, mountCfpSection } from '../sections/cfpSection.js';
@@ -48,7 +47,6 @@ export function renderHomePage() {
 
 export function mountHomePage() {
   const view = document.getElementById('app-view') || document;
-  const stopMotion = initSectionMotion(view);
   const stopAbout = mountAboutSection();
   const stopVenue = mountVenueSection();
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
@@ -66,6 +64,5 @@ export function mountHomePage() {
     stopSpeakers();
     stopVenue();
     stopAbout();
-    stopMotion();
   };
 }

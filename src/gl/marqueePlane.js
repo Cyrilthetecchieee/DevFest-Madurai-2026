@@ -143,7 +143,7 @@ export function createMarqueePlane({ scene, renderer }) {
     mat.uniforms.uRepeatX.value = W / Math.max(PERIOD_W * scalePx, 1);
   }
 
-  function update({ dt, paused, scrollProgress = 0 }) {
+  function update({ dt, paused }) {
     if (!ready) return;
     if (!paused) {
       // Matches CSS @keyframes marquee: -2352px over 34s = 1 full period every 34s
@@ -151,12 +151,10 @@ export function createMarqueePlane({ scene, renderer }) {
       mat.uniforms.uOffsetX.value = offsetPeriods;
     }
 
-    // Scrubbed Hero-to-Content Handoff (#7): marquee lifts & docks upward into sticky header bar
-    const dockT = Math.min(1, Math.max(0, scrollProgress / 0.11));
-    mesh.position.y = baseY + dockT * 115;
-    mesh.scale.set(viewWidth * (1 - dockT * 0.25), basePlaneH * (1 - dockT * 0.56), 1);
-    mat.uniforms.uOpacity.value = Math.max(0, 1 - dockT * 1.15);
-    mesh.visible = mat.uniforms.uOpacity.value > 0.01;
+    mesh.position.y = baseY;
+    mesh.scale.set(viewWidth, basePlaneH, 1);
+    mat.uniforms.uOpacity.value = 1;
+    mesh.visible = true;
   }
 
   function dispose() {

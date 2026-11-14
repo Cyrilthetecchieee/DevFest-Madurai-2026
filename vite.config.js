@@ -71,7 +71,6 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules/three/examples/jsm')) return 'gl-addons';
           if (id.includes('node_modules/three')) return 'gl-core';
-          if (id.includes('node_modules/gsap') || id.includes('node_modules/lenis')) return 'motion-vendor';
           return undefined;
         },
       },

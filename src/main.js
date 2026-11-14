@@ -12,75 +12,16 @@ import './styles/sections.css';
 import { detectWebGL, isConstrainedData, prefersReducedMotion } from './utils/env.js';
 import { createQualityGovernor } from './utils/quality.js';
 import { initSessionLoader } from './motion/loader.js';
-import { initFluidCursor } from './motion/cursor.js';
 import { initHud } from './pages/hud.js';
 import { createRouter } from './pages/router.js';
-import { initCommandSystem } from './motion/commandPalette.js';
-import { initSoundscape } from './motion/soundscape.js';
-import { initBilingualSystem } from './motion/bilingual.js';
 
 const quality = createQualityGovernor();
 
-// Lazy proxy keeps GSAP + Lenis (~50KB gzip) off the critical initial paint path
-const lenis = (() => {
-  let controller = null;
-  let pendingInit = null;
-  let desiredPaused = false;
-
-  return {
-    init() {
-      if (controller) {
-        controller.init();
-        return pendingInit;
-      }
-      if (!pendingInit) {
-        pendingInit = import('./motion/lenisTicker.js').then(({ createLenisController }) => {
-          controller = createLenisController();
-          controller.init();
-          if (desiredPaused) controller.setPaused(true);
-          return controller;
-        });
-      }
-      return pendingInit;
-    },
-    setPaused(nextPaused) {
-      desiredPaused = Boolean(nextPaused);
-      controller?.setPaused(desiredPaused);
-    },
-    scrollTo(target, opts = {}) {
-      if (controller) return controller.scrollTo(target, opts);
-      if (typeof target === 'string') {
-        const el = document.querySelector(target);
-        if (el) {
-          el.scrollIntoView({ behavior: opts.immediate ? 'auto' : 'smooth' });
-          return true;
-        }
-      } else if (typeof target === 'number') {
-        window.scrollTo({ top: target, behavior: 'auto' });
-        return true;
-      }
-      return false;
-    },
-    refresh() {
-      controller?.refresh();
-    },
-    destroy() {
-      controller?.destroy();
-    },
-  };
-})();
-
 let glStage = null;
 const viewRoot = document.getElementById('app-view');
-const cursorCtrl = initFluidCursor();
-const soundCtrl = initSoundscape();
-initBilingualSystem();
 
 const hud = initHud({
   onMotionChange(paused) {
-    lenis.setPaused(paused);
-    cursorCtrl.setPaused(paused);
-    soundCtrl.setPaused(paused);
     glStage?.setPaused(paused);
   },
   onNavigate(href) {
@@ -88,37 +29,22 @@ const hud = initHud({
   },
 });
 
-const router = createRouter({ viewRoot, hud, lenis });
+const router = createRouter({ viewRoot, hud });
 initSessionLoader();
-
-initCommandSystem({
-  onNavigate: (href) => router.navigate(href),
-  onToggleMotion: () => document.getElementById('motion-toggle')?.click(),
-});
 
 if (prefersReducedMotion()) {
   document.documentElement.classList.add('reduced-motion');
 }
 
-// Wait until hero posters & fonts finish painting before booting Lenis & WebGL so LCP (< 2.0s) stays unblocked
+// Wait until hero posters & fonts finish painting before booting background WebGL
 function scheduleEnhancementsBoot() {
-  let lenisBooted = false;
-  const bootLenis = () => {
-    if (lenisBooted) return;
-    lenisBooted = true;
-    lenis.init();
-  };
-
   const glCanvas = document.getElementById('gl-stage');
   let glBooted = false;
-  let passiveLenisTimer = 0;
   let passiveGlTimer = 0;
 
   const bootGL = async () => {
-    bootLenis();
     if (glBooted || !glCanvas || !detectWebGL()) return;
     glBooted = true;
-    window.clearTimeout(passiveLenisTimer);
     window.clearTimeout(passiveGlTimer);
     cleanupListeners();
     const { mountWebGLStage } = await import('./gl/stage.js');
@@ -129,7 +55,6 @@ function scheduleEnhancementsBoot() {
   };
 
   const onInteract = () => {
-    bootLenis();
     window.requestAnimationFrame(() => {
       bootGL();
     });
@@ -160,15 +85,11 @@ function scheduleEnhancementsBoot() {
       const shouldDeferHeavy =
         quality.getTier() === 'LOW' || isConstrainedData() || prefersReducedMotion();
       if (shouldDeferHeavy) {
-        passiveLenisTimer = window.setTimeout(bootLenis, 900);
         passiveGlTimer = window.setTimeout(bootGL, 3800);
+      } else if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => bootGL(), { timeout: 1200 });
       } else {
-        bootLenis();
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(() => bootGL(), { timeout: 1200 });
-        } else {
-          window.setTimeout(() => bootGL(), 300);
-        }
+        window.setTimeout(() => bootGL(), 300);
       }
     });
   };

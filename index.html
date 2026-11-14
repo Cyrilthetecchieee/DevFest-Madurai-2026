@@ -162,16 +162,7 @@
     <div id="hud-dock" class="hud-dock" aria-label="Mission telemetry dock">
       <span class="hud-dock-wordmark">DEVFEST 2026</span>
       <span class="hud-dock-sep" aria-hidden="true">//</span>
-      <span id="hud-waypoint" class="hud-dock-waypoint">01 / ORBIT</span>
-      <button type="button" id="cmd-open-btn" class="hud-cmd-btn" aria-label="Open command palette">
-        <span>CMD</span>
-        <kbd class="hud-cmd-kbd">⌘K</kbd>
-      </button>
-      <button type="button" id="hud-sound-btn" class="hud-sound-btn" aria-pressed="false" aria-label="Ambient soundscape off">
-        <span class="hud-sound-bars" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span id="hud-sound-label">SFX</span>
-      </button>
-      <button type="button" id="hud-lang-btn" class="hud-lang-btn" aria-pressed="false" aria-label="Switch to Tamil">தமிழ்</button>
+      <span id="hud-waypoint" class="hud-dock-waypoint">01 / OVERVIEW</span>
     </div>
 
     <button class="hud-menu-btn" id="menu-toggle" aria-expanded="false" aria-controls="hud-nav" aria-label="Menu">MENU</button>
@@ -192,14 +183,12 @@
   <!-- Session-gated, non-blocking skippable Mission Control Loader -->
   <div id="mc-loader" hidden>
     <div class="mc-loader-shell">
-      <div id="mc-loader-kolam" class="mc-loader-kolam" aria-hidden="true"></div>
-      <span class="mc-loader-tag">MISSION CONTROL // GDG MADURAI 2026</span>
+      <span class="mc-loader-tag">GDG MADURAI // DEVFEST 2026</span>
       <div class="mc-loader-telemetry" aria-hidden="true">
         <span id="mc-loader-pct">000%</span>
-        <span>FREQ 09.92N 78.12E</span>
       </div>
       <div class="mc-loader-bar" aria-hidden="true"><div class="mc-loader-fill"></div></div>
-      <button type="button" id="mc-loader-skip" class="mc-loader-skip">SKIP // ENTER STAGE</button>
+      <button type="button" id="mc-loader-skip" class="mc-loader-skip">SKIP</button>
     </div>
   </div>
 

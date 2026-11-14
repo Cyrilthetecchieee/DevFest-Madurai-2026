@@ -1,13 +1,10 @@
 /**
- * Memories Filmstrip, Curtain Reveals, Lightbox & Liquid Hover Integration (#20, S15):
- * - Home #memories: draggable inertial horizontal filmstrip, velocity skew, parallax frames.
- * - Shared clip-path curtain reveals, swipe/keyboard Prev/Next shared-element Lightbox.
- * - Dispatches media hover telemetry to stageBus for HIGH-tier persistent WebGL liquid shader (CSS fallback elsewhere).
+ * Memories Gallery & Lightbox Interaction:
+ * Clean gallery controls and accessible keyboard/swipe Lightbox without liquid WebGL hover distortion.
  */
 import memoriesData from '../data/memories.json';
 import { esc, renderPicture } from '../utils/dom.js';
 import { prefersReducedMotion } from '../utils/env.js';
-import { stageBus } from '../motion/stageBus.js';
 
 function getLightboxImageUrl(item) {
   return `/assets/${item.dir}/${item.base}-1280.webp`;
@@ -39,7 +36,6 @@ export function renderHomeMemoriesSection() {
           ${items.map((item, idx) => `
             <figure
               class="mem-film-card"
-              data-curtain="true"
               data-img="${esc(getLightboxImageUrl(item))}"
               data-caption="${esc(item.caption)}"
               data-idx="${idx}"
@@ -47,7 +43,7 @@ export function renderHomeMemoriesSection() {
               role="button"
               aria-label="Open photo: ${esc(item.caption)}"
             >
-              <div class="mem-film-frame" data-liquid-media="${esc(getLightboxImageUrl(item))}">
+              <div class="mem-film-frame">
                 ${renderPicture({ ...item, sizes: '(max-width: 820px) 84vw, 34vw' })}
               </div>
               <figcaption class="mem-film-caption">
@@ -88,159 +84,28 @@ export function mountMemoriesInteraction(root = document) {
   const cleanups = [];
   const reduced = prefersReducedMotion();
 
-  // 1. Clip-path curtain reveals on scroll
-  const curtainEls = Array.from(root.querySelectorAll('[data-curtain="true"]'));
-  if (curtainEls.length) {
-    if (reduced) {
-      curtainEls.forEach((el) => el.classList.add('is-curtain-open'));
-    } else {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-curtain-open');
-              io.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.14 }
-      );
-      curtainEls.forEach((el) => io.observe(el));
-      cleanups.push(() => io.disconnect());
-    }
-  }
-
-  // 2. Draggable inertial filmstrip + velocity skew + prev/next buttons (on Home)
   const viewport = root.querySelector('#mem-filmstrip-viewport');
-  const track = root.querySelector('#mem-filmstrip-track');
   const prevStep = root.querySelector('#mem-strip-prev');
   const nextStep = root.querySelector('#mem-strip-next');
-  let suppressClickUntil = 0;
 
-  if (viewport && track) {
-    let dragging = false;
-    let startX = 0;
-    let startScroll = 0;
-    let lastX = 0;
-    let velocity = 0;
-    let inertiaRaf = 0;
-
-    const applySkew = (vel) => {
-      if (reduced) return;
-      const deg = Math.max(-5.5, Math.min(5.5, vel * -0.22));
-      track.style.transform = `skewX(${deg.toFixed(2)}deg)`;
-    };
-
-    const runInertia = () => {
-      if (Math.abs(velocity) < 0.25) {
-        velocity = 0;
-        track.style.transform = '';
-        inertiaRaf = 0;
-        return;
-      }
-      viewport.scrollLeft -= velocity;
-      velocity *= 0.92;
-      applySkew(velocity);
-      inertiaRaf = window.requestAnimationFrame(runInertia);
-    };
-
-    const onDown = (e) => {
-      dragging = true;
-      startX = e.clientX;
-      lastX = e.clientX;
-      startScroll = viewport.scrollLeft;
-      velocity = 0;
-      window.cancelAnimationFrame(inertiaRaf);
-      viewport.classList.add('is-dragging');
-    };
-
-    const onMove = (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-      velocity = dx;
-      viewport.scrollLeft = startScroll - (e.clientX - startX);
-      applySkew(dx);
-      if (Math.abs(e.clientX - startX) > 7) {
-        suppressClickUntil = performance.now() + 220;
-      }
-    };
-
-    const onUp = () => {
-      if (!dragging) return;
-      dragging = false;
-      viewport.classList.remove('is-dragging');
-      if (!reduced && Math.abs(velocity) > 0.6) {
-        inertiaRaf = window.requestAnimationFrame(runInertia);
-      } else {
-        track.style.transform = '';
-      }
-    };
-
-    viewport.addEventListener('pointerdown', onDown);
-    window.addEventListener('pointermove', onMove, { passive: true });
-    window.addEventListener('pointerup', onUp);
-
+  if (viewport) {
     const scrollByStep = (dir) => {
-      viewport.scrollBy({ left: dir * Math.min(440, viewport.clientWidth * 0.72), behavior: 'smooth' });
-    };
-    prevStep?.addEventListener('click', () => scrollByStep(-1));
-    nextStep?.addEventListener('click', () => scrollByStep(1));
-
-    cleanups.push(() => {
-      window.cancelAnimationFrame(inertiaRaf);
-      viewport.removeEventListener('pointerdown', onDown);
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-    });
-  }
-
-  // 3. In-frame image scroll parallax + Liquid Hover bridge to persistent WebGL stage
-  const liquidMediaBoxes = Array.from(root.querySelectorAll('[data-liquid-media], .mem-featured-frame, .mem-sub-frame, .mem-edition-card, .mem-panoramic-card, .mem-diptych-card, .mem-human-card'));
-  if (liquidMediaBoxes.length && !reduced) {
-    const onScrollParallax = () => {
-      const vh = window.innerHeight || 800;
-      for (const box of liquidMediaBoxes) {
-        const r = box.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) continue;
-        const p = ((r.top + r.height * 0.5) / vh - 0.5) * 2;
-        box.style.setProperty('--mem-py', `${(p * -10).toFixed(1)}px`);
-      }
-    };
-    window.addEventListener('scroll', onScrollParallax, { passive: true });
-    onScrollParallax();
-    cleanups.push(() => window.removeEventListener('scroll', onScrollParallax));
-
-    liquidMediaBoxes.forEach((box) => {
-      const parentTrigger = box.closest('[data-img]');
-      const src = box.dataset.liquidMedia || parentTrigger?.dataset.img || box.querySelector('img')?.currentSrc;
-      const enter = () => {
-        if (!src) return;
-        stageBus.emit('media:hover', { el: box, src });
-      };
-      const move = (e) => {
-        const r = box.getBoundingClientRect();
-        stageBus.emit('media:move', {
-          nx: (e.clientX - r.left) / Math.max(1, r.width),
-          ny: (e.clientY - r.top) / Math.max(1, r.height),
-        });
-      };
-      const leave = () => {
-        stageBus.emit('media:leave', { el: box });
-      };
-      box.addEventListener('pointerenter', enter);
-      box.addEventListener('pointermove', move, { passive: true });
-      box.addEventListener('pointerleave', leave);
-      cleanups.push(() => {
-        stageBus.emit('media:leave', { el: box });
-        box.removeEventListener('pointerenter', enter);
-        box.removeEventListener('pointermove', move);
-        box.removeEventListener('pointerleave', leave);
+      viewport.scrollBy({
+        left: dir * Math.min(440, viewport.clientWidth * 0.72),
+        behavior: reduced ? 'auto' : 'smooth',
       });
+    };
+    const onPrev = () => scrollByStep(-1);
+    const onNext = () => scrollByStep(1);
+    prevStep?.addEventListener('click', onPrev);
+    nextStep?.addEventListener('click', onNext);
+    cleanups.push(() => {
+      prevStep?.removeEventListener('click', onPrev);
+      nextStep?.removeEventListener('click', onNext);
     });
   }
 
-  // 4. Upgraded Lightbox with Prev/Next, Keyboard Arrows & Touch Swipe
+  // Lightbox with Prev/Next, Keyboard Arrows & Touch Swipe
   const lightbox = root.querySelector('#archive-lightbox');
   const mediaSlot = root.querySelector('#lightbox-media-slot');
   const lightboxCaption = root.querySelector('#lightbox-caption');
@@ -271,7 +136,6 @@ export function mountMemoriesInteraction(root = document) {
   }
 
   function openLightbox(trigger, idx) {
-    if (performance.now() < suppressClickUntil) return;
     if (!lightbox || !mediaSlot) return;
     lastTrigger = trigger;
     renderLightboxAt(idx);

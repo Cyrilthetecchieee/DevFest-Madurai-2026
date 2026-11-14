@@ -6,7 +6,6 @@
  */
 import { esc } from '../utils/dom.js';
 import { prefersReducedMotion } from '../utils/env.js';
-import { renderCounterRoll } from '../motion/tokens.js';
 
 const EVENT_TARGET_MS = Date.parse('2026-12-12T09:00:00+05:30');
 
@@ -50,8 +49,8 @@ export function renderVenueSection(venueData, links) {
         <div class="venue-date-monument">
           <div class="k-outline-display venue-outline-date" data-outline-fill="true" aria-hidden="true">12 12 2026</div>
           <div class="venue-roll-wrap">
-            <span class="venue-roll-label">TARGET LAUNCH VECTOR //</span>
-            ${renderCounterRoll('12 12 2026', { label: '12 December 2026', className: 'venue-counter-date' })}
+            <span class="venue-roll-label">EVENT DATE //</span>
+            <div class="venue-counter-date">12 DECEMBER 2026</div>
           </div>
         </div>
       </div>

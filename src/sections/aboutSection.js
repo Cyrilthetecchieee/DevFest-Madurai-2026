@@ -1,13 +1,8 @@
 /**
  * About Section (#13):
- * - Asymmetric 2-column editorial intro with interactive Kolam backdrop (S2).
- * - Desktop pinned horizontal 6-pillar architectural rail (01-06 counter, hairline progress bar,
- *   bespoke geometric SVG emblem per pillar).
- * - Mobile / reduced-motion horizontal snap-scroll carousel.
+ * - Editorial intro and static normal-flow 6-pillar layout (no scroll-pinning or kolam engine).
  */
 import { esc } from '../utils/dom.js';
-import { prefersReducedMotion } from '../utils/env.js';
-import { mountInteractiveKolamSvg } from '../visuals/kolamEngine.js';
 
 const PILLAR_EMBLEMS = [
   // 01 Roadshows: concentric radar propagation arcs
@@ -72,12 +67,11 @@ export function renderAboutSection(aboutData) {
   const totalStr = String(pillars.length).padStart(2, '0');
 
   return `
-    <section id="about" class="stage-section about-stage" data-waypoint="1" aria-labelledby="heading-about">
+    <section id="about" class="stage-section about-stage" aria-labelledby="heading-about">
       <div class="about-editorial-grid">
         <div class="about-editorial-lead">
-          <div id="about-kolam-stage" class="about-kolam-backdrop" aria-hidden="true"></div>
-          <span class="stage-eyebrow" data-scramble="true">${esc(aboutData.tag)}</span>
-          <h2 id="heading-about" class="stage-display" data-reveal="mask" data-track-scroll="true">${esc(aboutData.heading)}</h2>
+          <span class="stage-eyebrow">${esc(aboutData.tag)}</span>
+          <h2 id="heading-about" class="stage-display">${esc(aboutData.heading)}</h2>
         </div>
 
         <div class="about-editorial-copy">
@@ -88,42 +82,21 @@ export function renderAboutSection(aboutData) {
       </div>
 
       <div id="experience" class="about-rail-wrapper" aria-label="DevFest Experience Sections">
-        <div class="about-rail-pin" id="about-rail-pin">
-          <div class="about-rail-header">
-            <div class="about-rail-counter">
-              <span class="about-rail-index" id="about-pillar-index">01</span>
-              <span class="about-rail-total">/ ${totalStr}</span>
-              <span class="about-rail-kicker">PILLARS // WAYPOINT 02</span>
-            </div>
-            <div class="about-rail-controls">
-              <button type="button" class="about-rail-btn" id="about-prev-btn" aria-label="Previous pillar">&#8592;</button>
-              <button type="button" class="about-rail-btn" id="about-next-btn" aria-label="Next pillar">&#8594;</button>
-            </div>
-          </div>
-
-          <div class="about-rail-progress" aria-hidden="true">
-            <div class="about-rail-progress-fill" id="about-rail-progress-fill"></div>
-          </div>
-
-          <div class="about-rail-viewport" id="about-rail-viewport">
-            <div class="about-rail-track" id="about-rail-track">
-              ${pillars.map((pillar, i) => {
-                const { code, full } = parsePillarParts(pillar.title);
-                const emblem = PILLAR_EMBLEMS[i % PILLAR_EMBLEMS.length];
-                return `
-                  <article class="about-pillar-card${i === 0 ? ' is-active' : ''}" data-pillar-index="${i}" tabindex="0">
-                    <div class="about-pillar-top">
-                      <span class="about-pillar-num">G_${code}</span>
-                      <div class="about-pillar-emblem">${emblem}</div>
-                    </div>
-                    <h3 class="about-pillar-title" data-hover-glyph="true">${esc(full)}</h3>
-                    <p class="about-pillar-body">${esc(pillar.body)}</p>
-                    <span class="about-pillar-rule" aria-hidden="true"></span>
-                  </article>
-                `;
-              }).join('')}
-            </div>
-          </div>
+        <div class="about-pillars-grid">
+          ${pillars.map((pillar, i) => {
+            const { code, full } = parsePillarParts(pillar.title);
+            const emblem = PILLAR_EMBLEMS[i % PILLAR_EMBLEMS.length];
+            return `
+              <article class="about-pillar-card" data-pillar-index="${i}">
+                <div class="about-pillar-top">
+                  <span class="about-pillar-num">G_${code}</span>
+                  <div class="about-pillar-emblem">${emblem}</div>
+                </div>
+                <h3 class="about-pillar-title">${esc(full)}</h3>
+                <p class="about-pillar-body">${esc(pillar.body)}</p>
+              </article>
+            `;
+          }).join('')}
         </div>
       </div>
     </section>
@@ -131,123 +104,5 @@ export function renderAboutSection(aboutData) {
 }
 
 export function mountAboutSection() {
-  const kolamStage = document.getElementById('about-kolam-stage');
-  const pinEl = document.getElementById('about-rail-pin');
-  const viewportEl = document.getElementById('about-rail-viewport');
-  const trackEl = document.getElementById('about-rail-track');
-  const indexEl = document.getElementById('about-pillar-index');
-  const progressFill = document.getElementById('about-rail-progress-fill');
-  const prevBtn = document.getElementById('about-prev-btn');
-  const nextBtn = document.getElementById('about-next-btn');
-  const cards = Array.from(document.querySelectorAll('.about-pillar-card'));
-
-  const cleanups = [];
-
-  if (kolamStage) {
-    const kolamCtrl = mountInteractiveKolamSvg(kolamStage, {
-      gridRadius: 3,
-      size: 420,
-      seed: 202601,
-      drawOnScroll: true,
-      className: 'about-kolam-svg',
-    });
-    cleanups.push(() => kolamCtrl.destroy());
-  }
-
-  let activeIdx = 0;
-  function setActivePillar(nextIdx) {
-    const clamped = Math.max(0, Math.min(cards.length - 1, nextIdx));
-    activeIdx = clamped;
-    if (indexEl) indexEl.textContent = String(clamped + 1).padStart(2, '0');
-    cards.forEach((c, idx) => c.classList.toggle('is-active', idx === clamped));
-    if (progressFill && cards.length > 1) {
-      progressFill.style.transform = `scaleX(${Math.max(0.08, clamped / (cards.length - 1))})`;
-    }
-  }
-
-  function stepCarousel(dir) {
-    const targetIdx = Math.max(0, Math.min(cards.length - 1, activeIdx + dir));
-    setActivePillar(targetIdx);
-    const card = cards[targetIdx];
-    if (!card || !viewportEl) return;
-    if (window.innerWidth <= 820 || prefersReducedMotion()) {
-      card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-    } else if (stInstance) {
-      const targetScroll = stInstance.start + (stInstance.end - stInstance.start) * (targetIdx / Math.max(1, cards.length - 1));
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    }
-  }
-
-  prevBtn?.addEventListener('click', () => stepCarousel(-1));
-  nextBtn?.addEventListener('click', () => stepCarousel(1));
-
-  // Mobile snap scroll telemetry sync
-  const onViewportScroll = () => {
-    if (!viewportEl || !cards.length) return;
-    const maxScroll = Math.max(1, viewportEl.scrollWidth - viewportEl.clientWidth);
-    const p = viewportEl.scrollLeft / maxScroll;
-    const idx = Math.round(p * (cards.length - 1));
-    setActivePillar(idx);
-    if (progressFill) {
-      progressFill.style.transform = `scaleX(${Math.max(0.08, p)})`;
-    }
-  };
-  viewportEl?.addEventListener('scroll', onViewportScroll, { passive: true });
-  cleanups.push(() => viewportEl?.removeEventListener('scroll', onViewportScroll));
-
-  let gsCtx = null;
-  let stInstance = null;
-  let cancelled = false;
-
-  async function initPinnedRail() {
-    if (cancelled || prefersReducedMotion() || window.innerWidth <= 820 || !pinEl || !trackEl || !viewportEl) {
-      setActivePillar(0);
-      return;
-    }
-
-    const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-      import('gsap'),
-      import('gsap/ScrollTrigger'),
-    ]);
-    if (cancelled) return;
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsCtx = gsap.context(() => {
-      const getTravel = () => Math.max(0, trackEl.scrollWidth - viewportEl.clientWidth);
-      if (getTravel() <= 16) return;
-
-      const tween = gsap.to(trackEl, {
-        x: () => -getTravel(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: pinEl,
-          pin: true,
-          scrub: 0.75,
-          start: 'top 64px',
-          end: () => `+=${Math.max(540, getTravel() * 0.92)}`,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            stInstance = self;
-            const p = self.progress;
-            const idx = Math.round(p * (cards.length - 1));
-            activeIdx = idx;
-            if (indexEl) indexEl.textContent = String(idx + 1).padStart(2, '0');
-            if (progressFill) progressFill.style.transform = `scaleX(${Math.max(0.08, p)})`;
-            cards.forEach((c, cIdx) => c.classList.toggle('is-active', cIdx === idx));
-          },
-        },
-      });
-      stInstance = tween.scrollTrigger;
-    }, pinEl);
-  }
-
-  // Idle-defer pin setup slightly so initial paint stays instant while ready before user reaches About
-  const setupTimer = window.setTimeout(initPinnedRail, 220);
-
-  return () => {
-    cancelled = true;
-    window.clearTimeout(setupTimer);
-    gsCtx?.revert();
-    cleanups.forEach((fn) => fn());
-  };
+  return () => {};
 }
