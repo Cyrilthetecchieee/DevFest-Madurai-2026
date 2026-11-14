@@ -26,6 +26,7 @@ export function renderStageFooter() {
             <li><a href="/#venue" data-spa-link="true" class="ftr-link">Venue &amp; Date</a></li>
             <li><a href="/#agenda" data-spa-link="true" class="ftr-link">Agenda</a></li>
             <li><a href="/speakers" data-spa-link="true" class="ftr-link">Speakers</a></li>
+            <li><a href="/#sponsors" data-spa-link="true" class="ftr-link">Sponsors</a></li>
             <li><a href="/memories" data-spa-link="true" class="ftr-link">Memories Archive</a></li>
           </ul>
         </div>
@@ -33,9 +34,10 @@ export function renderStageFooter() {
         <div class="ftr-col">
           <span class="ftr-col-label">PARTICIPATE</span>
           <ul class="ftr-link-list">
-            <li><a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Register / Tickets ↗</a></li>
-            <li><a href="${esc(links.codeOfConduct)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Code of Conduct ↗</a></li>
-            <li><a href="${esc(links.privacyPolicy)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Privacy Policy ↗</a></li>
+            <li><a href="/#tickets" data-spa-link="true" class="ftr-link">Tickets &amp; Event Pass</a></li>
+            <li><a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Register on GDG &#8599;</a></li>
+            <li><a href="${esc(links.codeOfConduct)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Code of Conduct &#8599;</a></li>
+            <li><a href="${esc(links.privacyPolicy)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Privacy Policy &#8599;</a></li>
           </ul>
         </div>
 

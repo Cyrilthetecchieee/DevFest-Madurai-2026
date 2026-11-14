@@ -123,6 +123,7 @@ export function renderHeroStage(routeKey, headingText) {
               <span class="hero-cta-arrow" aria-hidden="true">&#8599;</span>
             </a>
             <a ${secondaryAttrs} class="hero-cta-secondary">${esc(cfg.secondaryCta.label)}</a>
+            ${routeKey === 'home' ? `<a href="#tickets" class="hero-cta-secondary hero-cta-tickets">TICKETS &amp; PASS</a>` : ''}
           </div>
         </div>
       </div>

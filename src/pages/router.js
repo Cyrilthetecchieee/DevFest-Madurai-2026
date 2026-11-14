@@ -31,10 +31,18 @@ function normalizeUrlForHistory(href) {
 
 function updateHeadMetadata(meta) {
   document.title = meta.title;
-  const descEl = document.querySelector('meta[name="description"]');
-  if (descEl) descEl.setAttribute('content', meta.description);
-  const canonicalEl = document.querySelector('link[rel="canonical"]');
-  if (canonicalEl) canonicalEl.setAttribute('href', `${window.location.origin}${meta.canonical}`);
+  const canonicalHref = `https://devfest-madurai-2026.vercel.app${meta.canonical === '/' ? '/' : meta.canonical}`;
+  const setMeta = (selector, attr, val) => {
+    const el = document.querySelector(selector);
+    if (el) el.setAttribute(attr, val);
+  };
+  setMeta('meta[name="description"]', 'content', meta.description);
+  setMeta('link[rel="canonical"]', 'href', canonicalHref);
+  setMeta('meta[property="og:title"]', 'content', meta.title);
+  setMeta('meta[property="og:description"]', 'content', meta.description);
+  setMeta('meta[property="og:url"]', 'content', canonicalHref);
+  setMeta('meta[name="twitter:title"]', 'content', meta.title);
+  setMeta('meta[name="twitter:description"]', 'content', meta.description);
 }
 
 function scrollToHashOrTop(hash, smooth = false) {
@@ -67,6 +75,7 @@ export function createRouter({ viewRoot, hud }) {
 
     if (hash) {
       window.requestAnimationFrame(() => scrollToHashOrTop(hash, false));
+      window.setTimeout(() => scrollToHashOrTop(hash, false), 80);
     } else {
       window.scrollTo(0, 0);
     }

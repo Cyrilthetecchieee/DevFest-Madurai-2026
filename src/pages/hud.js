@@ -113,9 +113,21 @@ export function initHud({ onMotionChange, onNavigate }) {
     onMotionChange?.(paused);
   });
 
+  const NAV_SECTION_MAP = {
+    home: 'home',
+    about: 'about',
+    venue: 'about',
+    agenda: 'agenda',
+    tickets: 'agenda',
+    speakers: 'speakers',
+    sponsors: 'memories',
+    memories: 'memories',
+  };
+
   const setActiveNavSection = (sectionKey) => {
+    const mapped = NAV_SECTION_MAP[sectionKey] || sectionKey;
     header?.querySelectorAll('.header-nav-link, .hud-nav-link').forEach((el) => {
-      const matchesSection = el.dataset.section === sectionKey;
+      const matchesSection = el.dataset.section === mapped;
       const matchesRoute = el.dataset.route === currentRoute && !sectionKey;
       const active = matchesSection || matchesRoute;
       el.classList.toggle('active', active);

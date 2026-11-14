@@ -15,11 +15,26 @@
   <meta property="og:title" content="Memories — GDG Madurai · DevFest Archive">
   <meta property="og:description" content="A cinematic archive celebrating past DevFest & GDG Madurai editions, speakers, builders, and community moments.">
   <meta property="og:url" content="https://devfest-madurai-2026.vercel.app/memories">
-  <meta property="og:image" content="/assets/art/hero-night-1280.webp">
+  <meta property="og:image" content="https://devfest-madurai-2026.vercel.app/assets/art/hero-night-1280.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Memories — GDG Madurai · DevFest Archive">
   <meta name="twitter:description" content="A cinematic archive celebrating past DevFest & GDG Madurai editions and community moments.">
-  <meta name="twitter:image" content="/assets/art/hero-night-1280.webp">
+  <meta name="twitter:image" content="https://devfest-madurai-2026.vercel.app/assets/art/hero-night-1280.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Memories — GDG Madurai Community Archive",
+    "url": "https://devfest-madurai-2026.vercel.app/memories",
+    "description": "A cinematic archive celebrating past DevFest & GDG Madurai editions, speakers, builders, and community moments leading to DevFest Madurai 2026.",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "DevFest Madurai 2026 · GDG Madurai",
+      "url": "https://devfest-madurai-2026.vercel.app/"
+    }
+  }
+  </script>
 
   <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-400.woff2" crossorigin="anonymous">
   <link rel="preload" as="font" type="font/woff2" href="/fonts/orbe-mono.woff2" crossorigin="anonymous">
@@ -104,19 +119,24 @@
 
   <header id="stage-hud" class="site-header" role="banner">
     <div class="site-header-inner">
-      <a href="/#home" data-spa-link="true" class="header-brand">
+      <a href="/#home" data-spa-link="true" class="header-brand" aria-label="GDG Madurai — DevFest Madurai 2026 Home">
+        <span class="header-brand-brackets" aria-hidden="true">&lt; &gt;</span>
         <span class="header-brand-main">GDG MADURAI</span>
         <span class="header-brand-tag">DEVFEST 2026</span>
       </a>
 
       <nav class="site-nav-desktop" aria-label="Primary navigation">
-        <a href="/#about" data-section="about" class="header-nav-link">About</a>
-        <a href="/#venue" data-section="venue" class="header-nav-link">Venue</a>
-        <a href="/speakers" data-route="speakers" data-section="speakers" class="header-nav-link">Speakers</a>
-        <a href="/#agenda" data-section="agenda" class="header-nav-link">Agenda</a>
-        <a href="/#tickets" data-section="tickets" class="header-nav-link">Tickets</a>
-        <a href="/#sponsors" data-section="sponsors" class="header-nav-link">Sponsors</a>
-        <a href="/memories" data-route="memories" data-section="memories" class="header-nav-link active">Memories</a>
+        <a href="/#home" data-route="home" data-section="home" class="header-nav-link"><span class="nav-idx">[01]</span><span>HOME</span></a>
+        <a href="/#about" data-section="about" class="header-nav-link"><span class="nav-idx">[02]</span><span>ABOUT</span></a>
+        <a href="/#agenda" data-section="agenda" class="header-nav-link"><span class="nav-idx">[03]</span><span>AGENDA</span></a>
+        <a href="/speakers" data-route="speakers" data-section="speakers" class="header-nav-link"><span class="nav-idx">[04]</span><span>SPEAKERS</span></a>
+        <a href="/memories" data-route="memories" data-section="memories" class="header-nav-link active" aria-current="true"><span class="nav-idx">[05]</span><span>MEMORIES</span></a>
+        <a
+          href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header-nav-link header-nav-link--cta"
+        ><span class="nav-idx">[06]</span><span>REGISTER</span><span aria-hidden="true">&#8599;</span></a>
       </nav>
 
       <div class="header-utilities">
@@ -124,13 +144,6 @@
           <span class="hud-motion-dot" aria-hidden="true"></span>
           <span class="hud-motion-label" id="motion-label">MOTION: ON</span>
         </button>
-
-        <a
-          href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="header-register-btn"
-        >REGISTER</a>
 
         <button
           type="button"
@@ -146,25 +159,28 @@
     <div id="hud-drawer-backdrop" class="hud-drawer-backdrop" hidden></div>
     <nav id="hud-nav" class="hud-nav-panel" aria-label="Mobile navigation" hidden>
       <div class="hud-nav-drawer-head">
-        <span class="hud-nav-drawer-title">DEVFEST MADURAI 2026</span>
+        <span class="hud-nav-drawer-title">&lt; &gt; DEVFEST MADURAI 2026</span>
         <button type="button" id="drawer-close" class="hud-drawer-close" aria-label="Close navigation menu">CLOSE ✕</button>
       </div>
       <ul class="hud-nav-list">
-        <li><a href="/#home" data-route="home" data-section="home" class="hud-nav-link"><span>Home</span><span>01</span></a></li>
-        <li><a href="/#about" data-section="about" class="hud-nav-link"><span>About</span><span>02</span></a></li>
-        <li><a href="/#venue" data-section="venue" class="hud-nav-link"><span>Venue &amp; Date</span><span>03</span></a></li>
-        <li><a href="/speakers" data-route="speakers" data-section="speakers" class="hud-nav-link"><span>Speakers</span><span>04</span></a></li>
-        <li><a href="/#agenda" data-section="agenda" class="hud-nav-link"><span>Agenda</span><span>05</span></a></li>
-        <li><a href="/#tickets" data-section="tickets" class="hud-nav-link"><span>Tickets</span><span>06</span></a></li>
-        <li><a href="/#sponsors" data-section="sponsors" class="hud-nav-link"><span>Sponsors</span><span>07</span></a></li>
-        <li><a href="/memories" data-route="memories" data-section="memories" class="hud-nav-link active"><span>Memories</span><span>08</span></a></li>
+        <li><a href="/#home" data-route="home" data-section="home" class="hud-nav-link"><span>HOME</span><span>[01]</span></a></li>
+        <li><a href="/#about" data-section="about" class="hud-nav-link"><span>ABOUT</span><span>[02]</span></a></li>
+        <li><a href="/#agenda" data-section="agenda" class="hud-nav-link"><span>AGENDA</span><span>[03]</span></a></li>
+        <li><a href="/speakers" data-route="speakers" data-section="speakers" class="hud-nav-link"><span>SPEAKERS</span><span>[04]</span></a></li>
+        <li><a href="/memories" data-route="memories" data-section="memories" class="hud-nav-link active"><span>MEMORIES</span><span>[05]</span></a></li>
+        <li><a href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/" target="_blank" rel="noopener noreferrer" class="hud-nav-link"><span>REGISTER &#8599;</span><span>[06]</span></a></li>
       </ul>
+      <div class="hud-drawer-sublinks" aria-label="Section shortcuts">
+        <a href="/#venue" class="hud-sublink">Venue &amp; Date</a>
+        <a href="/#tickets" class="hud-sublink">Tickets</a>
+        <a href="/#sponsors" class="hud-sublink">Sponsors</a>
+      </div>
       <a
         href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/"
         target="_blank"
         rel="noopener noreferrer"
         class="btn-g-primary hud-drawer-cta"
-      >REGISTER NOW</a>
+      >[06] REGISTER NOW &#8599;</a>
     </nav>
   </header>
 

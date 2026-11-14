@@ -3,7 +3,7 @@ import eventData from '../data/event.json';
 import { esc, renderStatusChip } from '../utils/dom.js';
 
 export const EVENT_TARGET_MS = Date.parse('2026-12-12T09:00:00+05:30');
-const MADURAI_MAPS_URL = 'https://maps.google.com/?q=Madurai,Tamil+Nadu,India';
+const MADURAI_MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=Madurai%2C+Tamil+Nadu%2C+India';
 
 export function computeCountdownParts(nowMs = Date.now()) {
   const diff = EVENT_TARGET_MS - nowMs;
@@ -102,7 +102,7 @@ export function renderVenueSection(venueData, links) {
             ${renderStatusChip('TBA', 'tba')}
           </div>
           <h3 class="venue-info-value">To be announced.</h3>
-          <p class="venue-info-note">Full-day developer festival schedule locking soon.</p>
+          <p class="venue-info-note">Full-day tech festival schedule locking soon.</p>
         </article>
 
         <article class="venue-info-card venue-info-card--yellow">
