@@ -1,0 +1,241 @@
+/* Base Document & Persistent Canvas Stacking Rules */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  background-color: var(--navy);
+  view-transition-name: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background-color: var(--navy);
+  font-family: var(--font-mono);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link for keyboard accessibility */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  z-index: 200;
+  background: var(--bezel);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Persistent WebGL Canvas — lives OUTSIDE #app-view View Transitions root */
+#gl-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: var(--z-gl);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.65s ease;
+  display: block;
+}
+
+#gl-stage.ready {
+  opacity: 1;
+}
+
+/* Static First-Paint / LCP Poster Stack (behind gl-stage until WebGL takes over) */
+.cover-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  pointer-events: none;
+}
+
+.cover-box {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  --cu: max(100cqw / 2048, 100cqh / 1360);
+  width: calc(2048 * var(--cu));
+  height: calc(1360 * var(--cu));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#stage-bg {
+  z-index: var(--z-bg);
+}
+
+#stage-hl {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: var(--z-hl);
+  transition: opacity 0.45s ease;
+}
+
+#stage-fig-fallback {
+  z-index: var(--z-fig);
+  transition: opacity 0.45s ease;
+}
+
+#lcp-poster,
+#figure-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+html.gl-active #stage-hl,
+html.gl-active #stage-fig-fallback,
+html.gl-active #stage-bg {
+  opacity: 0;
+}
+
+/* Route View Transition root (keeps WebGL canvas and HUD stationary & flicker-free) */
+#app-view {
+  position: relative;
+  z-index: var(--z-ui);
+  min-height: 100dvh;
+  view-transition-name: page-content;
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  animation-duration: 280ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Once-per-session skippable Mission Control loader (translucent HUD frame — never blocks LCP poster) */
+#mc-loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  background: radial-gradient(circle at 50% 42%, rgba(11, 15, 58, 0.04) 0%, rgba(3, 4, 9, 0.72) 85%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 24px 24px clamp(52px, 8dvh, 90px);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.mc-loader-shell {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(3, 4, 9, 0.88);
+  border: 1px solid rgba(94, 243, 255, 0.42);
+}
+
+#mc-loader[hidden] {
+  display: none;
+}
+
+#mc-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.mc-loader-tag {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+
+.mc-loader-bar {
+  width: min(280px, 72vw);
+  height: 2px;
+  background: rgba(94, 243, 255, 0.18);
+  overflow: hidden;
+}
+
+.mc-loader-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  transform-origin: left center;
+  animation: loaderSweep 0.65s var(--ease-expo) forwards;
+}
+
+.mc-loader-skip {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid rgba(94, 243, 255, 0.45);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.mc-loader-skip:hover,
+.mc-loader-skip:focus-visible {
+  color: var(--bezel);
+  background: var(--cyan);
+  outline: none;
+}
+
+@keyframes loaderSweep {
+  from { transform: scaleX(0.08); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-loader-fill { animation: none; transform: scaleX(1); }
+  #gl-stage, #stage-hl, #stage-fig-fallback, #stage-bg { transition: none; }
+}

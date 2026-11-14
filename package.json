@@ -1,0 +1,32 @@
+{
+  "name": "devfest-madurai-2026",
+  "version": "2.0.0",
+  "description": "GDG Madurai presents DevFest Madurai 2026 — Where Curiosity Meets Creation.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cyrilthetecchieee/DevFest-Madurai-2026.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.15.1",
+    "lenis": "^1.3.27",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "lighthouse": "^13.6.0",
+    "meshoptimizer": "^1.3.0",
+    "playwright": "^1.65.1",
+    "sharp": "^0.35.5",
+    "vite": "^8.3.8"
+  }
+}

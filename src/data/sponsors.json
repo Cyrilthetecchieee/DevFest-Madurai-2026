@@ -1,0 +1,75 @@
+{
+  "tag": "+++ // SPONSORS & COMMUNITY PARTNERS",
+  "heading": "POWERED BY COMMUNITY.",
+  "copy": "Official sponsor slots are open and marked as placeholders until confirmed. Joined by community partners across the Madurai ecosystem.",
+  "sponsors": [
+    {
+      "id": "platinum-tba",
+      "src": "/assets/sponsors/platinum-placeholder.svg",
+      "alt": "Title Sponsor (Placeholder — TBA)",
+      "label": "PLATINUM · PLACEHOLDER (TBA)"
+    },
+    {
+      "id": "gold-01-tba",
+      "src": "/assets/sponsors/gold-placeholder-1.svg",
+      "alt": "Gold Sponsor 01 (Placeholder — TBA)",
+      "label": "GOLD 01 · PLACEHOLDER (TBA)"
+    },
+    {
+      "id": "gold-02-tba",
+      "src": "/assets/sponsors/gold-placeholder-2.svg",
+      "alt": "Gold Sponsor 02 (Placeholder — TBA)",
+      "label": "GOLD 02 · PLACEHOLDER (TBA)"
+    }
+  ],
+  "partners": [
+    {
+      "id": "gdg-cloud-madurai",
+      "src": "/assets/partners/gdg-cloud-madurai.svg",
+      "alt": "GDG Cloud Madurai",
+      "label": "GDG CLOUD"
+    },
+    {
+      "id": "kug-madurai",
+      "src": "/assets/partners/kug-madurai.svg",
+      "alt": "Kotlin User Group Madurai",
+      "label": "KOTLIN USER GROUP"
+    },
+    {
+      "id": "ai-for-science",
+      "src": "/assets/partners/ai-for-science.svg",
+      "alt": "AI for Science",
+      "label": "AI FOR SCIENCE"
+    },
+    {
+      "id": "ai-geeks",
+      "src": "/assets/partners/ai-geeks.svg",
+      "alt": "AI Geeks",
+      "label": "AI GEEKS"
+    },
+    {
+      "id": "grafana-madurai",
+      "src": "/assets/partners/grafana-madurai.svg",
+      "alt": "Grafana Community Madurai",
+      "label": "GRAFANA COMMUNITY"
+    },
+    {
+      "id": "mongo-madurai",
+      "src": "/assets/partners/mongo-madurai.svg",
+      "alt": "MongoDB User Group Madurai",
+      "label": "MONGODB USER GROUP"
+    },
+    {
+      "id": "uai",
+      "src": "/assets/partners/uai.svg",
+      "alt": "United by AI",
+      "label": "UNITED BY AI"
+    },
+    {
+      "id": "partner-placeholder",
+      "src": "/assets/partners/partner-placeholder.svg",
+      "alt": "Community Partner (Placeholder)",
+      "label": "PARTNER PLACEHOLDER"
+    }
+  ]
+}

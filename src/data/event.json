@@ -1,0 +1,173 @@
+{
+  "brand": "GDG MADURAI",
+  "event": "DEVFEST MADURAI 2026",
+  "presenter": "GDG MADURAI PRESENTS",
+  "tagline": "WHERE CURIOSITY MEETS CREATION.",
+  "pillars": "BUILD. LEARN. CONNECT. CREATE.",
+  "dateDisplay": "12 December 2026",
+  "dateISO": "2026-12-12T09:00:00+05:30",
+  "locationDisplay": "Madurai, Tamil Nadu, India",
+  "locationSub": "Cultural capital of Tamil Nadu · Temple City",
+  "dateSub": "Saturday · Full-day developer festival",
+  "venueDisplay": "To be announced.",
+  "venueSub": "Official venue announcement coming soon.",
+  "coords": "9°55'10\"N · 78°07'10\"E",
+  "hudCoords": "X.0052  //  Y.0053",
+  "links": {
+    "tickets": "https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/",
+    "cfp": "https://gdg-final-tau.vercel.app/cfp",
+    "codeOfConduct": "https://developers.google.com/community-guidelines",
+    "privacyPolicy": "https://policies.google.com/privacy",
+    "email": "mailto:contact@gdgmadurai.in",
+    "emailLabel": "contact@gdgmadurai.in",
+    "socials": [
+      { "label": "X", "url": "https://x.com/gdgmadurai" },
+      { "label": "Instagram", "url": "https://www.instagram.com/gdg_madurai/" },
+      { "label": "LinkedIn", "url": "https://www.linkedin.com/company/gdg-madurai/" },
+      { "label": "YouTube", "url": "https://www.youtube.com/@gdgmadurai" },
+      { "label": "GitHub", "url": "https://github.com/gdg-madurai" },
+      { "label": "Community", "url": "https://gdg.community.dev/gdg-madurai/" }
+    ]
+  },
+  "hero": {
+    "home": {
+      "left": {
+        "kicker": "GDG MADURAI PRESENTS",
+        "title": "DEVFEST MADURAI 2026",
+        "lead": "WHERE CURIOSITY MEETS CREATION.",
+        "subs": [
+          "Madurai's biggest tech festival by Google Developer Groups.",
+          "One community. Endless possibilities. A future built together."
+        ]
+      },
+      "right": {
+        "lead": "BUILD. LEARN. CONNECT. CREATE.",
+        "subs": [
+          "Bringing developers, designers, innovators and technology enthusiasts together to explore what's next."
+        ],
+        "meta": [
+          "Date: 12 December 2026",
+          "Location: Madurai, Tamil Nadu, India",
+          "Venue: To be announced."
+        ]
+      },
+      "primaryCta": { "label": "REGISTER NOW", "ariaLabel": "Register Now", "href": "https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/", "external": true },
+      "secondaryCta": { "label": "EXPLORE AGENDA", "href": "#agenda" }
+    },
+    "speakers": {
+      "left": {
+        "kicker": "GDG MADURAI · SPEAKERS",
+        "title": "THE MINDS BEHIND WHAT'S NEXT.",
+        "lead": "DEVFEST MADURAI 2026",
+        "subs": [
+          "Developers, creators, community hosts and technology experts across Madurai.",
+          "Unconfirmed speaker slots are marked as official announcement placeholders."
+        ]
+      },
+      "right": {
+        "lead": "HAVE SOMETHING WORTH SHARING?",
+        "subs": [
+          "Share your ideas, experiences and innovations with the developer community. Bring your knowledge to the DevFest Madurai stage."
+        ],
+        "meta": [
+          "Date: 12 December 2026",
+          "Location: Madurai, Tamil Nadu, India",
+          "Venue: To be announced."
+        ]
+      },
+      "primaryCta": { "label": "VIEW SPEAKERS", "ariaLabel": "View Speakers", "href": "#speakers-directory", "external": false },
+      "secondaryCta": { "label": "SUBMIT YOUR PROPOSAL.", "href": "#cfp" }
+    },
+    "memories": {
+      "left": {
+        "kicker": "GDG MADURAI ARCHIVE",
+        "title": "EVERY MOMENT BECOMES A MEMORY.",
+        "lead": "COMMUNITY CHRONICLE",
+        "subs": [
+          "A journey through the people, ideas and moments that brought the GDG Madurai community together.",
+          "Where heritage meets developer innovation in the Temple City."
+        ]
+      },
+      "right": {
+        "lead": "THE DIGITAL MEMORY ARCHIVE",
+        "subs": [
+          "Photographic records and community highlights from DevFest 2024, 2025 and beyond."
+        ],
+        "meta": [
+          "Chapter: GDG Madurai",
+          "City: Madurai, Tamil Nadu, India",
+          "Next Edition: 12 December 2026"
+        ]
+      },
+      "primaryCta": { "label": "EXPLORE ARCHIVE", "ariaLabel": "Explore Archive", "href": "#community", "external": false },
+      "secondaryCta": { "label": "← RETURN TO HOME", "href": "/" }
+    }
+  },
+  "sections": {
+    "about": {
+      "tag": "+++ // ABOUT DEVFEST · GDG MADURAI",
+      "heading": "MORE THAN AN EVENT. IT'S A COMMUNITY.",
+      "paragraphs": [
+        "DevFest Madurai is a celebration of technology, creativity and community. Bringing together developers, students, creators and technology enthusiasts for a day of learning, collaboration and innovation.",
+        "WHERE CURIOSITY MEETS CREATION. — BUILD. LEARN. CONNECT. CREATE. — One community. Endless possibilities. A future built together. Bringing developers, designers, innovators and technology enthusiasts together to explore what's next."
+      ],
+      "pillars": [
+        { "title": "01 — ROADSHOWS", "body": "Community outreach and technology awareness." },
+        { "title": "02 — BUILD SESSIONS", "body": "Hands-on building and practical learning." },
+        { "title": "03 — COMPETITIONS", "body": "Challenges, creativity and problem-solving." },
+        { "title": "04 — TECH TALKS", "body": "Insights from developers and technology experts." },
+        { "title": "05 — NETWORKING", "body": "Meet developers, creators and innovators." },
+        { "title": "06 — COMMUNITY", "body": "Connect with the Madurai developer ecosystem." }
+      ]
+    },
+    "venue": {
+      "tag": "+++ // THE VENUE & EVENT INFORMATION",
+      "heading": "IN THE HEART OF MADURAI.",
+      "copy": "A vibrant space for a vibrant community — where ideas, people and innovation come together.",
+      "statusBadge": "Official venue announcement coming soon.",
+      "cards": [
+        { "title": "LOCATION", "body": "Madurai, Tamil Nadu, India", "badge": "Cultural capital of Tamil Nadu · Temple City" },
+        { "title": "DATE", "body": "12 December 2026", "badge": "Saturday · Full-day developer festival" },
+        { "title": "VENUE", "body": "To be announced.", "badge": "Official venue announcement coming soon." }
+      ]
+    },
+    "cfp": {
+      "tag": "+++ // CALL FOR SPEAKERS · SUBMIT CFP",
+      "heading": "HAVE SOMETHING WORTH SHARING?",
+      "copy": "Share your ideas, experiences and innovations with the developer community. Bring your knowledge to the DevFest Madurai stage.",
+      "homeCards": [
+        {
+          "badge": "TRACKS · AI, CLOUD, WEB, ANDROID, OPEN SOURCE, DESIGN",
+          "title": "01 — PRACTICAL & COMMUNITY-DRIVEN",
+          "body": "We welcome talks, hands-on workshops and lightning sessions across AI & ML, Web & Cloud, Android, Open Source, Design & Product, and Career stories."
+        },
+        {
+          "badge": "SELECTION TIMELINE ANNOUNCING SOON",
+          "title": "02 — FIRST-TIME & EXPERIENCED SPEAKERS",
+          "body": "Share your own work, experiments and practical takeaways for developers in Madurai."
+        }
+      ],
+      "guidelines": [
+        { "badge": "GUIDELINE 01", "title": "01 — PRACTICAL", "body": "Keep it practical and specific." },
+        { "badge": "GUIDELINE 02", "title": "02 — TAKEAWAYS", "body": "Tell us what attendees will take away." },
+        { "badge": "GUIDELINE 03", "title": "03 — INCLUSIVE", "body": "First-time speakers are welcome." },
+        { "badge": "GUIDELINE 04", "title": "04 — AUTHENTIC", "body": "Share your own work and experience." }
+      ],
+      "ctaLabel": "SUBMIT YOUR PROPOSAL."
+    },
+    "tickets": {
+      "tag": "+++ // TICKETS & REGISTRATION",
+      "heading": "YOUR NEXT CHAPTER STARTS HERE.",
+      "copy": "Be part of a community that learns, builds and creates the future together.",
+      "metaLine": "Date: 12 December 2026 · Location: Madurai, Tamil Nadu, India · Venue: To be announced.",
+      "ctaLabel": "GET YOUR TICKETS."
+    }
+  },
+  "footer": {
+    "tag": "GDG MADURAI // DEVFEST 2026",
+    "heading": "GDG MADURAI — DEVFEST 2026",
+    "pillars": "BUILD. LEARN. CONNECT. CREATE.",
+    "disclaimer": "DevFest Madurai is an independent, community-run event organised by GDG Madurai under Google's Community Guidelines. It is not produced or endorsed by Google.",
+    "copyright": "© 2026 GDG Madurai · DevFest Madurai 2026"
+  }
+}

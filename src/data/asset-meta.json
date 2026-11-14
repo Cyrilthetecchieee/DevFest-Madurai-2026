@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "skyPlate": {
+      "width": 2048,
+      "height": 1360
+    },
+    "figurePoster": {
+      "width": 2048,
+      "height": 1360
+    }
+  },
+  "archive": {
+    "2024-dks06596": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2024-group-photo": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2024-opening-stage": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2024-panel-discussion": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2024-panel-question": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2024-speaker-on-stage": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2025-badges-held-up": {
+      "width": 1920,
+      "height": 1281
+    },
+    "2025-build": {
+      "width": 1920,
+      "height": 1080
+    },
+    "2025-full-house": {
+      "width": 1920,
+      "height": 1281
+    },
+    "2025-group": {
+      "width": 1920,
+      "height": 1440
+    },
+    "2025-hosts-welcome": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2025-keynote-hall": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2025-registration-desk": {
+      "width": 1920,
+      "height": 1281
+    },
+    "2025-speaker-research-park": {
+      "width": 1920,
+      "height": 1280
+    },
+    "2025-sponsor-thank-you": {
+      "width": 1920,
+      "height": 1311
+    }
+  },
+  "art": {
+    "hero-night": {
+      "width": 1536,
+      "height": 1024
+    },
+    "waterfront": {
+      "width": 1536,
+      "height": 1024
+    }
+  }
+}
