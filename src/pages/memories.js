@@ -1,7 +1,9 @@
-/** Memories Archive Page View, Scroll Progress Bar & Accessible Lightbox */
+/** Memories Archive Page View, Curtain Reveals, Liquid Hover & Swipe Lightbox */
 import eventData from '../data/event.json';
 import memoriesData from '../data/memories.json';
 import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter } from '../utils/dom.js';
+import { initSectionMotion } from '../motion/tokens.js';
+import { mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
 
 export const MEMORIES_META = {
   title: 'Memories — GDG Madurai · DevFest Archive',
@@ -21,13 +23,13 @@ export function renderMemoriesPage() {
     ${renderHeroStage('memories', 'Memories — GDG Madurai Community Archive')}
 
     <main id="devfest-content">
-      <section id="community" class="orbe-section" aria-labelledby="heading-community">
-        <span class="orbe-section-tag">${esc(community.tag)}</span>
-        <h2 id="heading-community" class="orbe-section-heading">${esc(community.heading)}</h2>
-        <p class="orbe-section-copy">${esc(community.copy)}</p>
+      <section id="community" class="stage-section" aria-labelledby="heading-community">
+        <span class="stage-eyebrow" data-scramble="true">${esc(community.tag)}</span>
+        <h2 id="heading-community" class="stage-display" data-reveal="mask">${esc(community.heading)}</h2>
+        <p class="stage-lead">${esc(community.copy)}</p>
 
         <div class="mem-community-layout">
-          <div class="mem-featured-frame" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
+          <div class="mem-featured-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
             ${renderPicture({ ...community.featured, sizes: '(max-width: 820px) 92vw, 52vw' })}
             <div class="mem-caption-bar">
               <span>${esc(community.featured.title)}</span>
@@ -37,7 +39,7 @@ export function renderMemoriesPage() {
 
           <div class="mem-community-stack">
             ${community.stack.map((item) => `
-              <div class="mem-sub-frame" tabindex="0" role="button" aria-label="Open photo: ${esc(item.title)}" data-img="${esc(getLightboxImageUrl(item))}" data-caption="${esc(item.lightboxCaption)}">
+              <div class="mem-sub-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(item.title)}" data-img="${esc(getLightboxImageUrl(item))}" data-caption="${esc(item.lightboxCaption)}">
                 ${renderPicture({ ...item, sizes: '(max-width: 820px) 92vw, 32vw' })}
                 <div class="mem-caption-bar">
                   <span>${esc(item.title)}</span>
@@ -49,10 +51,10 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      <section id="editions" class="orbe-section" aria-labelledby="heading-editions">
-        <span class="orbe-section-tag">${esc(editions.tag)}</span>
-        <h2 id="heading-editions" class="orbe-section-heading">${esc(editions.heading)}</h2>
-        <p class="orbe-section-copy">${esc(editions.copy)}</p>
+      <section id="editions" class="stage-section" aria-labelledby="heading-editions">
+        <span class="stage-eyebrow" data-scramble="true">${esc(editions.tag)}</span>
+        <h2 id="heading-editions" class="stage-display" data-reveal="mask">${esc(editions.heading)}</h2>
+        <p class="stage-lead">${esc(editions.copy)}</p>
 
         <div class="mem-timeline">
           ${editions.items.map((ed) => `
@@ -62,10 +64,10 @@ export function renderMemoriesPage() {
                 <span class="mem-year-badge">${esc(ed.year)}</span>
                 <span class="mem-edition-title">${esc(ed.title)}</span>
               </div>
-              <p class="orbe-section-copy orbe-section-copy-flush">${esc(ed.copy)}</p>
+              <p class="stage-lead orbe-section-copy-flush">${esc(ed.copy)}</p>
               <div class="mem-edition-grid">
                 ${ed.cards.map((card) => `
-                  <div class="mem-edition-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+                  <div class="mem-edition-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
                     ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 26vw' })}
                     <div class="mem-caption-bar">
                       <span>${esc(card.title)}</span>
@@ -79,13 +81,13 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      <section id="gallery" class="orbe-section" aria-labelledby="heading-gallery">
-        <span class="orbe-section-tag">${esc(gallery.tag)}</span>
-        <h2 id="heading-gallery" class="orbe-section-heading">${esc(gallery.heading)}</h2>
-        <p class="orbe-section-copy">${esc(gallery.copy)}</p>
+      <section id="gallery" class="stage-section" aria-labelledby="heading-gallery">
+        <span class="stage-eyebrow" data-scramble="true">${esc(gallery.tag)}</span>
+        <h2 id="heading-gallery" class="stage-display" data-reveal="mask">${esc(gallery.heading)}</h2>
+        <p class="stage-lead">${esc(gallery.copy)}</p>
 
         <div class="mem-cinematic-gallery">
-          <div class="mem-panoramic-card" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic1.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic1))}" data-caption="${esc(gallery.panoramic1.lightboxCaption)}">
+          <div class="mem-panoramic-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic1.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic1))}" data-caption="${esc(gallery.panoramic1.lightboxCaption)}">
             ${renderPicture({ ...gallery.panoramic1, sizes: '(max-width: 820px) 92vw, 84vw' })}
             <div class="mem-panoramic-overlay">
               <div>
@@ -98,7 +100,7 @@ export function renderMemoriesPage() {
 
           <div class="mem-diptych-grid">
             ${gallery.diptych.map((card) => `
-              <div class="mem-diptych-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+              <div class="mem-diptych-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
                 ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 42vw' })}
                 <div class="mem-caption-bar">
                   <span>${esc(card.title)}</span>
@@ -108,7 +110,7 @@ export function renderMemoriesPage() {
             `).join('')}
           </div>
 
-          <div class="mem-panoramic-card" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic2.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic2))}" data-caption="${esc(gallery.panoramic2.lightboxCaption)}">
+          <div class="mem-panoramic-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic2.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic2))}" data-caption="${esc(gallery.panoramic2.lightboxCaption)}">
             ${renderPicture({ ...gallery.panoramic2, sizes: '(max-width: 820px) 92vw, 84vw' })}
             <div class="mem-panoramic-overlay">
               <div>
@@ -121,14 +123,14 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      <section id="human-moments" class="orbe-section" aria-labelledby="heading-human">
-        <span class="orbe-section-tag">${esc(human.tag)}</span>
-        <h2 id="heading-human" class="orbe-section-heading">${esc(human.heading)}</h2>
-        <p class="orbe-section-copy">${esc(human.copy)}</p>
+      <section id="human-moments" class="stage-section" aria-labelledby="heading-human">
+        <span class="stage-eyebrow" data-scramble="true">${esc(human.tag)}</span>
+        <h2 id="heading-human" class="stage-display" data-reveal="mask">${esc(human.heading)}</h2>
+        <p class="stage-lead">${esc(human.copy)}</p>
 
         <div class="mem-human-grid">
           ${human.cards.map((card) => `
-            <div class="mem-human-card" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+            <div class="mem-human-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
               ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 28vw' })}
               <div class="mem-human-title">${esc(card.title)}</div>
               <p class="mem-human-text">${esc(card.text)}</p>
@@ -137,11 +139,11 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      <section id="closing" class="orbe-section mem-closing-hero" aria-labelledby="heading-closing">
-        <span class="orbe-section-tag">${esc(closing.tag)}</span>
-        <h2 id="heading-closing" class="mem-closing-heading">${esc(closing.heading)}</h2>
+      <section id="closing" class="stage-section mem-closing-hero" aria-labelledby="heading-closing">
+        <span class="stage-eyebrow" data-scramble="true">${esc(closing.tag)}</span>
+        <h2 id="heading-closing" class="mem-closing-heading" data-reveal="mask">${esc(closing.heading)}</h2>
         <p class="mem-closing-sub">${esc(closing.sub)}</p>
-        <p class="orbe-section-copy orbe-section-copy-center">${esc(closing.copy)}</p>
+        <p class="stage-lead orbe-section-copy-center">${esc(closing.copy)}</p>
 
         <div class="orbe-cta-row orbe-cta-row-center">
           ${renderDiscoverButton({
@@ -159,11 +161,18 @@ export function renderMemoriesPage() {
       ${renderFooter({ cfpHref: '/#cfp' })}
     </main>
 
-    <div id="archive-lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">
+    <div id="archive-lightbox" class="mem-lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">
       <div class="lightbox-content">
-        <button type="button" class="lightbox-close-btn" id="lightbox-close">CLOSE // ESC</button>
-        <div id="lightbox-media-slot"></div>
-        <div class="lightbox-caption" id="lightbox-caption"></div>
+        <div class="lightbox-bar">
+          <span class="lightbox-counter" id="lightbox-counter">01 / 01</span>
+          <button type="button" class="lightbox-close-btn" id="lightbox-close">CLOSE // ESC</button>
+        </div>
+        <div id="lightbox-media-slot" class="lightbox-media-slot"></div>
+        <div class="lightbox-foot">
+          <button type="button" class="lightbox-nav-btn" id="lightbox-prev" aria-label="Previous photo">&#8592; PREV</button>
+          <div class="lightbox-caption" id="lightbox-caption"></div>
+          <button type="button" class="lightbox-nav-btn" id="lightbox-next" aria-label="Next photo">NEXT &#8594;</button>
+        </div>
       </div>
     </div>
   `;
@@ -171,12 +180,6 @@ export function renderMemoriesPage() {
 
 export function mountMemoriesPage(root) {
   const progress = document.getElementById('archive-progress');
-  const lightbox = root.querySelector('#archive-lightbox');
-  const mediaSlot = root.querySelector('#lightbox-media-slot');
-  const lightboxCaption = root.querySelector('#lightbox-caption');
-  const closeBtn = root.querySelector('#lightbox-close');
-  let lastTrigger = null;
-
   if (progress) progress.classList.add('visible');
 
   const updateProgress = () => {
@@ -188,59 +191,8 @@ export function mountMemoriesPage(root) {
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
 
-  const openLightbox = (trigger) => {
-    const src = trigger.dataset.img;
-    const cap = trigger.dataset.caption || '';
-    if (!src || !lightbox || !mediaSlot) return;
-    lastTrigger = trigger;
-
-    mediaSlot.innerHTML = '';
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = cap;
-    mediaSlot.appendChild(img);
-
-    if (lightboxCaption) lightboxCaption.textContent = cap;
-    lightbox.classList.add('active');
-    lightbox.setAttribute('aria-hidden', 'false');
-    closeBtn?.focus();
-  };
-
-  const closeLightbox = () => {
-    if (!lightbox || !lightbox.classList.contains('active')) return;
-    lightbox.classList.remove('active');
-    lightbox.setAttribute('aria-hidden', 'true');
-    if (mediaSlot) mediaSlot.innerHTML = '';
-    lastTrigger?.focus?.();
-    lastTrigger = null;
-  };
-
-  const triggers = root.querySelectorAll('[data-img]');
-  const triggerHandlers = [];
-  triggers.forEach((el) => {
-    const onClick = () => openLightbox(el);
-    const onKey = (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openLightbox(el);
-      }
-    };
-    el.addEventListener('click', onClick);
-    el.addEventListener('keydown', onKey);
-    triggerHandlers.push([el, onClick, onKey]);
-  });
-
-  closeBtn?.addEventListener('click', closeLightbox);
-  const onBackdropClick = (e) => {
-    if (e.target === lightbox) closeLightbox();
-  };
-  const onEsc = (e) => {
-    if (e.key === 'Escape' && lightbox?.classList.contains('active')) {
-      closeLightbox();
-    }
-  };
-  lightbox?.addEventListener('click', onBackdropClick);
-  document.addEventListener('keydown', onEsc);
+  const stopMotion = initSectionMotion(root || document);
+  const stopInteraction = mountMemoriesInteraction(root || document);
 
   return () => {
     if (progress) {
@@ -248,12 +200,7 @@ export function mountMemoriesPage(root) {
       progress.style.width = '0%';
     }
     window.removeEventListener('scroll', updateProgress);
-    for (const [el, onClick, onKey] of triggerHandlers) {
-      el.removeEventListener('click', onClick);
-      el.removeEventListener('keydown', onKey);
-    }
-    closeBtn?.removeEventListener('click', closeLightbox);
-    lightbox?.removeEventListener('click', onBackdropClick);
-    document.removeEventListener('keydown', onEsc);
+    stopInteraction();
+    stopMotion();
   };
 }

@@ -13,6 +13,7 @@ import { createCameraFlythrough } from './cameraFlythrough.js';
 import { createParticleDirector } from './particleDirector.js';
 import { createProceduralGopuram } from '../visuals/gopuramBuilder.js';
 import { createMaduraiSkyline } from './skylineBuilder.js';
+import { createLiquidHoverPlane } from './liquidHoverPlane.js';
 import { stageBus } from '../motion/stageBus.js';
 
 const yieldTask = () => new Promise((resolve) => window.setTimeout(resolve, 0));
@@ -68,6 +69,7 @@ export async function mountWebGLStage({ canvas, quality }) {
   const skyline = createMaduraiSkyline(worldScene);
   const gopuram = createProceduralGopuram(worldScene, { isMobile: isSmallScreen });
   const particles = createParticleDirector(worldScene, { tier: initialTier });
+  const liquidPlane = createLiquidHoverPlane({ scene, tier: initialTier });
 
   await yieldTask();
   let figureVisibleReady = false;
@@ -158,6 +160,7 @@ export async function mountWebGLStage({ canvas, quality }) {
     renderer.setSize(state.W, state.H, false);
     skyPass.setTier(tier);
     particles.setTier(tier);
+    liquidPlane.setTier(tier);
     postFx.setTier(tier);
     postFx.setSize(state.W, state.H, renderer.getPixelRatio());
   });
@@ -283,6 +286,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       paused: state.paused,
       warpBoost: stageBus.warpBoost,
     });
+    liquidPlane.update({ time: state.time, paused: state.paused });
 
     postFx.render({
       scene,
@@ -330,6 +334,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       skyline.dispose();
       gopuram.dispose();
       particles.dispose();
+      liquidPlane.dispose();
       postFx.dispose();
       renderer.dispose();
     },
