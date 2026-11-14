@@ -346,6 +346,10 @@ export async function mountWebGLStage({ canvas, quality }) {
 
     const heroFade = Math.max(0, 1 - state.scrollY / Math.max(state.H * 0.45, 220));
     const companionPose = computeCompanionPose(state.W, state.H, state.time);
+    const creatureUv = {
+      x: Math.max(0.1, Math.min(0.9, (companionPose.screenX || state.W * 0.5) / Math.max(1, state.W))),
+      y: Math.max(0.15, Math.min(0.85, 1 - (companionPose.screenY || state.H * 0.5) / Math.max(1, state.H))),
+    };
 
     const t0 = performance.now();
     skyPass.update({
@@ -356,6 +360,9 @@ export async function mountWebGLStage({ canvas, quality }) {
       paused: state.paused,
       trailEnabled: cfg.trailEnabled,
       scrollProgress,
+      auroraBoost: Math.max(0, (companionPose.haloGain || 1) - 1) * 0.45,
+      creatureUv,
+      warmth: companionPose.warmth || 0,
     });
     marqueePlane.update({ dt, paused: state.paused, heroFade });
     figureRig.update({

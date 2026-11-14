@@ -61,6 +61,8 @@ const FS_SKY = /* glsl */ `
   uniform float uTrailWeight;
   uniform float uScrollProgress;
   uniform float uAuroraGain;
+  uniform vec2 uCreatureUv;
+  uniform float uWarmth;
   varying vec2 vUv;
 
   vec2 toCoverUv(vec2 uv) {
@@ -135,13 +137,20 @@ const FS_SKY = /* glsl */ `
       texture2D(uMainTex, uvB).b
     );
 
-    // Domain-warped FBM aurora curtains within #0b0f3a / #5ef3ff / #9b5cff palette
+    // Domain-warped FBM aurora curtains within #0b0f3a / #5ef3ff / #9b5cff palette + zone harmony
     vec2 aUv = v * vec2(2.8, 1.9) + vec2(uTime * 0.035, -uScrollProgress * 0.45);
     vec2 q = vec2(fbm3(aUv), fbm3(aUv + vec2(4.2, 1.7)));
     float aurora = fbm3(aUv + 1.85 * q + vec2(uTime * 0.022));
     float auroraBand = smoothstep(0.32, 0.78, aurora) * smoothstep(0.08, 0.88, v.y);
-    vec3 auroraCol = mix(vec3(0.369, 0.953, 1.0), vec3(0.608, 0.361, 1.0), clamp(q.y * 1.2 + uScrollProgress * 0.4, 0.0, 1.0));
+    vec3 auroraCol = mix(vec3(0.369, 0.953, 1.0), vec3(0.608, 0.361, 1.0), clamp(q.y * 1.15 + uScrollProgress * 0.38, 0.0, 1.0));
+    auroraCol = mix(auroraCol, vec3(0.243, 0.910, 0.710), smoothstep(0.2, 0.7, sin(uScrollProgress * 3.14159)) * 0.32);
+    auroraCol = mix(auroraCol, vec3(0.957, 0.447, 0.714), clamp(uWarmth, 0.0, 1.0) * 0.36);
+
+    // Subtle atmospheric spotlight behind the creature companion
+    vec2 cDelta = vec2((v.x - uCreatureUv.x) * 1.35, v.y - uCreatureUv.y);
+    float creatureAura = exp(-dot(cDelta, cDelta) * 14.0);
     col += auroraCol * auroraBand * (0.14 + uAuroraGain * 0.24);
+    col += mix(vec3(0.369, 0.953, 1.0), vec3(0.608, 0.361, 1.0), 0.4) * creatureAura * 0.14;
 
     // Dual-depth parallax twinkling starfield
     float starsFar = starLayer(v, 36.0, 0.014, 13.7);
@@ -228,6 +237,8 @@ export function createSkyPass({ scene, renderer, plateImgUrl, videoUrl, tier }) 
       uTrailWeight: { value: tier === 'LOW' ? 0 : 1 },
       uScrollProgress: { value: 0 },
       uAuroraGain: { value: tier === 'LOW' ? 0.45 : 1.0 },
+      uCreatureUv: { value: new THREE.Vector2(0.5, 0.5) },
+      uWarmth: { value: 0 },
     },
   });
   const skyMesh = new THREE.Mesh(skyGeo, skyMat);
@@ -293,9 +304,24 @@ export function createSkyPass({ scene, renderer, plateImgUrl, videoUrl, tier }) 
     if (nextTier !== 'LOW') enableVideoIfPermitted(nextTier);
   }
 
-  function update({ time, pointer, W, H, paused, trailEnabled, scrollProgress = 0, auroraBoost = 0 }) {
+  function update({
+    time,
+    pointer,
+    W,
+    H,
+    paused,
+    trailEnabled,
+    scrollProgress = 0,
+    auroraBoost = 0,
+    creatureUv = null,
+    warmth = 0,
+  }) {
     skyMat.uniforms.uTime.value = time;
     skyMat.uniforms.uScrollProgress.value = scrollProgress;
+    skyMat.uniforms.uWarmth.value = warmth;
+    if (creatureUv) {
+      skyMat.uniforms.uCreatureUv.value.set(creatureUv.x, creatureUv.y);
+    }
     skyMat.uniforms.uPointer.value.set(pointer.x / Math.max(1, W), 1.0 - pointer.y / Math.max(1, H));
     const baseGain = trailEnabled ? 1.0 : 0.45;
     skyMat.uniforms.uAuroraGain.value = baseGain + auroraBoost;
