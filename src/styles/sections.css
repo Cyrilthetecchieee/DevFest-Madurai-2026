@@ -290,7 +290,7 @@
   left: auto;
   bottom: auto;
   transform: none;
-  display: inline-block;
+  display: inline-flex;
 }
 
 .btn-link-inline {
