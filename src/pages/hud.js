@@ -181,6 +181,10 @@ export function initHud({ onMotionChange, onNavigate }) {
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   });
 
+  const onHudResize = () => {
+    if (window.innerWidth >= 1100) closeMenu();
+  };
+  window.addEventListener('resize', onHudResize, { passive: true });
   window.addEventListener('scroll', syncScrollControls, { passive: true });
   syncScrollControls();
 

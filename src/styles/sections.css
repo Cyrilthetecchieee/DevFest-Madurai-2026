@@ -3219,6 +3219,10 @@
   touch-action: pan-y;
 }
 
+#memories {
+  overflow-x: clip;
+}
+
 .mem-ring-stage[hidden] {
   display: none;
 }
@@ -3323,6 +3327,10 @@
 }
 
 /* Footer Giant Wordmark Over Centered Silhouette */
+.ftr-stage {
+  padding-bottom: max(40px, calc(32px + env(safe-area-inset-bottom)));
+}
+
 .ftr-wordmark-stage {
   position: relative;
   min-height: clamp(160px, 28vh, 280px);

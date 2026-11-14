@@ -8,13 +8,16 @@
 html {
   width: 100%;
   min-height: 100%;
+  overflow-x: clip;
   background-color: var(--navy);
   view-transition-name: none;
 }
 
 body {
   width: 100%;
+  min-height: 100svh;
   min-height: 100dvh;
+  overflow-x: clip;
   background-color: var(--navy-deep);
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -269,4 +272,9 @@ html.gl-active #stage-bg {
   }
   .mc-loader-fill { transform: scaleX(1); }
   #gl-stage, #stage-hl, #stage-fig-fallback, #stage-bg { transition: none; }
+  .spn-marquee-track, .venue-unit strong.is-drum-rolling { animation: none !important; }
+}
+
+html.paused .spn-marquee-track {
+  animation-play-state: paused !important;
 }
