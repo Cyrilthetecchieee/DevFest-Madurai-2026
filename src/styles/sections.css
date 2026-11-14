@@ -1259,3 +1259,256 @@
     transform: none;
   }
 }
+
+/* === SECTION C2: VENUE (#14 TELEMETRY MAP, OUTLINE NUMERALS & COUNTDOWN S7) === */
+.venue-header-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: end;
+  margin-bottom: clamp(32px, 5vh, 56px);
+}
+
+.venue-date-monument {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.venue-outline-date {
+  text-align: right;
+}
+
+.venue-roll-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+}
+
+.venue-roll-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+}
+
+.venue-counter-date {
+  font-size: clamp(18px, 2.2vw, 28px);
+  color: var(--ink);
+  letter-spacing: 0.08em;
+}
+
+.venue-blueprint-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(24px, 4vw, 52px);
+  align-items: stretch;
+}
+
+.venue-telemetry-map {
+  border: 1px solid rgba(94, 243, 255, 0.25);
+  background: rgba(5, 8, 26, 0.56);
+  padding: clamp(16px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.venue-map-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+}
+
+.venue-map-live {
+  color: var(--violet);
+}
+
+.venue-radar-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.venue-radar-arm {
+  transform-origin: 210px 170px;
+  animation: venueRadarSweep 7.5s linear infinite;
+}
+
+.venue-ping-ring {
+  transform-origin: 210px 170px;
+  animation: venuePing 2.6s ease-out infinite;
+}
+
+@keyframes venueRadarSweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes venuePing {
+  0% { transform: scale(0.7); opacity: 0.9; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+.venue-radar-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(243, 246, 255, 0.14);
+}
+
+.venue-radar-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+  flex-shrink: 0;
+}
+
+.venue-status-title {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+
+.venue-status-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--cyan);
+  opacity: 0.86;
+}
+
+.venue-instrument-deck {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.venue-countdown-box {
+  border-top: 2px solid var(--cyan);
+  border-bottom: 1px solid rgba(243, 246, 255, 0.16);
+  padding: 20px 0;
+}
+
+.venue-countdown-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  margin-bottom: 14px;
+}
+
+.venue-countdown-digits {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(8px, 1.5vw, 18px);
+  font-family: var(--font-mono);
+}
+
+.venue-unit {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.venue-unit strong {
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.venue-unit span {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-dim);
+}
+
+.venue-colon {
+  font-size: clamp(22px, 3vw, 38px);
+  color: var(--violet);
+}
+
+.venue-countdown-passed {
+  font-family: var(--font-mono);
+  font-size: clamp(18px, 2vw, 24px);
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+}
+
+.venue-specs-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.venue-spec-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.42fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(243, 246, 255, 0.14);
+}
+
+.venue-spec-term {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+}
+
+.venue-spec-idx {
+  opacity: 0.6;
+}
+
+.venue-spec-val strong {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: clamp(16px, 1.35vw, 20px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.venue-spec-note {
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+@media (max-width: 820px) {
+  .venue-header-band,
+  .venue-blueprint-grid,
+  .venue-spec-row {
+    grid-template-columns: 1fr;
+  }
+
+  .venue-date-monument {
+    align-items: flex-start;
+  }
+
+  .venue-outline-date {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .venue-radar-arm,
+  .venue-ping-ring {
+    animation: none;
+  }
+}

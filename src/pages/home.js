@@ -7,6 +7,7 @@ import memoriesData from '../data/memories.json';
 import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter } from '../utils/dom.js';
 import { initSectionMotion } from '../motion/tokens.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
+import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -24,27 +25,7 @@ export function renderHomePage() {
     <main id="devfest-content">
       ${renderAboutSection(sections.about)}
 
-      <section id="venue" class="orbe-section" aria-labelledby="heading-venue">
-        <span class="orbe-section-tag">${esc(sections.venue.tag)}</span>
-        <h2 id="heading-venue" class="orbe-section-heading">${esc(sections.venue.heading)}</h2>
-        <p class="orbe-section-copy">${esc(sections.venue.copy)}</p>
-        <p class="orbe-section-copy"><span class="orbe-badge-tba">${esc(sections.venue.statusBadge)}</span></p>
-
-        <div id="event-info" class="orbe-grid-3" aria-label="Event Information">
-          ${sections.venue.cards.map((card) => `
-            <article class="orbe-card">
-              <h3 class="orbe-card-title">${esc(card.title)}</h3>
-              <p class="orbe-card-body">${esc(card.body)}</p>
-              <span class="orbe-badge-tba">${esc(card.badge)}</span>
-            </article>
-          `).join('')}
-        </div>
-
-        <div class="orbe-cta-row">
-          <a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">REGISTER NOW //</a>
-          <a href="#agenda" class="btn-link-inline">EXPLORE AGENDA //</a>
-        </div>
-      </section>
+      ${renderVenueSection(sections.venue, links)}
 
       <section id="speakers" class="orbe-section" aria-labelledby="heading-speakers">
         <span class="orbe-section-tag">${esc(speakersData.homeSection.tag)}</span>
@@ -172,7 +153,9 @@ export function mountHomePage() {
   const view = document.getElementById('app-view') || document;
   const stopMotion = initSectionMotion(view);
   const stopAbout = mountAboutSection();
+  const stopVenue = mountVenueSection();
   return () => {
+    stopVenue();
     stopAbout();
     stopMotion();
   };
