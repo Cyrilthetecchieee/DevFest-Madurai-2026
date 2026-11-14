@@ -52,6 +52,7 @@ export function createRouter({ viewRoot, hud, lenis }) {
     updateHeadMetadata(entry.meta);
     hud.setActiveRoute(routeKey);
     cleanupCurrent = entry.mount(viewRoot) || (() => {});
+    stageBus.emit('route:applied', { routeKey });
 
     lenis.refresh();
     if (hash) {

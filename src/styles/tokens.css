@@ -16,6 +16,15 @@
   unicode-range: U+0030;
 }
 
+@font-face {
+  font-family: "Noto Sans Tamil";
+  src: url("/fonts/noto-sans-tamil.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0B80-0BFF, U+200C-200D, U+25CC;
+}
+
 :root {
   /* Core Brand Palette */
   --navy: #0b0f3a;
@@ -39,7 +48,7 @@
   --surface-footer: rgba(3, 4, 9, 0.94);
 
   /* Typography */
-  --font-mono: "Orbe Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: "Orbe Mono", "Noto Sans Tamil", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Virtual Stage Coordinates */
   --u: min(100vw / 2048, 100svh / 1150);

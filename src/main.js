@@ -17,6 +17,7 @@ import { initHud } from './pages/hud.js';
 import { createRouter } from './pages/router.js';
 import { initCommandSystem } from './motion/commandPalette.js';
 import { initSoundscape } from './motion/soundscape.js';
+import { initBilingualSystem } from './motion/bilingual.js';
 
 const quality = createQualityGovernor();
 
@@ -73,6 +74,7 @@ let glStage = null;
 const viewRoot = document.getElementById('app-view');
 const cursorCtrl = initFluidCursor();
 const soundCtrl = initSoundscape();
+initBilingualSystem();
 
 const hud = initHud({
   onMotionChange(paused) {

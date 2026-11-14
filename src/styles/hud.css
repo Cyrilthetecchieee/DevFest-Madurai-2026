@@ -420,6 +420,50 @@ html.is-scrolled .hud-coords {
   to { height: 11px; }
 }
 
+.hud-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid rgba(155, 92, 255, 0.45);
+  border-radius: 3px;
+  background: rgba(11, 15, 58, 0.56);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.hud-lang-btn.is-on,
+.hud-lang-btn[aria-pressed="true"],
+.hud-lang-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.hud-ta-notice {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-nav);
+  max-width: min(92vw, 720px);
+  padding: 8px 16px;
+  border: 1px solid var(--violet);
+  background: rgba(6, 9, 28, 0.94);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.hud-ta-notice[hidden] {
+  display: none;
+}
+
 .hud-brand:hover,
 .hud-brand:focus-visible {
   color: var(--cyan);
@@ -689,7 +733,8 @@ html.is-scrolled .hud-coords {
   }
 
   .hud-cmd-btn,
-  .hud-sound-btn {
+  .hud-sound-btn,
+  .hud-lang-btn {
     min-height: 44px;
     padding: 6px 8px;
   }
