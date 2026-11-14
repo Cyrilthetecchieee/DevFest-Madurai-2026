@@ -371,20 +371,38 @@
 
 /* Speaker Filters & Frames */
 .orbe-filter-bar {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: calc(12 * var(--u));
-  margin: calc(20 * var(--u)) 0 calc(28 * var(--u));
+  gap: 10px;
+  margin: 20px 0 26px;
+}
+
+.orbe-filter-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(94, 243, 255, 0.22);
+  border: 1px solid var(--cyan);
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  z-index: 0;
 }
 
 .orbe-filter-btn {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--ink);
-  background: var(--surface-card);
-  border: 1px solid rgba(207, 214, 230, 0.35);
+  background: rgba(8, 12, 38, 0.62);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(94, 243, 255, 0.28);
   border-radius: 6px;
-  padding: 10px 18px;
+  padding: 10px 16px;
   min-height: 44px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -395,8 +413,8 @@
 .orbe-filter-btn:hover,
 .orbe-filter-btn.active,
 .orbe-filter-btn:focus-visible {
-  color: var(--ink-on-accent);
-  background: var(--cyan);
+  color: #ffffff;
+  background: rgba(22, 152, 176, 0.38);
   border-color: var(--cyan);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
@@ -2918,4 +2936,424 @@
 
 .venue-unit strong.is-drum-rolling {
   animation: cdDrumRoll 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* === TASK 6: REBUILT SECTION COMPONENTS === */
+/* About Quick Actions */
+.about-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+/* Venue Glowing Ring Countdown Instrument */
+.venue-ring-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  padding: 10px 0;
+}
+
+.venue-ring-svg {
+  width: min(260px, 72vw);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(94, 243, 255, 0.24));
+}
+
+.venue-ring-wrap .venue-countdown-digits {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 14px);
+}
+
+.venue-ring-wrap .venue-unit strong {
+  font-size: clamp(24px, 2.8vw, 34px);
+}
+
+/* Speakers Portrait Iris / Aurora Mask Sweep */
+.spk-photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(94, 243, 255, 0.26) 0%, rgba(155, 92, 255, 0.14) 44%, transparent 72%);
+  clip-path: circle(0% at 50% 45%);
+  transition: clip-path 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.spk-card:hover .spk-photo-frame::after,
+.spk-card:focus-within .spk-photo-frame::after {
+  clip-path: circle(78% at 50% 45%);
+}
+
+/* Agenda — THE DAY RING Interactive Dial & Inspector */
+.ag-ring-dial-wrap {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ag-ring-dial-wrap.is-dimmed {
+  opacity: 0.4;
+}
+
+.ag-ring-dial {
+  position: relative;
+  width: min(400px, 84vw);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(8, 12, 38, 0.62) 0%, rgba(8, 12, 38, 0.25) 58%, transparent 76%);
+  filter: drop-shadow(0 0 28px rgba(94, 243, 255, 0.18));
+}
+
+.ag-ring-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ag-ring-arc-path {
+  cursor: pointer;
+  opacity: 0.72;
+  transition: stroke-width 0.24s ease, opacity 0.24s ease, filter 0.24s ease;
+}
+
+.ag-ring-sector:hover .ag-ring-arc-path,
+.ag-ring-sector.is-active .ag-ring-arc-path,
+.ag-ring-arc-path:focus-visible {
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(94, 243, 255, 0.55));
+  outline: none;
+}
+
+.ag-ring-arc-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  fill: var(--ink-dim);
+  pointer-events: none;
+}
+
+.ag-ring-arc-label.is-active {
+  fill: #ffffff;
+  font-weight: 700;
+}
+
+.ag-ring-core {
+  position: absolute;
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(7, 10, 28, 0.74);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(94, 243, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 14px;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.ag-ring-core-idx {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.14em;
+}
+
+.ag-ring-core-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.ag-ring-core-room {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+}
+
+.ag-inspector-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ag-inspector-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ag-insp-nav {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.ag-insp-time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--cyan);
+}
+
+.ag-insp-title {
+  font-family: var(--font-mono);
+  font-size: clamp(19px, 1.8vw, 25px);
+  color: #ffffff;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.ag-insp-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.62;
+  color: var(--ink);
+  margin: 0;
+}
+
+.ag-timeline--collapsible[hidden] {
+  display: none;
+}
+
+/* Tickets — Realistic Tactile Pass Card with Grain, Barcode & <8deg Tilt */
+.tkt-card-stage {
+  perspective: 1100px;
+}
+
+.tkt-cardstock {
+  position: relative;
+  transform: rotateX(var(--tkt-rx, 0deg)) rotateY(var(--tkt-ry, 0deg));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  box-shadow: 0 20px 50px rgba(3, 6, 20, 0.55);
+}
+
+.tkt-cardstock::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.8) 0.5px, transparent 0.5px);
+  background-size: 4px 4px;
+}
+
+.tkt-sheen-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 260px at var(--tkt-mx, 50%) var(--tkt-my, 50%),
+    rgba(94, 243, 255, 0.16) 0%,
+    rgba(155, 92, 255, 0.06) 45%,
+    transparent 75%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.tkt-cardstock:hover .tkt-sheen-layer,
+.tkt-cardstock.is-tilting .tkt-sheen-layer {
+  opacity: 1;
+}
+
+.tkt-barcode-decorative {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  width: 100%;
+  max-width: 168px;
+  margin: 4px auto;
+  opacity: 0.65;
+}
+
+.tkt-barcode-decorative span {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(94, 243, 255, 0.85), rgba(155, 92, 255, 0.65));
+  border-radius: 1px;
+}
+
+.tkt-barcode-decorative span:nth-child(2n) { flex: 0.45; opacity: 0.6; }
+.tkt-barcode-decorative span:nth-child(3n) { flex: 1.5; }
+.tkt-barcode-decorative span:nth-child(5n) { flex: 0.35; }
+
+/* Memories — Curved 3D Ring Carousel & Unified Lightbox */
+.mem-ring-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.mem-ring-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 44vw, 440px);
+  margin-top: clamp(20px, 3vh, 36px);
+  perspective: 1350px;
+  overflow: visible;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.mem-ring-stage[hidden] {
+  display: none;
+}
+
+.mem-ring-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.mem-ring-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.mem-ring-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(440px, 80vw);
+  margin: 0;
+  padding: 10px;
+  transform-origin: center center;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mem-ring-card.is-active {
+  background: rgba(94, 243, 255, 0.72);
+  box-shadow: 0 20px 60px rgba(94, 243, 255, 0.16);
+}
+
+.mem-hud-year {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 4px 10px;
+  background: rgba(7, 10, 28, 0.82);
+  border: 1px solid rgba(94, 243, 255, 0.42);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+}
+
+.mem-iris-frame {
+  position: relative;
+}
+
+.mem-iris-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(94, 243, 255, 0.28) 0%, rgba(62, 232, 181, 0.12) 40%, transparent 72%);
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.mem-iris-frame:hover::after,
+.mem-iris-frame:focus-visible::after {
+  clip-path: circle(76% at 50% 50%);
+}
+
+.mem-home-grid[hidden] {
+  display: none;
+}
+
+/* Unified Lightbox button/media selectors across Home & /memories */
+.lightbox-close,
+.lightbox-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid rgba(94, 243, 255, 0.4);
+  background: rgba(8, 12, 38, 0.86);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lightbox-media-frame,
+.lightbox-media-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.lightbox-media-frame img,
+.lightbox-media-slot img {
+  max-width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* Footer Giant Wordmark Over Centered Silhouette */
+.ftr-wordmark-stage {
+  position: relative;
+  min-height: clamp(160px, 28vh, 280px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  margin-bottom: 12px;
+}
+
+.ftr-giant-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: clamp(38px, 8.8vw, 132px);
+  line-height: 0.92;
+  letter-spacing: 0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.4px rgba(243, 246, 255, 0.72);
+  text-shadow: 0 0 36px rgba(94, 243, 255, 0.22);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tkt-cardstock {
+    transform: none !important;
+  }
+  .ftr-giant-wordmark {
+    transform: none !important;
+  }
 }

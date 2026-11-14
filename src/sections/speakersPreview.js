@@ -147,6 +147,7 @@ export function renderSpeakersExperience({
             </div>
 
             <div class="orbe-filter-bar" role="group" aria-label="Filter speakers by track">
+              <span class="orbe-filter-indicator" aria-hidden="true"></span>
               ${filters.map((f, idx) => `
                 <button
                   type="button"
@@ -209,12 +210,34 @@ export function mountSpeakersExperience({ id = 'speakers' } = {}) {
     cleanups.push(() => img.removeEventListener('error', onError));
   });
 
-  // Track filter tabs
+  // Track filter tabs with sliding indicator & keyboard Arrow navigation
+  const filterBar = section.querySelector('.orbe-filter-bar');
+  const filterIndicator = filterBar?.querySelector('.orbe-filter-indicator');
   const filterBtns = Array.from(section.querySelectorAll('[data-spk-filter]'));
   const cards = Array.from(section.querySelectorAll('.speaker-item'));
   const emptyEl = section.querySelector(`#${id}-empty`);
 
-  filterBtns.forEach((btn) => {
+  const moveFilterIndicator = (btn) => {
+    if (!filterBar || !filterIndicator || !btn) return;
+    const barRect = filterBar.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    filterIndicator.style.width = `${btnRect.width}px`;
+    filterIndicator.style.height = `${btnRect.height}px`;
+    filterIndicator.style.transform = `translate3d(${btnRect.left - barRect.left}px, ${btnRect.top - barRect.top}px, 0)`;
+    filterIndicator.style.opacity = '1';
+  };
+
+  if (filterBtns[0]) {
+    window.requestAnimationFrame(() => moveFilterIndicator(filterBtns.find((b) => b.classList.contains('active')) || filterBtns[0]));
+  }
+  const onResizeIndicator = () => {
+    const active = filterBtns.find((b) => b.classList.contains('active'));
+    if (active) moveFilterIndicator(active);
+  };
+  window.addEventListener('resize', onResizeIndicator, { passive: true });
+  cleanups.push(() => window.removeEventListener('resize', onResizeIndicator));
+
+  filterBtns.forEach((btn, idx) => {
     const onClick = () => {
       const filterId = btn.dataset.spkFilter || 'all';
       filterBtns.forEach((b) => {
@@ -222,6 +245,7 @@ export function mountSpeakersExperience({ id = 'speakers' } = {}) {
         b.classList.toggle('active', active);
         b.setAttribute('aria-pressed', String(active));
       });
+      moveFilterIndicator(btn);
 
       let shown = 0;
       cards.forEach((card) => {
@@ -232,8 +256,21 @@ export function mountSpeakersExperience({ id = 'speakers' } = {}) {
       });
       if (emptyEl) emptyEl.hidden = shown > 0;
     };
+    const onKeyDown = (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        filterBtns[(idx + 1) % filterBtns.length]?.focus();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        filterBtns[(idx - 1 + filterBtns.length) % filterBtns.length]?.focus();
+      }
+    };
     btn.addEventListener('click', onClick);
-    cleanups.push(() => btn.removeEventListener('click', onClick));
+    btn.addEventListener('keydown', onKeyDown);
+    cleanups.push(() => {
+      btn.removeEventListener('click', onClick);
+      btn.removeEventListener('keydown', onKeyDown);
+    });
   });
 
   // Accessible Speaker Bio & Socials Modal

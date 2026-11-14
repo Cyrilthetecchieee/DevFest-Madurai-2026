@@ -1,8 +1,9 @@
 /**
- * Footer Section — Clear 4-Column Navigation, Official Socials, Email, Legal & Disclaimer
+ * Footer Section — Giant Cursor-Reactive Wordmark Over Back-Lit Creature + 4-Column HUD Footer
  */
 import eventData from '../data/event.json';
 import { esc } from '../utils/dom.js';
+import { prefersReducedMotion } from '../utils/env.js';
 
 export function renderStageFooter() {
   const { footer, links } = eventData;
@@ -10,6 +11,13 @@ export function renderStageFooter() {
 
   return `
     <footer class="stage-section ftr-stage" id="footer" data-creature-zone="footer" aria-labelledby="heading-footer">
+      <div class="ftr-wordmark-stage" aria-hidden="true">
+        <div class="ftr-giant-wordmark" id="ftr-giant-wordmark">
+          <span>DEVFEST</span>
+          <span>MADURAI</span>
+        </div>
+      </div>
+
       <div class="content-zone local-scrim">
         <div class="ftr-top-meta">
           <span class="stage-eyebrow" data-scramble="true">${esc(footer.tag)}</span>
@@ -72,6 +80,8 @@ export function renderStageFooter() {
 export function mountStageFooter(root = document) {
   const cleanups = [];
   const topBtn = root.querySelector('#ftr-back-top');
+  const footer = root.querySelector('#footer');
+  const wordmark = root.querySelector('#ftr-giant-wordmark');
 
   if (topBtn) {
     const onTop = () => {
@@ -79,6 +89,24 @@ export function mountStageFooter(root = document) {
     };
     topBtn.addEventListener('click', onTop);
     cleanups.push(() => topBtn.removeEventListener('click', onTop));
+  }
+
+  if (footer && wordmark && !prefersReducedMotion()) {
+    const onMove = (e) => {
+      const r = footer.getBoundingClientRect();
+      const nx = ((e.clientX - r.left) / Math.max(1, r.width) - 0.5) * 26;
+      const ny = ((e.clientY - r.top) / Math.max(1, r.height) - 0.5) * 10;
+      wordmark.style.transform = `translate3d(${nx.toFixed(1)}px, ${ny.toFixed(1)}px, 0)`;
+    };
+    const onLeave = () => {
+      wordmark.style.transform = 'translate3d(0, 0, 0)';
+    };
+    footer.addEventListener('pointermove', onMove, { passive: true });
+    footer.addEventListener('pointerleave', onLeave, { passive: true });
+    cleanups.push(() => {
+      footer.removeEventListener('pointermove', onMove);
+      footer.removeEventListener('pointerleave', onLeave);
+    });
   }
 
   return () => cleanups.forEach((fn) => fn());

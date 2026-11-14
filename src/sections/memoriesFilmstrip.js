@@ -1,7 +1,8 @@
 /**
- * Memories Highlights & Clean Accessible Lightbox Controller
+ * Memories Highlights — Curved 3D Ring Carousel, Drag Inertia, Aurora Mask Reveal & Accessible Lightbox
  */
 import memoriesData from '../data/memories.json';
+import { prefersReducedMotion } from '../utils/env.js';
 import {
   esc,
   renderPicture,
@@ -27,7 +28,13 @@ export function renderHomeMemoriesSection() {
           </div>
           <p class="stage-lead">${esc(teaser.copy)}</p>
 
-          <div class="mem-home-cta">
+          <div class="mem-ring-toolbar">
+            <div class="hero-pillars-controls">
+              <button type="button" class="hero-pillar-nav-btn" id="mem-ring-prev" aria-label="Previous memory">&lsaquo;</button>
+              <span class="hero-pillars-counter" id="mem-ring-counter">01 / ${String(items.length).padStart(2, '0')}</span>
+              <button type="button" class="hero-pillar-nav-btn" id="mem-ring-next" aria-label="Next memory">&rsaquo;</button>
+            </div>
+            <button type="button" class="btn-g-secondary" id="mem-grid-toggle" aria-pressed="false">GRID VIEW</button>
             <a href="/memories" data-spa-link="true" class="btn-g-primary">EXPLORE ALL MEMORIES</a>
           </div>
         </div>
@@ -35,12 +42,45 @@ export function renderHomeMemoriesSection() {
         <div class="graphic-window" data-creature-zone="memories" aria-hidden="true"></div>
       </div>
 
-      <div class="mem-home-grid">
+      <div class="mem-ring-stage" id="mem-ring-stage" aria-label="3D Memory Ring Carousel">
+        <div class="mem-ring-track" id="mem-ring-track">
+          ${items.map((item, i) => `
+            <figure class="hud-bevel-card mem-ring-card" data-mem-idx="${i}">
+              <button
+                type="button"
+                class="mem-photo-trigger mem-iris-frame"
+                aria-label="Open photo: ${esc(item.caption)}"
+                data-img="${esc(getLightboxImageUrl(item))}"
+                data-caption="${esc(item.caption)}"
+                data-ring-idx="${i}"
+              >
+                <span class="mem-hud-year">2025 // ARCHIVE 0${i + 1}</span>
+                ${renderPicture({
+                  base: item.base,
+                  dir: item.dir,
+                  alt: item.alt,
+                  sizes: '(max-width: 640px) 84vw, (max-width: 1024px) 52vw, 38vw',
+                  width: item.width,
+                  height: item.height,
+                  className: 'mem-photo-img',
+                  fallbackExt: 'webp',
+                })}
+              </button>
+              <figcaption class="mem-photo-caption">
+                <span class="mem-photo-num">0${i + 1}</span>
+                <span>${esc(item.caption)}</span>
+              </figcaption>
+            </figure>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="mem-home-grid" id="mem-home-grid" hidden>
         ${items.map((item, i) => `
           <figure class="mem-photo-card">
             <button
               type="button"
-              class="mem-photo-trigger"
+              class="mem-photo-trigger mem-iris-frame"
               aria-label="Open photo: ${esc(item.caption)}"
               data-img="${esc(getLightboxImageUrl(item))}"
               data-caption="${esc(item.caption)}"
@@ -84,6 +124,149 @@ export function renderHomeMemoriesSection() {
 
 export function mountMemoriesInteraction(root = document) {
   const cleanups = [];
+  const ringStage = root.querySelector('#mem-ring-stage');
+  const ringCards = Array.from(root.querySelectorAll('.mem-ring-card'));
+  const ringCounter = root.querySelector('#mem-ring-counter');
+  const ringPrevBtn = root.querySelector('#mem-ring-prev');
+  const ringNextBtn = root.querySelector('#mem-ring-next');
+  const gridToggleBtn = root.querySelector('#mem-grid-toggle');
+  const gridFallback = root.querySelector('#mem-home-grid');
+
+  // Interactive Curved 3D Ring Carousel Controller (when present on Home page)
+  if (ringStage && ringCards.length) {
+    const count = ringCards.length;
+    let targetIdx = 0;
+    let currentPos = 0;
+    let velocity = 0;
+    let dragging = false;
+    let lastX = 0;
+    let dragDist = 0;
+    let rafId = 0;
+    const reduced = prefersReducedMotion();
+
+    const wrappedDiff = (i, pos) => {
+      let d = (i - pos) % count;
+      if (d > count / 2) d -= count;
+      if (d < -count / 2) d += count;
+      return d;
+    };
+
+    const layoutCards = () => {
+      const stageW = ringStage.clientWidth || window.innerWidth;
+      const arcRadius = Math.max(240, Math.min(480, stageW * 0.42));
+      const nearest = ((Math.round(targetIdx) % count) + count) % count;
+      if (ringCounter) {
+        ringCounter.textContent = `${String(nearest + 1).padStart(2, '0')} / ${String(count).padStart(2, '0')}`;
+      }
+
+      ringCards.forEach((card, i) => {
+        const d = wrappedDiff(i, currentPos);
+        const absD = Math.abs(d);
+        const theta = d * 0.48;
+        const tx = Math.sin(theta) * arcRadius;
+        const tz = (Math.cos(theta) - 1) * 280;
+        const ry = -theta * (180 / Math.PI) * 0.72;
+        const scale = Math.max(0.72, 1 - absD * 0.14);
+        const opacity = absD > 2.3 ? Math.max(0, 1 - (absD - 2.3) * 1.4) : Math.max(0.45, 1 - absD * 0.24);
+        const isActive = absD < 0.35;
+
+        card.classList.toggle('is-active', isActive);
+        card.style.opacity = opacity.toFixed(2);
+        card.style.zIndex = String(Math.round(100 - absD * 20));
+        card.style.transform = `translate3d(calc(-50% + ${tx.toFixed(1)}px), 0, ${tz.toFixed(1)}px) rotateY(${ry.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+      });
+    };
+
+    const tick = () => {
+      if (!dragging) {
+        if (Math.abs(velocity) > 0.002) {
+          targetIdx += velocity;
+          velocity *= 0.9;
+        } else {
+          targetIdx += (Math.round(targetIdx) - targetIdx) * 0.14;
+        }
+      }
+      currentPos += (targetIdx - currentPos) * (reduced ? 1 : 0.16);
+      layoutCards();
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    const onDown = (e) => {
+      dragging = true;
+      lastX = e.clientX;
+      dragDist = 0;
+      velocity = 0;
+      ringStage.classList.add('is-dragging');
+    };
+    const onMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      dragDist += Math.abs(dx);
+      targetIdx -= dx / 220;
+      velocity = -dx / 260;
+    };
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      ringStage.classList.remove('is-dragging');
+      targetIdx = Math.round(targetIdx);
+    };
+
+    const onPrev = () => { targetIdx = Math.round(targetIdx) - 1; velocity = 0; };
+    const onNext = () => { targetIdx = Math.round(targetIdx) + 1; velocity = 0; };
+
+    ringPrevBtn?.addEventListener('click', onPrev);
+    ringNextBtn?.addEventListener('click', onNext);
+    ringStage.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerup', onUp, { passive: true });
+
+    if (gridToggleBtn && gridFallback) {
+      const onGridToggle = () => {
+        const showGrid = gridFallback.hidden;
+        gridFallback.hidden = !showGrid;
+        ringStage.hidden = showGrid;
+        gridToggleBtn.setAttribute('aria-pressed', String(showGrid));
+        gridToggleBtn.textContent = showGrid ? '3D RING VIEW' : 'GRID VIEW';
+      };
+      gridToggleBtn.addEventListener('click', onGridToggle);
+      cleanups.push(() => gridToggleBtn.removeEventListener('click', onGridToggle));
+    }
+
+    rafId = window.requestAnimationFrame(tick);
+    cleanups.push(() => {
+      window.cancelAnimationFrame(rafId);
+      ringPrevBtn?.removeEventListener('click', onPrev);
+      ringNextBtn?.removeEventListener('click', onNext);
+      ringStage.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    });
+
+    // Clicking an inactive side card brings it forward instead of immediately triggering lightbox
+    ringCards.forEach((card, i) => {
+      const btn = card.querySelector('[data-ring-idx]');
+      if (!btn) return;
+      const onRingClick = (e) => {
+        if (dragDist > 10) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return;
+        }
+        const diff = wrappedDiff(i, targetIdx);
+        if (Math.abs(diff) > 0.35) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          targetIdx += diff;
+        }
+      };
+      btn.addEventListener('click', onRingClick, { capture: true });
+      cleanups.push(() => btn.removeEventListener('click', onRingClick, { capture: true }));
+    });
+  }
+
+  // Lightbox Controller (Home + Memories Archive Page)
   const lightbox = root.querySelector('#archive-lightbox');
   const mediaSlot = root.querySelector('#lightbox-media-slot');
   const lightboxCaption = root.querySelector('#lightbox-caption');

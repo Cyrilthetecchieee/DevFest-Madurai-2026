@@ -1,6 +1,6 @@
 /** Home Page View (Hero Stage + About + Venue + Speakers Preview + Agenda + Tickets + Sponsors + Memories + Footer) */
 import eventData from '../data/event.json';
-import { renderHeroStage, renderDragMarqueeBand } from '../utils/dom.js';
+import { renderHeroStage, mountHeroPillarsCarousel, renderDragMarqueeBand } from '../utils/dom.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
@@ -48,6 +48,7 @@ export function renderHomePage() {
 
 export function mountHomePage() {
   const view = document.getElementById('app-view') || document;
+  const stopHeroPillars = mountHeroPillarsCarousel(view);
   const stopAbout = mountAboutSection();
   const stopVenue = mountVenueSection();
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
@@ -65,5 +66,6 @@ export function mountHomePage() {
     stopSpeakers();
     stopVenue();
     stopAbout();
+    stopHeroPillars();
   };
 }

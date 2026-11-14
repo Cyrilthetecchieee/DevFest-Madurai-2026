@@ -178,9 +178,9 @@ export function renderMemoriesPage() {
       <div class="lightbox-content">
         <div class="lightbox-bar">
           <span class="lightbox-counter" id="lightbox-counter">01 / 01</span>
-          <button type="button" class="lightbox-close-btn" id="lightbox-close">CLOSE // ESC</button>
+          <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close Lightbox">CLOSE [ESC]</button>
         </div>
-        <div id="lightbox-media-slot" class="lightbox-media-slot"></div>
+        <div id="lightbox-media-slot" class="lightbox-media-frame"></div>
         <div class="lightbox-foot">
           <button type="button" class="lightbox-nav-btn" id="lightbox-prev" aria-label="Previous photo">&#8592; PREV</button>
           <div class="lightbox-caption" id="lightbox-caption"></div>

@@ -76,17 +76,43 @@ export function renderVenueSection(venueData, links) {
 
           <div class="hud-bevel-card venue-countdown-panel" aria-live="polite" aria-label="Countdown to DevFest Madurai 2026">
             <div class="venue-countdown-header">
-              <span class="venue-countdown-kicker">COUNTDOWN TO DEVFEST MADURAI 2026</span>
+              <span class="venue-countdown-kicker">COUNTDOWN INSTRUMENT // DEVFEST 2026</span>
               ${renderStatusChip('12 DEC 2026', 'cyan')}
             </div>
             ${cd.passed
               ? `<p class="venue-countdown-passed">DevFest Madurai 2026 is underway in Madurai, Tamil Nadu.</p>`
-              : `<div class="venue-countdown-digits" id="venue-countdown">
-                  <div class="venue-unit"><strong id="cd-days">${cd.days}</strong><span>DAYS</span></div>
-                  <span class="venue-colon" aria-hidden="true">:</span>
-                  <div class="venue-unit"><strong id="cd-hours">${cd.hours}</strong><span>HOURS</span></div>
-                  <span class="venue-colon" aria-hidden="true">:</span>
-                  <div class="venue-unit"><strong id="cd-mins">${cd.mins}</strong><span>MINUTES</span></div>
+              : `<div class="venue-ring-wrap">
+                  <svg class="venue-ring-svg" viewBox="0 0 260 260" aria-hidden="true">
+                    <circle cx="130" cy="130" r="112" fill="none" stroke="rgba(94,243,255,0.14)" stroke-width="2" />
+                    <circle cx="130" cy="130" r="98" fill="none" stroke="rgba(155,92,255,0.22)" stroke-width="1" stroke-dasharray="4 7" />
+                    <circle
+                      id="venue-ring-progress"
+                      cx="130"
+                      cy="130"
+                      r="112"
+                      fill="none"
+                      stroke="url(#venueRingGrad)"
+                      stroke-width="4"
+                      stroke-linecap="round"
+                      stroke-dasharray="703.7"
+                      stroke-dashoffset="160"
+                      transform="rotate(-90 130 130)"
+                    />
+                    <defs>
+                      <linearGradient id="venueRingGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#5ef3ff" />
+                        <stop offset="55%" stop-color="#3ee8b5" />
+                        <stop offset="100%" stop-color="#9b5cff" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="venue-countdown-digits" id="venue-countdown">
+                    <div class="venue-unit"><strong id="cd-days">${cd.days}</strong><span>DAYS</span></div>
+                    <span class="venue-colon" aria-hidden="true">:</span>
+                    <div class="venue-unit"><strong id="cd-hours">${cd.hours}</strong><span>HRS</span></div>
+                    <span class="venue-colon" aria-hidden="true">:</span>
+                    <div class="venue-unit"><strong id="cd-mins">${cd.mins}</strong><span>MIN</span></div>
+                  </div>
                 </div>`
             }
           </div>
@@ -145,6 +171,7 @@ export function mountVenueSection() {
   const daysEl = document.getElementById('cd-days');
   const hoursEl = document.getElementById('cd-hours');
   const minsEl = document.getElementById('cd-mins');
+  const ringArcEl = document.getElementById('venue-ring-progress');
   const icsBtn = document.getElementById('venue-ics-btn');
 
   let timer = null;
@@ -152,12 +179,18 @@ export function mountVenueSection() {
     const tick = () => {
       const cd = computeCountdownParts();
       if (cd.passed) {
+        if (ringArcEl) ringArcEl.setAttribute('stroke-dashoffset', '0');
         if (timer) clearInterval(timer);
         return;
       }
       spinCountdownDigit(daysEl, cd.days);
       spinCountdownDigit(hoursEl, cd.hours);
       spinCountdownDigit(minsEl, cd.mins);
+      if (ringArcEl) {
+        const daysLeft = Number(cd.days) || 0;
+        const frac = Math.max(0.06, Math.min(1, 1 - daysLeft / 365));
+        ringArcEl.setAttribute('stroke-dashoffset', String((703.7 * (1 - frac)).toFixed(1)));
+      }
     };
     tick();
     timer = setInterval(tick, 15000);

@@ -90,8 +90,24 @@ export function renderDiscoverButton({ label, ariaLabel, href, external = false,
   `;
 }
 
+const HERO_PILLAR_ICONS = [
+  '<rect x="5" y="9" width="22" height="14" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M11 16h10M16 11v10" stroke="currentColor" stroke-width="1.6"/>',
+  '<polygon points="16,4 28,10 28,22 16,28 4,22 4,10" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="16" cy="16" r="2.6" fill="currentColor"/>',
+  '<path d="M6 24 L16 6 L26 24 Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="16" cy="18" r="2" fill="currentColor"/>',
+  '<circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M11 16h10M16 11v10" stroke="currentColor" stroke-width="1.6"/>',
+  '<circle cx="10" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="22" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="22" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M13 13l6 0M11.5 14.5l3.5 5M20.5 14.5l-3.5 5" stroke="currentColor" stroke-width="1.4"/>',
+  '<rect x="6" y="6" width="8" height="8" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="18" y="6" width="8" height="8" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="6" y="18" width="8" height="8" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="18" y="18" width="8" height="8" fill="currentColor"/>',
+];
+
+function splitPillarLabel(raw, index) {
+  const m = String(raw).match(/^(\d{2})\s*[—-]\s*(.+)$/);
+  if (m) return { num: m[1], title: m[2] };
+  return { num: `0${index + 1}`, title: raw };
+}
+
 export function renderHeroStage(routeKey, headingText) {
   const cfg = eventData.hero[routeKey] || eventData.hero.home;
+  const pillars = routeKey === 'home' ? (eventData.sections?.about?.pillars || []) : [];
   const topId = routeKey === 'home' ? 'home' : 'top';
   const primaryAttrs = cfg.primaryCta.external
     ? 'target="_blank" rel="noopener noreferrer"'
@@ -138,9 +154,119 @@ export function renderHeroStage(routeKey, headingText) {
             ${routeKey === 'home' ? `<a href="#tickets" class="hero-cta-secondary hero-cta-tickets">TICKETS &amp; PASS</a>` : ''}
           </div>
         </div>
+
+        ${pillars.length ? `
+          <div class="hero-pillars-band" aria-label="Festival pillars">
+            <div class="hero-pillars-bar">
+              <span class="hero-pillars-label">FESTIVAL PILLARS // DEVFEST 2026</span>
+              <div class="hero-pillars-controls">
+                <button type="button" class="hero-pillar-nav-btn" id="hero-pillar-prev" aria-label="Previous pillar">&lsaquo;</button>
+                <span class="hero-pillars-counter" id="hero-pillars-counter">01 / ${String(pillars.length).padStart(2, '0')}</span>
+                <button type="button" class="hero-pillar-nav-btn" id="hero-pillar-next" aria-label="Next pillar">&rsaquo;</button>
+              </div>
+            </div>
+            <div class="hero-pillars-track" id="hero-pillars-track" tabindex="0" aria-label="Festival pillars carousel">
+              ${pillars.map((pillar, idx) => {
+                const parts = splitPillarLabel(pillar.title, idx);
+                return `
+                  <article class="hud-bevel-card hero-pillar-card">
+                    <div class="hero-pillar-top">
+                      <span class="hero-pillar-num">${esc(parts.num)}</span>
+                      <svg class="hero-pillar-icon" viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">
+                        ${HERO_PILLAR_ICONS[idx % HERO_PILLAR_ICONS.length]}
+                      </svg>
+                    </div>
+                    <h2 class="hero-pillar-title">${esc(parts.title)}</h2>
+                    <p class="hero-pillar-copy">${esc(pillar.body)}</p>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
       </div>
     </section>
   `;
+}
+
+export function mountHeroPillarsCarousel(root = document) {
+  const track = root.querySelector('#hero-pillars-track');
+  const prevBtn = root.querySelector('#hero-pillar-prev');
+  const nextBtn = root.querySelector('#hero-pillar-next');
+  const counterEl = root.querySelector('#hero-pillars-counter');
+  if (!track) return () => {};
+
+  const cards = Array.from(track.querySelectorAll('.hero-pillar-card'));
+  const total = cards.length || 1;
+  let activeIdx = 0;
+  let dragging = false;
+  let startX = 0;
+  let startScroll = 0;
+
+  const getStepPx = () => {
+    if (!cards.length) return 320;
+    return cards[0].getBoundingClientRect().width + 16;
+  };
+
+  const updateCounter = () => {
+    const step = Math.max(1, getStepPx());
+    const idx = Math.max(0, Math.min(total - 1, Math.round(track.scrollLeft / step)));
+    activeIdx = idx;
+    if (counterEl) {
+      counterEl.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    }
+  };
+
+  const scrollToIdx = (idx) => {
+    const clamped = Math.max(0, Math.min(total - 1, idx));
+    activeIdx = clamped;
+    track.scrollTo({ left: clamped * getStepPx(), behavior: 'smooth' });
+    if (counterEl) {
+      counterEl.textContent = `${String(clamped + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    }
+  };
+
+  const onPrev = () => scrollToIdx(activeIdx - 1);
+  const onNext = () => scrollToIdx(activeIdx + 1);
+  const onKeyDown = (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); onPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); onNext(); }
+  };
+
+  const onPointerDown = (e) => {
+    dragging = true;
+    startX = e.clientX;
+    startScroll = track.scrollLeft;
+    track.classList.add('is-dragging');
+  };
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    track.scrollLeft = startScroll - (e.clientX - startX);
+  };
+  const onPointerUp = () => {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove('is-dragging');
+    updateCounter();
+  };
+
+  prevBtn?.addEventListener('click', onPrev);
+  nextBtn?.addEventListener('click', onNext);
+  track.addEventListener('keydown', onKeyDown);
+  track.addEventListener('scroll', updateCounter, { passive: true });
+  track.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerup', onPointerUp, { passive: true });
+
+  return () => {
+    prevBtn?.removeEventListener('click', onPrev);
+    nextBtn?.removeEventListener('click', onNext);
+    track.removeEventListener('keydown', onKeyDown);
+    track.removeEventListener('scroll', updateCounter);
+    track.removeEventListener('pointerdown', onPointerDown);
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+  };
 }
 
 export function renderFooter() {
