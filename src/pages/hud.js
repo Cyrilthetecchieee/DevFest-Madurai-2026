@@ -1,227 +1,186 @@
-/** Pinned Mission Control HUD Chrome: Bezel SVG, Sticky Dock Handoff, Menu Drawer, Motion Toggle & Coordinates. */
-
-const HOME_WAYPOINTS = [
-  '01 / ORBIT',
-  '02 / ABOUT',
-  '03 / VENUE',
-  '04 / SPEAKERS',
-  '05 / AGENDA',
-  '06 / TICKETS',
-  '07 / CFP',
-  '08 / SPONSORS',
-  '09 / MEMORIES',
-  '10 / SIGNAL END',
-];
-
-const ROUTE_LABELS = {
-  speakers: 'G_010 // SPEAKERS',
-  memories: 'G_012 // MEMORIES',
-};
+/**
+ * Sticky Header (<= 64px), Active Section Observer, Accessible Mobile Drawer & Back-to-Top
+ */
+import { prefersReducedMotion } from '../utils/env.js';
 
 export function initHud({ onMotionChange, onNavigate }) {
-  const hudSvg = document.getElementById('hud-svg');
+  const header = document.getElementById('stage-hud');
   const motionToggle = document.getElementById('motion-toggle');
   const motionLabel = document.getElementById('motion-label');
-  const coordsText = document.getElementById('coords-text');
   const menuToggle = document.getElementById('menu-toggle');
+  const drawerClose = document.getElementById('drawer-close');
+  const drawerBackdrop = document.getElementById('hud-drawer-backdrop');
   const hudNav = document.getElementById('hud-nav');
-  const waypointEl = document.getElementById('hud-waypoint');
+  const backTopBtn = document.getElementById('global-back-top');
 
-  let paused = false;
-  let lastScrolled = false;
-  let lastWaypointText = '';
-  let activeRouteKey = 'home';
+  let paused = prefersReducedMotion();
+  let currentRoute = 'home';
+  let activeObserver = null;
 
-  function redrawHUD() {
-    if (!hudSvg) return;
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    const isMobile = W <= 820;
-    const h = isMobile ? W / 860 : Math.min(W / 2048, H / 1360);
-    const cx = W / 2;
-    const k = 7 * h;
-
-    const L = 20 * h;
-    const T = 20 * h;
-    const R = W - 20 * h;
-    const B = H - 30 * h;
-    const bc = H * 577 / 1360;
-
-    let p = `M 0,0 H ${W} V ${H} H 0 Z `;
-    p += `M ${L},${T + 30 * h} Q ${L},${T} ${L + 30 * h},${T} `;
-    p += `L ${cx - 220 * h},${T} `;
-    p += `Q ${cx - 220 * h + 0.7 * k},${T} ${cx - 220 * h + 1.2 * k},${T + 0.7 * k} `;
-    p += `L ${cx - 188 * h - 0.7 * k},${T + 30 * h - 0.7 * k} `;
-    p += `Q ${cx - 188 * h},${T + 30 * h} ${cx - 188 * h + k},${T + 30 * h} `;
-    p += `L ${cx + 190 * h - k},${T + 30 * h} `;
-    p += `Q ${cx + 190 * h},${T + 30 * h} ${cx + 190 * h + 0.7 * k},${T + 30 * h - 0.7 * k} `;
-    p += `L ${cx + 222 * h - 1.2 * k},${T + 0.7 * k} `;
-    p += `Q ${cx + 222 * h},${T} ${cx + 222 * h + k},${T} `;
-    p += `L ${R - 30 * h},${T} Q ${R},${T} ${R},${T + 30 * h} `;
-
-    if (!isMobile) {
-      p += `L ${R},${bc - 247 * h - 52 * h} `;
-      p += `L ${R - 26 * h},${bc - 247 * h} `;
-      p += `L ${R - 26 * h},${bc + 247 * h} `;
-      p += `L ${R},${bc + 247 * h + 52 * h} `;
+  const syncMotionUi = () => {
+    document.documentElement.classList.toggle('paused', paused);
+    if (motionLabel) motionLabel.textContent = paused ? 'MOTION: OFF' : 'MOTION: ON';
+    if (motionToggle) {
+      motionToggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      motionToggle.setAttribute('aria-label', paused ? 'Motion off' : 'Motion on');
     }
-    p += `L ${R},${B - 30 * h} Q ${R},${B} ${R - 30 * h},${B} `;
-    p += `L ${cx + 232 * h},${B} `;
-    p += `Q ${cx + 232 * h - 0.7 * k},${B} ${cx + 232 * h - 1.2 * k},${B - 0.7 * k} `;
-    p += `L ${cx + 190 * h + 0.7 * k},${B - 37 * h + 0.7 * k} `;
-    p += `Q ${cx + 190 * h},${B - 37 * h} ${cx + 190 * h - k},${B - 37 * h} `;
-    p += `L ${cx - 188 * h + k},${B - 37 * h} `;
-    p += `Q ${cx - 188 * h},${B - 37 * h} ${cx - 188 * h - 0.7 * k},${B - 37 * h + 0.7 * k} `;
-    p += `L ${cx - 230 * h + 1.2 * k},${B - 0.7 * k} `;
-    p += `Q ${cx - 230 * h},${B} ${cx - 230 * h - k},${B} `;
-    p += `L ${L + 30 * h},${B} Q ${L},${B} ${L},${B - 30 * h} `;
+  };
+  syncMotionUi();
 
-    if (!isMobile) {
-      p += `L ${L},${bc + 247 * h + 52 * h} `;
-      p += `L ${L + 26 * h},${bc + 247 * h} `;
-      p += `L ${L + 26 * h},${bc - 247 * h} `;
-      p += `L ${L},${bc - 247 * h - 52 * h} `;
-    }
-    p += `L ${L},${T + 30 * h} Z`;
+  const getDrawerFocusable = () => {
+    if (!hudNav) return [];
+    return Array.from(
+      hudNav.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+    );
+  };
 
-    const bStroke = Math.max(1, 2 * h);
-    const bLen = 14 * h;
-    const bOff = 5 * h;
-    const brackets = `
-      <path d="M ${bOff},${bOff + bLen} V ${bOff} H ${bOff + bLen}" stroke="#cfd6e6" stroke-width="${bStroke}" fill="none" />
-      <path d="M ${W - bOff - bLen},${bOff} H ${W - bOff} V ${bOff + bLen}" stroke="#cfd6e6" stroke-width="${bStroke}" fill="none" />
-      <path d="M ${bOff},${H - bOff - bLen} V ${H - bOff} H ${bOff + bLen}" stroke="#cfd6e6" stroke-width="${bStroke}" fill="none" />
-      <path d="M ${W - bOff - bLen},${H - bOff} H ${W - bOff} V ${H - bOff - bLen}" stroke="#cfd6e6" stroke-width="${bStroke}" fill="none" />
-    `;
-
-    let rails = '';
-    if (!isMobile) {
-      const rStroke = Math.max(0.8, 1.2 * h);
-      const rDot = 3 * h;
-      const y0 = bc - 180 * h;
-      const y1 = bc + 208 * h;
-      rails = `
-        <g stroke="#cfd6e6" stroke-width="${rStroke}" opacity="0.55">
-          <line x1="${20 * h}" y1="${y0}" x2="${20 * h}" y2="${y1}" />
-          <line x1="${W - 20 * h}" y1="${y0}" x2="${W - 20 * h}" y2="${y1}" />
-        </g>
-        <circle cx="${20 * h}" cy="${y0}" r="${rDot}" fill="#7f8aa6" />
-        <circle cx="${20 * h}" cy="${y1}" r="${rDot}" fill="#7f8aa6" />
-        <circle cx="${W - 20 * h}" cy="${y0}" r="${rDot}" fill="#7f8aa6" />
-        <circle cx="${W - 20 * h}" cy="${y1}" r="${rDot}" fill="#7f8aa6" />
-      `;
-    }
-
-    hudSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    hudSvg.innerHTML = `
-      <path d="${p}" fill="#030409" fill-rule="evenodd" />
-      ${brackets}
-      ${rails}
-    `;
-  }
-
-  function closeMenu() {
-    if (!hudNav || !menuToggle) return;
+  const closeMenu = ({ restoreFocus = false } = {}) => {
+    if (!hudNav || hudNav.hidden) return;
+    hudNav.hidden = true;
     hudNav.classList.remove('open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.textContent = 'MENU';
-  }
+    if (drawerBackdrop) drawerBackdrop.hidden = true;
+    document.body.style.overflow = '';
+    menuToggle?.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) menuToggle?.focus();
+  };
+
+  const openMenu = () => {
+    if (!hudNav) return;
+    hudNav.hidden = false;
+    hudNav.classList.add('open');
+    if (drawerBackdrop) drawerBackdrop.hidden = false;
+    document.body.style.overflow = 'hidden';
+    menuToggle?.setAttribute('aria-expanded', 'true');
+    window.requestAnimationFrame(() => {
+      const focusables = getDrawerFocusable();
+      focusables[0]?.focus();
+    });
+  };
 
   menuToggle?.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isOpen = hudNav.classList.toggle('open');
-    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    menuToggle.textContent = isOpen ? 'CLOSE' : 'MENU';
+    const isOpen = !hudNav?.hidden;
+    if (isOpen) closeMenu();
+    else openMenu();
   });
 
-  hudNav?.querySelectorAll('a').forEach((link) => {
+  drawerClose?.addEventListener('click', () => closeMenu({ restoreFocus: true }));
+  drawerBackdrop?.addEventListener('click', () => closeMenu({ restoreFocus: true }));
+
+  header?.querySelectorAll('a[href]').forEach((link) => {
     link.addEventListener('click', (e) => {
-      closeMenu();
       const href = link.getAttribute('href');
-      if (href && typeof onNavigate === 'function') {
-        e.preventDefault();
+      if (!href) return;
+      if (link.target === '_blank') {
+        closeMenu();
+        return;
+      }
+      e.preventDefault();
+      closeMenu();
+      if (typeof onNavigate === 'function') {
         onNavigate(href);
+      } else {
+        window.location.href = href;
       }
     });
   });
 
-  document.addEventListener('click', (e) => {
-    if (hudNav?.classList.contains('open') && !hudNav.contains(e.target) && e.target !== menuToggle) {
-      closeMenu();
-    }
-  });
-
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && hudNav?.classList.contains('open')) {
-      closeMenu();
-      menuToggle?.focus();
+    if (!hudNav || hudNav.hidden) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeMenu({ restoreFocus: true });
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusables = getDrawerFocusable();
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   });
 
   motionToggle?.addEventListener('click', () => {
     paused = !paused;
-    document.documentElement.classList.toggle('paused', paused);
-    if (motionLabel) motionLabel.textContent = paused ? 'OFF' : 'ON';
-    motionToggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
-    motionToggle.setAttribute('aria-label', paused ? 'Motion off' : 'Motion on');
+    syncMotionUi();
     onMotionChange?.(paused);
   });
 
-  function pad4(n) {
-    return String(Math.round(Math.abs(n)) % 10000).padStart(4, '0');
-  }
+  const setActiveNavSection = (sectionKey) => {
+    header?.querySelectorAll('.header-nav-link, .hud-nav-link').forEach((el) => {
+      const matchesSection = el.dataset.section === sectionKey;
+      const matchesRoute = el.dataset.route === currentRoute && !sectionKey;
+      const active = matchesSection || matchesRoute;
+      el.classList.toggle('active', active);
+      if (active) el.setAttribute('aria-current', 'true');
+      else el.removeAttribute('aria-current');
+    });
+  };
 
-  window.addEventListener('pointermove', (e) => {
-    if (!coordsText) return;
-    coordsText.textContent = `X.${pad4(e.clientX)}  //  Y.${pad4(e.clientY)}`;
-  }, { passive: true });
+  const observeSections = () => {
+    activeObserver?.disconnect();
+    activeObserver = null;
 
-  window.addEventListener('resize', redrawHUD, { passive: true });
-  redrawHUD();
-
-  function syncDockState(scrollProgress) {
-    const y = window.scrollY || 0;
-    const isScrolled = scrollProgress > 0.035 || y > Math.max(140, window.innerHeight * 0.22);
-    if (isScrolled !== lastScrolled) {
-      lastScrolled = isScrolled;
-      document.documentElement.classList.toggle('is-scrolled', isScrolled);
+    if (currentRoute !== 'home') {
+      setActiveNavSection(currentRoute);
+      return;
     }
 
-    let nextWaypoint = ROUTE_LABELS[activeRouteKey];
-    if (!nextWaypoint) {
-      const idx = Math.min(
-        HOME_WAYPOINTS.length - 1,
-        Math.max(0, Math.round(scrollProgress * (HOME_WAYPOINTS.length - 1))),
-      );
-      nextWaypoint = HOME_WAYPOINTS[idx];
+    const targets = Array.from(document.querySelectorAll('#app-view [id]')).filter((el) =>
+      ['home', 'about', 'venue', 'speakers', 'agenda', 'tickets', 'cfp', 'sponsors', 'memories'].includes(el.id),
+    );
+    if (!targets.length || !('IntersectionObserver' in window)) {
+      setActiveNavSection('home');
+      return;
     }
-    if (waypointEl && nextWaypoint !== lastWaypointText) {
-      lastWaypointText = nextWaypoint;
-      waypointEl.textContent = nextWaypoint;
+
+    activeObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+        if (visible.length) {
+          setActiveNavSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-84px 0px -55% 0px', threshold: 0.05 },
+    );
+
+    targets.forEach((el) => activeObserver.observe(el));
+  };
+
+  const syncScrollControls = () => {
+    const scrolled = window.scrollY > 32;
+    document.documentElement.classList.toggle('is-scrolled', scrolled);
+    if (backTopBtn) {
+      const showBackTop = window.scrollY > Math.max(420, window.innerHeight * 0.75);
+      backTopBtn.hidden = !showBackTop;
     }
-  }
+  };
 
-  function syncFromScroll() {
-    const docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    syncDockState((window.scrollY || 0) / docMax);
-  }
+  backTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  });
 
-  window.addEventListener('scroll', syncFromScroll, { passive: true });
+  window.addEventListener('scroll', syncScrollControls, { passive: true });
+  syncScrollControls();
 
   function setActiveRoute(routeKey) {
-    activeRouteKey = routeKey || 'home';
-    syncFromScroll();
-    if (!hudNav) return;
-    hudNav.querySelectorAll('.hud-nav-link').forEach((el) => {
-      const targetRoute = el.dataset.route;
-      el.classList.toggle('active', targetRoute === routeKey);
-    });
+    currentRoute = routeKey;
+    closeMenu();
+    setActiveNavSection(routeKey === 'home' ? 'home' : routeKey);
+    window.requestAnimationFrame(observeSections);
   }
 
   return {
     setActiveRoute,
-    closeMenu,
     isPaused: () => paused,
-    destroy: () => window.removeEventListener('scroll', syncFromScroll),
   };
 }

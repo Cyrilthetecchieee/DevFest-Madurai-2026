@@ -8,21 +8,16 @@
 html {
   width: 100%;
   min-height: 100%;
-  overflow-x: hidden;
-  scrollbar-width: none;
+  overflow-x: clip;
+  scroll-behavior: smooth;
   background-color: var(--navy);
   view-transition-name: none;
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none;
 }
 
 body {
   width: 100%;
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--navy-deep);
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -32,6 +27,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   user-select: text;
   -webkit-user-select: text;
+}
+
+[id],
+.stage-section {
+  scroll-margin-top: 84px;
 }
 
 .sr-only {
@@ -260,6 +260,12 @@ html.gl-active #stage-bg {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
   .mc-loader-fill { transform: scaleX(1); }
   #gl-stage, #stage-hl, #stage-fig-fallback, #stage-bg { transition: none; }
 }

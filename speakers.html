@@ -102,45 +102,76 @@
   <div id="archive-progress" aria-hidden="true"></div>
   <div id="app-view"></div>
 
-  <div id="stage-hud">
-    <svg id="hud-svg" aria-hidden="true"></svg>
-    <a href="/#home" data-spa-link="true" class="hud-text hud-brand">GDG MADURAI</a>
+  <header id="stage-hud" class="site-header" role="banner">
+    <div class="site-header-inner">
+      <a href="/#home" data-spa-link="true" class="header-brand">
+        <span class="header-brand-main">GDG MADURAI</span>
+        <span class="header-brand-tag">DEVFEST 2026</span>
+      </a>
 
-    <button class="hud-motion-btn" id="motion-toggle" aria-pressed="false" aria-label="Motion on">
-      <svg class="hud-motion-badge" viewBox="0 0 68 22" aria-hidden="true">
-        <rect x="1" y="1" width="66" height="20" rx="5" fill="#0a0c14" stroke="#f3f6ff" stroke-width="1.4" />
-        <path d="M8,19 L14,3 H19 L13,19Z" fill="#f3f6ff" />
-        <path d="M20,19 L26,3 H31 L25,19Z" fill="#f3f6ff" />
-        <path d="M32,19 L38,3 H43 L37,19Z" fill="#f3f6ff" />
-        <path d="M44,19 L50,3 H55 L49,19Z" fill="#f3f6ff" />
-        <circle cx="60" cy="11" r="2.4" fill="#f3f6ff" />
-      </svg>
-      <span class="hud-motion-label" id="motion-label">ON</span>
-    </button>
+      <nav class="site-nav-desktop" aria-label="Primary navigation">
+        <a href="/#about" data-section="about" class="header-nav-link">About</a>
+        <a href="/#venue" data-section="venue" class="header-nav-link">Venue</a>
+        <a href="/speakers" data-route="speakers" data-section="speakers" class="header-nav-link active">Speakers</a>
+        <a href="/#agenda" data-section="agenda" class="header-nav-link">Agenda</a>
+        <a href="/#tickets" data-section="tickets" class="header-nav-link">Tickets</a>
+        <a href="/#cfp" data-section="cfp" class="header-nav-link">CFP</a>
+        <a href="/#sponsors" data-section="sponsors" class="header-nav-link">Sponsors</a>
+        <a href="/memories" data-route="memories" data-section="memories" class="header-nav-link">Memories</a>
+      </nav>
 
-    <div class="hud-text hud-coords" id="coords-text">X.0052  //  Y.0053</div>
+      <div class="header-utilities">
+        <button type="button" class="hud-motion-btn" id="motion-toggle" aria-pressed="false" aria-label="Motion on">
+          <span class="hud-motion-dot" aria-hidden="true"></span>
+          <span class="hud-motion-label" id="motion-label">MOTION: ON</span>
+        </button>
 
-    <div id="hud-dock" class="hud-dock" aria-label="Mission telemetry dock">
-      <span class="hud-dock-wordmark">DEVFEST 2026</span>
-      <span class="hud-dock-sep" aria-hidden="true">//</span>
-      <span id="hud-waypoint" class="hud-dock-waypoint">SPEAKERS</span>
+        <a
+          href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header-register-btn"
+        >REGISTER</a>
+
+        <button
+          type="button"
+          class="hud-menu-btn"
+          id="menu-toggle"
+          aria-expanded="false"
+          aria-controls="hud-nav"
+          aria-label="Open navigation menu"
+        >MENU</button>
+      </div>
     </div>
-    <div class="gdg-rule gdg-rule--wide hud-dock-rule" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="gdg-rule gdg-rule--wide header-gdg-rule" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
-    <button class="hud-menu-btn" id="menu-toggle" aria-expanded="false" aria-controls="hud-nav" aria-label="Menu">MENU</button>
-
-    <nav id="hud-nav" class="hud-nav-panel" aria-label="Primary">
+    <div id="hud-drawer-backdrop" class="hud-drawer-backdrop" hidden></div>
+    <nav id="hud-nav" class="hud-nav-panel" aria-label="Mobile navigation" hidden>
+      <div class="hud-nav-drawer-head">
+        <span class="hud-nav-drawer-title">DEVFEST MADURAI 2026</span>
+        <button type="button" id="drawer-close" class="hud-drawer-close" aria-label="Close navigation menu">CLOSE ✕</button>
+      </div>
       <ul class="hud-nav-list">
-        <li><a href="/#home" data-route="home" class="hud-nav-link"><span>Home</span><span>01</span></a></li>
-        <li><a href="/#about" data-route="about" class="hud-nav-link"><span>About</span><span>02</span></a></li>
-        <li><a href="/#agenda" data-route="agenda" class="hud-nav-link"><span>Agenda</span><span>03</span></a></li>
-        <li><a href="/speakers" data-route="speakers" class="hud-nav-link active"><span>Speakers</span><span>04</span></a></li>
-        <li><a href="/#tickets" data-route="tickets" class="hud-nav-link"><span>Tickets</span><span>05</span></a></li>
-        <li><a href="/memories" data-route="memories" class="hud-nav-link"><span>Memories</span><span>06</span></a></li>
-        <li><a href="/#cfp" data-route="cfp" class="hud-nav-link"><span>Submit CFP</span><span>07</span></a></li>
+        <li><a href="/#home" data-route="home" data-section="home" class="hud-nav-link"><span>Home</span><span>01</span></a></li>
+        <li><a href="/#about" data-section="about" class="hud-nav-link"><span>About</span><span>02</span></a></li>
+        <li><a href="/#venue" data-section="venue" class="hud-nav-link"><span>Venue &amp; Date</span><span>03</span></a></li>
+        <li><a href="/speakers" data-route="speakers" data-section="speakers" class="hud-nav-link active"><span>Speakers</span><span>04</span></a></li>
+        <li><a href="/#agenda" data-section="agenda" class="hud-nav-link"><span>Agenda</span><span>05</span></a></li>
+        <li><a href="/#tickets" data-section="tickets" class="hud-nav-link"><span>Tickets</span><span>06</span></a></li>
+        <li><a href="/#cfp" data-section="cfp" class="hud-nav-link"><span>Submit CFP</span><span>07</span></a></li>
+        <li><a href="/#sponsors" data-section="sponsors" class="hud-nav-link"><span>Sponsors</span><span>08</span></a></li>
+        <li><a href="/memories" data-route="memories" data-section="memories" class="hud-nav-link"><span>Memories</span><span>09</span></a></li>
       </ul>
+      <a
+        href="https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-g-primary hud-drawer-cta"
+      >REGISTER NOW</a>
     </nav>
-  </div>
+  </header>
+
+  <button type="button" id="global-back-top" class="global-back-top" aria-label="Back to top" hidden>↑ TOP</button>
 
   <div id="mc-loader" hidden>
     <div class="mc-loader-shell">
