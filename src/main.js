@@ -15,6 +15,7 @@ import { initSessionLoader } from './motion/loader.js';
 import { initFluidCursor } from './motion/cursor.js';
 import { initHud } from './pages/hud.js';
 import { createRouter } from './pages/router.js';
+import { initCommandSystem } from './motion/commandPalette.js';
 
 const quality = createQualityGovernor();
 
@@ -84,6 +85,11 @@ const hud = initHud({
 
 const router = createRouter({ viewRoot, hud, lenis });
 initSessionLoader();
+
+initCommandSystem({
+  onNavigate: (href) => router.navigate(href),
+  onToggleMotion: () => document.getElementById('motion-toggle')?.click(),
+});
 
 if (prefersReducedMotion()) {
   document.documentElement.classList.add('reduced-motion');
