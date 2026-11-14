@@ -143,7 +143,7 @@ export function createMarqueePlane({ scene, renderer }) {
     mat.uniforms.uRepeatX.value = W / Math.max(PERIOD_W * scalePx, 1);
   }
 
-  function update({ dt, paused }) {
+  function update({ dt, paused, heroFade = 1 }) {
     if (!ready) return;
     if (!paused) {
       // Matches CSS @keyframes marquee: -2352px over 34s = 1 full period every 34s
@@ -153,8 +153,8 @@ export function createMarqueePlane({ scene, renderer }) {
 
     mesh.position.y = baseY;
     mesh.scale.set(viewWidth, basePlaneH, 1);
-    mat.uniforms.uOpacity.value = 1;
-    mesh.visible = true;
+    mat.uniforms.uOpacity.value = Math.max(0, Math.min(1, heroFade));
+    mesh.visible = heroFade > 0.01;
   }
 
   function dispose() {

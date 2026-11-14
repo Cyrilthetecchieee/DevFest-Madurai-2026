@@ -111,10 +111,124 @@ export async function mountWebGLStage({ canvas, quality }) {
       prevX: window.innerWidth / 2,
       prevY: window.innerHeight / 2,
       amt: 0,
+      speed: 0,
       moved: false,
       inside: true,
     },
+    scrollY: window.scrollY || 0,
+    prevScrollY: window.scrollY || 0,
+    scrollVelocity: 0,
+    zoneEls: [],
   };
+
+  const ZONE_PRESETS = {
+    hero: { yaw: 0, pitch: 0.02, scale: 1.0, z: 0, haloGain: 1.0, warmth: 0.0, silhouette: 0.0 },
+    about: { yaw: -0.52, pitch: 0.06, scale: 0.85, z: -100, haloGain: 1.0, warmth: 0.05, silhouette: 0.0 },
+    venue: { yaw: 0.72, pitch: 0.04, scale: 0.88, z: -80, haloGain: 1.12, warmth: 0.45, silhouette: 0.0 },
+    speakers: { yaw: -0.44, pitch: 0.05, scale: 0.8, z: -120, haloGain: 0.92, warmth: 0.1, silhouette: 0.0 },
+    agenda: { yaw: 0.28, pitch: 0.03, scale: 0.86, z: -90, haloGain: 1.42, warmth: 0.0, silhouette: 0.0 },
+    tickets: { yaw: -0.34, pitch: 0.02, scale: 0.94, z: -50, haloGain: 1.24, warmth: 0.12, silhouette: 0.0 },
+    sponsors: { yaw: 0.48, pitch: 0.05, scale: 0.8, z: -120, haloGain: 0.95, warmth: 0.08, silhouette: 0.0 },
+    memories: { yaw: -0.32, pitch: 0.04, scale: 0.74, z: -150, haloGain: 0.98, warmth: 0.15, silhouette: 0.0 },
+    footer: { yaw: 0.04, pitch: -0.02, scale: 1.06, z: 20, haloGain: 1.48, warmth: 0.18, silhouette: 0.92 },
+  };
+
+  function collectZoneElements() {
+    state.zoneEls = Array.from(document.querySelectorAll('[data-creature-zone]'));
+  }
+  collectZoneElements();
+  const onRouteChanged = () => collectZoneElements();
+  window.addEventListener('devfest:route-changed', onRouteChanged);
+
+  function smoothstep(a, b, x) {
+    const t = Math.max(0, Math.min(1, (x - a) / Math.max(1e-4, b - a)));
+    return t * t * (3 - 2 * t);
+  }
+
+  function lerpPose(a, b, t) {
+    return {
+      screenX: a.screenX + (b.screenX - a.screenX) * t,
+      screenY: a.screenY + (b.screenY - a.screenY) * t,
+      yaw: a.yaw + (b.yaw - a.yaw) * t,
+      pitch: a.pitch + (b.pitch - a.pitch) * t,
+      scale: a.scale + (b.scale - a.scale) * t,
+      z: a.z + (b.z - a.z) * t,
+      haloGain: a.haloGain + (b.haloGain - a.haloGain) * t,
+      warmth: a.warmth + (b.warmth - a.warmth) * t,
+      silhouette: a.silhouette + (b.silhouette - a.silhouette) * t,
+    };
+  }
+
+  function computeCompanionPose(W, H, time) {
+    const isMobile = W <= 960;
+    const isSmall = W <= 820;
+    const topPx = isSmall ? Math.max(200, Math.min(260, H * 0.3)) : 0;
+    const boxH = H - topPx;
+    const coverUnit = Math.max(W / 2048, boxH / 1360);
+    const boxLeft = W / 2 - 1024 * coverUnit;
+    const boxTop = topPx + boxH / 2 - 680 * coverUnit;
+
+    const heroPose = {
+      ...ZONE_PRESETS.hero,
+      screenX: boxLeft + 982 * coverUnit,
+      screenY: boxTop + 792 * coverUnit,
+      anchorY: H * 0.42 - state.scrollY,
+    };
+
+    if (!state.zoneEls.length) {
+      return heroPose;
+    }
+
+    const focusY = H * 0.46;
+    const points = [heroPose];
+
+    for (const el of state.zoneEls) {
+      const key = el.dataset.creatureZone || 'about';
+      const base = ZONE_PRESETS[key] || ZONE_PRESETS.about;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+
+      const isFooter = key === 'footer';
+      const screenX = isMobile || isFooter
+        ? W * 0.5
+        : Math.max(W * 0.17, Math.min(W * 0.83, r.left + r.width * 0.5));
+
+      const screenY = isMobile
+        ? Math.max(H * 0.42, Math.min(H * 0.54, heroPose.screenY * 0.94))
+        : (isFooter ? H * 0.6 : Math.max(H * 0.50, Math.min(H * 0.68, r.top + Math.min(r.height * 0.54, H * 0.4))));
+
+      points.push({
+        ...base,
+        yaw: isMobile ? base.yaw * 0.35 : base.yaw,
+        screenX,
+        screenY,
+        anchorY: isFooter ? r.top + r.height * 0.38 : r.top + Math.min(r.height * 0.5, H * 0.45),
+      });
+    }
+
+    if (points.length === 1 || focusY <= points[0].anchorY) {
+      return heroPose;
+    }
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const a = points[i];
+      const b = points[i + 1];
+      if (focusY <= b.anchorY) {
+        const w = smoothstep(a.anchorY, b.anchorY, focusY);
+        const mixed = lerpPose(a, b, w);
+        return {
+          ...mixed,
+          yaw: mixed.yaw + (mixed.silhouette > 0.4 ? Math.sin(time * 0.65) * 0.08 : 0),
+        };
+      }
+    }
+
+    const last = points[points.length - 1];
+    return {
+      ...last,
+      yaw: last.yaw + Math.sin(time * 0.65) * 0.08,
+    };
+  }
 
   function resize() {
     const W = window.innerWidth || 320;
@@ -157,6 +271,7 @@ export async function mountWebGLStage({ canvas, quality }) {
     state.pointer.moved = true;
     state.pointer.inside = true;
     state.pointer.amt = Math.min(1, state.pointer.amt + dist / 140);
+    state.pointer.speed = Math.min(1.2, state.pointer.speed + dist / 90);
   };
 
   const onPointerLeave = () => {
@@ -222,6 +337,16 @@ export async function mountWebGLStage({ canvas, quality }) {
     }
 
     const cfg = quality.getConfig();
+    const docScrollMax = Math.max(1, document.documentElement.scrollHeight - state.H);
+    state.scrollY = window.scrollY || window.pageYOffset || 0;
+    const scrollProgress = Math.max(0, Math.min(1, state.scrollY / docScrollMax));
+    const scrollDelta = state.scrollY - state.prevScrollY;
+    state.prevScrollY = state.scrollY;
+    state.scrollVelocity = state.scrollVelocity * 0.85 + Math.max(-2.5, Math.min(2.5, scrollDelta / 48)) * 0.15;
+
+    const heroFade = Math.max(0, 1 - state.scrollY / Math.max(state.H * 0.45, 220));
+    const companionPose = computeCompanionPose(state.W, state.H, state.time);
+
     const t0 = performance.now();
     skyPass.update({
       time: state.time,
@@ -230,8 +355,9 @@ export async function mountWebGLStage({ canvas, quality }) {
       H: state.H,
       paused: state.paused,
       trailEnabled: cfg.trailEnabled,
+      scrollProgress,
     });
-    marqueePlane.update({ dt, paused: state.paused });
+    marqueePlane.update({ dt, paused: state.paused, heroFade });
     figureRig.update({
       dt,
       time: state.time,
@@ -239,18 +365,22 @@ export async function mountWebGLStage({ canvas, quality }) {
       W: state.W,
       H: state.H,
       paused: state.paused,
+      pointerSpeed: state.pointer.speed,
+      pose: companionPose,
     });
 
     postFx.render({
       scene,
       camera,
       time: state.time,
+      velocity: state.scrollVelocity,
     });
     const renderCostMs = performance.now() - t0;
 
     state.pointer.prevX = state.pointer.x;
     state.pointer.prevY = state.pointer.y;
     state.pointer.amt *= 0.82;
+    state.pointer.speed *= 0.86;
 
     if (!state.paused) {
       quality.recordFrame(Math.max(rawDtMs, renderCostMs), now);
@@ -270,6 +400,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       window.clearTimeout(state.paceTimerId);
       window.cancelAnimationFrame(state.rafId);
       unsubscribeQuality();
+      window.removeEventListener('devfest:route-changed', onRouteChanged);
       window.removeEventListener('resize', resize);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerleave', onPointerLeave);

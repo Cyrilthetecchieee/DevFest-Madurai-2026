@@ -76,6 +76,8 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
   const disposableResources = [];
   let loaded = false;
   let coverUnit = 1;
+  let boxLeft = 0;
+  let boxTop = 0;
   let headScreenX = 0;
   let headScreenY = 0;
 
@@ -83,9 +85,71 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
   let curPitch = 0;
   let curRoll = 0;
   let curParallaxX = 0;
-  let curBobY = 0;
+  let curPosX = 982;
+  let curPosY = -792;
+  let curPosZ = 0;
+  let curScale = 1;
+  let curHaloGain = 1;
+  let curWarmth = 0;
+  let curSilhouette = 0;
   let revealElapsed = 0;
   let rimPulse = 0;
+
+  // High-segment concentric halo rings mounted around the crown so low-poly/far zoom never facets
+  const haloRingGeo = new THREE.TorusGeometry(235, 3.0, 20, 160);
+  const haloRingMat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    uniforms: {
+      uTime: { value: 0 },
+      uGain: { value: 1 },
+      uWarmth: { value: 0 },
+      uRimPulse: { value: 0 },
+    },
+    vertexShader: /* glsl */ `
+      varying vec3 vNormalV;
+      varying vec2 vRingUv;
+      void main() {
+        vRingUv = uv;
+        vNormalV = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform float uTime;
+      uniform float uGain;
+      uniform float uWarmth;
+      uniform float uRimPulse;
+      varying vec3 vNormalV;
+      varying vec2 vRingUv;
+      void main() {
+        float fresnel = pow(1.0 - abs(vNormalV.z), 1.6);
+        float sweep = 0.72 + 0.28 * sin(vRingUv.x * 6.28318 * 2.0 - uTime * 1.4);
+        vec3 cyanCol = vec3(0.369, 0.953, 1.0);
+        vec3 violetCol = vec3(0.608, 0.361, 1.0);
+        vec3 roseCol = vec3(0.957, 0.447, 0.714);
+        vec3 baseCol = mix(cyanCol, violetCol, 0.28 + 0.22 * sin(vRingUv.x * 6.28318 + uTime * 0.6));
+        baseCol = mix(baseCol, roseCol, uWarmth * 0.42);
+        float alpha = clamp((0.36 + 0.64 * fresnel) * sweep * (0.42 + uGain * 0.36 + uRimPulse * 0.28), 0.0, 0.92);
+        gl_FragColor = vec4(baseCol * (1.1 + uGain * 0.45), alpha);
+      }
+    `,
+  });
+  const haloRingMesh = new THREE.Mesh(haloRingGeo, haloRingMat);
+  haloRingMesh.position.set(-14, 344, -28);
+  haloRingMesh.rotation.set(Math.PI * 0.42, 0.14, 0.08);
+  haloRingMesh.renderOrder = 3;
+  turnGroup.add(haloRingMesh);
+
+  const outerRingGeo = new THREE.TorusGeometry(274, 1.35, 16, 160);
+  const outerRingMat = haloRingMat.clone();
+  const outerRingMesh = new THREE.Mesh(outerRingGeo, outerRingMat);
+  outerRingMesh.position.copy(haloRingMesh.position);
+  outerRingMesh.rotation.set(Math.PI * 0.42, 0.14, 0.08);
+  outerRingMesh.renderOrder = 3;
+  turnGroup.add(outerRingMesh);
+  disposableResources.push(haloRingGeo, haloRingMat, outerRingGeo, outerRingMat);
 
   // Device tilt (permission-gated on iOS Safari via first tap, passive elsewhere)
   let gyroOffsetX = 0;
@@ -115,8 +179,10 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
     }
   }
 
-  const useLowLod = tier === 'LOW' && Boolean(lowGlbUrl);
-  const chosenUrl = useLowLod ? lowGlbUrl : glbUrl;
+  // Always load full-detail compressed GLB (1.12 MB cached) so crown halo geometry never facets;
+  // downgrade shader cost only via MeshStandardMaterial on LOW tier.
+  const useLowLod = tier === 'LOW';
+  const chosenUrl = glbUrl || lowGlbUrl;
 
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
@@ -176,6 +242,9 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
           shader.uniforms.uTime = { value: 0 };
           shader.uniforms.uRimPulse = { value: 0 };
           shader.uniforms.uReveal = { value: 0 };
+          shader.uniforms.uHaloGain = { value: 1 };
+          shader.uniforms.uWarmth = { value: 0 };
+          shader.uniforms.uSilhouette = { value: 0 };
           shader.uniforms.uBBoxMin = { value: bbox.min };
           shader.uniforms.uBBoxMax = { value: bbox.max };
 
@@ -200,6 +269,9 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
             uniform float uTime;
             uniform float uRimPulse;
             uniform float uReveal;
+            uniform float uHaloGain;
+            uniform float uWarmth;
+            uniform float uSilhouette;
             ${shader.fragmentShader}
           `
             .replace(
@@ -227,16 +299,18 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
 
               float rim = pow(1.0 - abs(vNormal.z), 2.0);
               vec3 iriShift = mix(vec3(0.35, 0.95, 1.0), vec3(0.66, 0.4, 1.0), smoothstep(0.18, 0.82, vYF));
-              vec3 rimColor = iriShift * rim * (1.8 + uRimPulse * 1.15);
+              iriShift = mix(iriShift, vec3(0.96, 0.56, 0.78), uWarmth * 0.42);
+              vec3 rimColor = iriShift * rim * (1.8 + uRimPulse * 1.15 + uSilhouette * 1.1);
+              totalEmissiveRadiance = mix(totalEmissiveRadiance, totalEmissiveRadiance * 0.25, uSilhouette * 0.65);
               totalEmissiveRadiance += rimColor;
 
-              vec3 warmCore = vec3(1.0, 0.62, 0.55) * 0.55 * smoothstep(0.18, 0.42, vYF) * (1.0 - smoothstep(0.52, 0.68, vYF)) * pow(abs(vNormal.z), 2.5);
-              totalEmissiveRadiance += warmCore;
+              vec3 warmCore = vec3(1.0, 0.62, 0.55) * (0.55 + uWarmth * 0.45) * smoothstep(0.18, 0.42, vYF) * (1.0 - smoothstep(0.52, 0.68, vYF)) * pow(abs(vNormal.z), 2.5);
+              totalEmissiveRadiance += warmCore * (1.0 - uSilhouette * 0.7);
 
               float ring = smoothstep(0.69, 0.73, vYF);
               float pulse = 0.85 + 0.15 * sin(uTime * 2.2);
               float haloEmissiveAtten = isPlanetOrMoon ? 0.5 : 1.0;
-              vec3 haloEmissive = vec3(0.06, 0.7, 1.0) * ring * (0.9 + 2.2 * rim) * pulse * haloEmissiveAtten;
+              vec3 haloEmissive = mix(vec3(0.06, 0.7, 1.0), vec3(0.95, 0.48, 0.78), uWarmth * 0.35) * ring * (0.9 + 2.2 * rim) * pulse * haloEmissiveAtten * uHaloGain;
               totalEmissiveRadiance += haloEmissive;
 
               // Holographic scan-sweep reveal wave on first entry
@@ -281,8 +355,8 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
     const boxH = H - topPx;
     coverUnit = Math.max(W / 2048, boxH / 1360);
 
-    const boxLeft = W / 2 - 1024 * coverUnit;
-    const boxTop = topPx + boxH / 2 - 680 * coverUnit;
+    boxLeft = W / 2 - 1024 * coverUnit;
+    boxTop = topPx + boxH / 2 - 680 * coverUnit;
 
     figureCoverRoot.position.set(boxLeft, -boxTop, 0);
     figureCoverRoot.scale.setScalar(coverUnit);
@@ -291,51 +365,103 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
     headScreenY = boxTop + 450 * coverUnit;
   }
 
-  function update({ dt, time, pointer, W, H, paused, scrollProgress = 0, pointerSpeed = 0 }) {
+  function update({
+    dt,
+    time,
+    pointer,
+    W,
+    H,
+    paused,
+    pointerSpeed = 0,
+    pose = null,
+  }) {
     if (!loaded) return;
 
     revealElapsed = Math.min(1.3, revealElapsed + dt * 0.95);
     rimPulse = rimPulse * 0.88 + pointerSpeed * 0.12;
+
+    const targetHalo = pose?.haloGain ?? 1.0;
+    const targetWarmth = pose?.warmth ?? 0.0;
+    const targetSil = pose?.silhouette ?? 0.0;
+    const paramEase = 1.0 - Math.exp(-dt * 4.0);
+    curHaloGain += (targetHalo - curHaloGain) * paramEase;
+    curWarmth += (targetWarmth - curWarmth) * paramEase;
+    curSilhouette += (targetSil - curSilhouette) * paramEase;
 
     for (const shader of customShaders) {
       if (!shader.uniforms) continue;
       if (shader.uniforms.uTime) shader.uniforms.uTime.value = time;
       if (shader.uniforms.uReveal) shader.uniforms.uReveal.value = revealElapsed;
       if (shader.uniforms.uRimPulse) shader.uniforms.uRimPulse.value = rimPulse;
+      if (shader.uniforms.uHaloGain) shader.uniforms.uHaloGain.value = curHaloGain;
+      if (shader.uniforms.uWarmth) shader.uniforms.uWarmth.value = curWarmth;
+      if (shader.uniforms.uSilhouette) shader.uniforms.uSilhouette.value = curSilhouette;
     }
 
+    haloRingMat.uniforms.uTime.value = time;
+    haloRingMat.uniforms.uGain.value = curHaloGain;
+    haloRingMat.uniforms.uWarmth.value = curWarmth;
+    haloRingMat.uniforms.uRimPulse.value = rimPulse;
+    outerRingMat.uniforms.uTime.value = -time * 0.7;
+    outerRingMat.uniforms.uGain.value = curHaloGain * 0.78;
+    outerRingMat.uniforms.uWarmth.value = curWarmth;
+    outerRingMat.uniforms.uRimPulse.value = rimPulse;
+
     if (paused) return;
+
+    // Gentle ring oscillation synced to creature breath
+    haloRingMesh.rotation.z = 0.08 + Math.sin(time * 0.7) * 0.04;
+    outerRingMesh.rotation.z = -0.06 - Math.sin(time * 0.5) * 0.05;
+    outerRingMesh.scale.setScalar(1.0 + 0.025 * Math.sin(time * 1.1) + rimPulse * 0.05);
 
     let dx = gyroOffsetX;
     let dy = gyroOffsetY;
     if (pointer.inside && pointer.moved) {
-      dx = Math.max(-1, Math.min(1, (pointer.x - headScreenX) / Math.max(W / 2, 1)));
-      dy = Math.max(-1, Math.min(1, (pointer.y - headScreenY) / Math.max(H / 2, 1)));
+      dx = Math.max(-1, Math.min(1, (pointer.x - headScreenX) / Math.max(W * 0.5, 1)));
+      dy = Math.max(-1, Math.min(1, (pointer.y - headScreenY) / Math.max(H * 0.5, 1)));
     }
 
-    // Hero-to-content recession & scroll-linked yaw (#3, #7)
-    const heroExit = Math.min(1, scrollProgress * 4.5);
-    const tYaw = 0.62 * dx + 0.025 * Math.sin(time * 0.6) + heroExit * 0.42;
-    const tPitch = 0.2 * dy - heroExit * 0.12;
+    const baseYaw = pose?.yaw ?? 0;
+    const basePitch = pose?.pitch ?? 0;
+    const baseScale = pose?.scale ?? 1;
+    const baseZ = pose?.z ?? 0;
+
+    let targetPosX = 982;
+    let targetPosY = -792;
+    if (pose && typeof pose.screenX === 'number' && typeof pose.screenY === 'number') {
+      const unit = Math.max(coverUnit, 1e-4);
+      targetPosX = (pose.screenX - boxLeft) / unit;
+      targetPosY = -((pose.screenY - boxTop) / unit);
+    }
+
+    const tYaw = baseYaw + 0.58 * dx + 0.025 * Math.sin(time * 0.6);
+    const tPitch = basePitch + 0.18 * dy;
     const tRoll = -0.045 * dx;
     const tParallaxX = 14 * dx;
-    const tBobY = 5 * Math.sin(time * 0.9) - heroExit * 90;
+    const tBobY = 6 * Math.sin(time * 0.9);
 
-    const easeK = 1.0 - Math.exp(-dt * 4.2);
+    const easeK = 1.0 - Math.exp(-dt * 4.5);
     curYaw += (tYaw - curYaw) * easeK;
     curPitch += (tPitch - curPitch) * easeK;
     curRoll += (tRoll - curRoll) * easeK;
     curParallaxX += (tParallaxX - curParallaxX) * easeK;
-    curBobY += (tBobY - curBobY) * easeK;
+    curScale += (baseScale - curScale) * easeK;
+    curPosX += (targetPosX - curPosX) * easeK;
+    curPosY += (targetPosY + tBobY - curPosY) * easeK;
+    curPosZ += (baseZ - curPosZ) * easeK;
 
     turnGroup.rotation.y = curYaw;
     turnGroup.rotation.x = curPitch;
     turnGroup.rotation.z = curRoll;
-    turnGroup.scale.setScalar(1.0 - heroExit * 0.22);
+    turnGroup.scale.setScalar(curScale);
 
-    rootGroup.position.x = 982 + curParallaxX;
-    rootGroup.position.y = -792 + curBobY;
-    rootGroup.position.z = -heroExit * 340;
+    rootGroup.position.x = curPosX + curParallaxX;
+    rootGroup.position.y = curPosY;
+    rootGroup.position.z = curPosZ;
+
+    // Keep pointer gaze anchored on where the figure currently stands
+    headScreenX = boxLeft + rootGroup.position.x * coverUnit;
+    headScreenY = boxTop + (-rootGroup.position.y - 340 * curScale) * coverUnit;
   }
 
   function dispose() {

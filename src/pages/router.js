@@ -72,6 +72,7 @@ export function createRouter({ viewRoot, hud }) {
     updateHeadMetadata(entry.meta);
     hud.setActiveRoute(routeKey);
     cleanupCurrent = entry.mount(viewRoot) || (() => {});
+    window.dispatchEvent(new CustomEvent('devfest:route-changed', { detail: { routeKey } }));
 
     if (hash) {
       window.requestAnimationFrame(() => scrollToHashOrTop(hash, false));
