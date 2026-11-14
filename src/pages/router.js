@@ -4,6 +4,7 @@
  * keeping the persistent #gl-stage WebGL canvas untouched across all navigations.
  */
 import { supportsViewTransitions, prefersReducedMotion } from '../utils/env.js';
+import { mountTextMotion } from '../motion/textMotion.js';
 import { HOME_META, renderHomePage, mountHomePage } from './home.js';
 import { SPEAKERS_META, renderSpeakersPage, mountSpeakersPage } from './speakers.js';
 import { MEMORIES_META, renderMemoriesPage, mountMemoriesPage } from './memories.js';
@@ -61,9 +62,11 @@ function scrollToHashOrTop(hash, smooth = false) {
 export function createRouter({ viewRoot, hud }) {
   let currentKey = resolveRouteKey(window.location.pathname);
   let cleanupCurrent = () => {};
+  let cleanupMotion = () => {};
   let navToken = 0;
 
   function applyRoute(routeKey, hash = '') {
+    cleanupMotion();
     cleanupCurrent();
     const entry = ROUTES[routeKey] || ROUTES.home;
     currentKey = routeKey;
@@ -72,6 +75,7 @@ export function createRouter({ viewRoot, hud }) {
     updateHeadMetadata(entry.meta);
     hud.setActiveRoute(routeKey);
     cleanupCurrent = entry.mount(viewRoot) || (() => {});
+    cleanupMotion = mountTextMotion(viewRoot) || (() => {});
     window.dispatchEvent(new CustomEvent('devfest:route-changed', { detail: { routeKey } }));
 
     if (hash) {

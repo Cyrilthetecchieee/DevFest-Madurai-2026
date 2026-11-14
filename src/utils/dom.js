@@ -61,6 +61,18 @@ export function renderPicture({ base, dir, alt, width, height, sizes = '(max-wid
   `;
 }
 
+export function renderDragMarqueeBand(phrase = 'BUILD. LEARN. CONNECT. CREATE. · MADURAI 12 DEC 2026 · ') {
+  const repeated = `${phrase}${phrase}${phrase}${phrase}`;
+  return `
+    <div class="drag-marquee-band" data-drag-marquee="true" aria-hidden="true">
+      <div class="drag-marquee-track">
+        <span class="drag-marquee-chunk">${esc(repeated)}</span>
+        <span class="drag-marquee-chunk">${esc(repeated)}</span>
+      </div>
+    </div>
+  `;
+}
+
 export function renderDiscoverButton({ label, ariaLabel, href, external = false, inline = false, internalHref = null }) {
   const attrs = external
     ? 'target="_blank" rel="noopener noreferrer"'

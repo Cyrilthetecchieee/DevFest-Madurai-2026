@@ -1,6 +1,7 @@
 /** Venue & Event Info Section — Clear 4-Card Grid, Countdown, Maps & .ics Export */
 import eventData from '../data/event.json';
 import { esc, renderStatusChip } from '../utils/dom.js';
+import { spinCountdownDigit } from '../motion/textMotion.js';
 
 export const EVENT_TARGET_MS = Date.parse('2026-12-12T09:00:00+05:30');
 const MADURAI_MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=Madurai%2C+Tamil+Nadu%2C+India';
@@ -154,10 +155,11 @@ export function mountVenueSection() {
         if (timer) clearInterval(timer);
         return;
       }
-      daysEl.textContent = cd.days;
-      hoursEl.textContent = cd.hours;
-      minsEl.textContent = cd.mins;
+      spinCountdownDigit(daysEl, cd.days);
+      spinCountdownDigit(hoursEl, cd.hours);
+      spinCountdownDigit(minsEl, cd.mins);
     };
+    tick();
     timer = setInterval(tick, 15000);
   }
 

@@ -1,6 +1,6 @@
 /** Home Page View (Hero Stage + About + Venue + Speakers Preview + Agenda + Tickets + Sponsors + Memories + Footer) */
 import eventData from '../data/event.json';
-import { renderHeroStage } from '../utils/dom.js';
+import { renderHeroStage, renderDragMarqueeBand } from '../utils/dom.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
@@ -25,9 +25,13 @@ export function renderHomePage() {
     <main id="devfest-content">
       ${renderAboutSection(sections.about)}
 
+      ${renderDragMarqueeBand('BUILD. LEARN. CONNECT. CREATE. · GDG MADURAI 2026 · ')}
+
       ${renderVenueSection(sections.venue, links)}
 
       ${renderSpeakersExperience({ id: 'speakers', headingId: 'heading-speakers', isPage: false })}
+
+      ${renderDragMarqueeBand('WHERE CURIOSITY MEETS CREATION · 12 DEC 2026 · ')}
 
       ${renderAgendaSection()}
 
