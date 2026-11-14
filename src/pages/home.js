@@ -1,6 +1,7 @@
 /** Home Page View (Hero Stage + About + Venue + Speakers Preview + Agenda + Tickets + CFP + Sponsors + Memories + Footer) */
 import eventData from '../data/event.json';
-import { renderHeroStage, renderFooter } from '../utils/dom.js';
+import { renderHeroStage } from '../utils/dom.js';
+import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 import { initSectionMotion } from '../motion/tokens.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
@@ -40,7 +41,7 @@ export function renderHomePage() {
 
       ${renderHomeMemoriesSection()}
 
-      ${renderFooter({ cfpHref: '/#cfp' })}
+      ${renderStageFooter({ cfpHref: '/#cfp' })}
     </main>
   `;
 }
@@ -55,7 +56,9 @@ export function mountHomePage() {
   const stopTickets = mountTicketsSection();
   const stopCfp = mountCfpSection();
   const stopMemories = mountMemoriesInteraction(view);
+  const stopFooter = mountStageFooter(view);
   return () => {
+    stopFooter();
     stopMemories();
     stopCfp();
     stopTickets();

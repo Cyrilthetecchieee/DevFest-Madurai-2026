@@ -1,8 +1,9 @@
 /** Speakers Page View & Constellation/Track Controller */
 import eventData from '../data/event.json';
-import { esc, renderHeroStage, renderDiscoverButton, renderFooter } from '../utils/dom.js';
+import { esc, renderHeroStage, renderDiscoverButton } from '../utils/dom.js';
 import { initSectionMotion } from '../motion/tokens.js';
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
+import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 
 export const SPEAKERS_META = {
   title: 'Speakers — GDG Madurai · DevFest Madurai 2026',
@@ -67,7 +68,7 @@ export function renderSpeakersPage() {
         </dl>
       </section>
 
-      ${renderFooter({ cfpHref: '#cfp' })}
+      ${renderStageFooter({ cfpHref: '#cfp' })}
     </main>
   `;
 }
@@ -75,7 +76,9 @@ export function renderSpeakersPage() {
 export function mountSpeakersPage(root) {
   const stopMotion = initSectionMotion(root || document);
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers-directory', isPage: true });
+  const stopFooter = mountStageFooter(root || document);
   return () => {
+    stopFooter();
     stopSpeakers();
     stopMotion();
   };

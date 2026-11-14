@@ -1,9 +1,10 @@
 /** Memories Archive Page View, Curtain Reveals, Liquid Hover & Swipe Lightbox */
 import eventData from '../data/event.json';
 import memoriesData from '../data/memories.json';
-import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter } from '../utils/dom.js';
+import { esc, renderHeroStage, renderDiscoverButton, renderPicture } from '../utils/dom.js';
 import { initSectionMotion } from '../motion/tokens.js';
 import { mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
+import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
 
 export const MEMORIES_META = {
   title: 'Memories — GDG Madurai · DevFest Archive',
@@ -158,7 +159,7 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      ${renderFooter({ cfpHref: '/#cfp' })}
+      ${renderStageFooter({ cfpHref: '/#cfp' })}
     </main>
 
     <div id="archive-lightbox" class="mem-lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">
@@ -193,6 +194,7 @@ export function mountMemoriesPage(root) {
 
   const stopMotion = initSectionMotion(root || document);
   const stopInteraction = mountMemoriesInteraction(root || document);
+  const stopFooter = mountStageFooter(root || document);
 
   return () => {
     if (progress) {
@@ -200,6 +202,7 @@ export function mountMemoriesPage(root) {
       progress.style.width = '0%';
     }
     window.removeEventListener('scroll', updateProgress);
+    stopFooter();
     stopInteraction();
     stopMotion();
   };
