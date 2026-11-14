@@ -1,75 +1,87 @@
 /**
- * Agenda Section (#16, S8):
- * - Self-drawing vertical timeline spine driven by scroll transit.
- * - Expandable track rows with pulse-lock COMING SOON badges.
- * - My Day localStorage pin planner + valid .ics calendar export clearly labelled [DEMO SLOT — SCHEDULE TBA].
+ * Agenda Section — Chronological Track-Filterable Timeline & Expandable Session Details
  */
 import agendaData from '../data/agenda.json';
-import { esc } from '../utils/dom.js';
-import { prefersReducedMotion } from '../utils/env.js';
+import speakersData from '../data/speakers.json';
+import {
+  esc,
+  renderTrackChip,
+  renderStatusChip,
+  renderGdgRule,
+  renderGdgMotif,
+} from '../utils/dom.js';
 
-const STORAGE_KEY = 'df26_my_day_pins_v1';
+const PIN_KEY = 'devfest_my_agenda_v2';
 
-const TRACK_DETAILS = [
-  'Community opening, opening remarks from GDG Madurai organizers, keynote launch, and end-of-day wrap.',
-  'Full-stage flagship talks covering next-generation AI workflows, web platform advances, and community lessons.',
-  'Deep-dive technical sessions across AI & ML, Web & Cloud, Android, Open Source, Design & Product.',
-  'Hands-on guided build labs where attendees ship real prototypes and test modern developer toolchains.',
-  'Open corridor networking, lightning exchanges, community booths, and peer mentoring across Madurai.',
-  'Full session timetable, room assignments, and speaker time slots will publish here once CFP closes.',
-];
+function parseMinutes(timeStr) {
+  const m = String(timeStr || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return Number.POSITIVE_INFINITY;
+  const hh = Number(m[1]);
+  const mm = Number(m[2]);
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return Number.POSITIVE_INFINITY;
+  return hh * 60 + mm;
+}
 
-function loadPins() {
+export function sortSessionsChronologically(sessions) {
+  return sessions
+    .map((s, index) => ({ session: s, index, mins: parseMinutes(s.time) }))
+    .sort((a, b) => (a.mins !== b.mins ? a.mins - b.mins : a.index - b.index))
+    .map((item) => item.session);
+}
+
+function matchesAgendaTrack(track, filterId) {
+  if (!filterId || filterId === 'all') return true;
+  if (filterId === 'opensource-design') {
+    return track === 'opensource' || track === 'design';
+  }
+  return track === filterId;
+}
+
+function readPins() {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    const raw = localStorage.getItem(PIN_KEY);
+    return new Set(Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : []);
   } catch {
-    return [];
+    return new Set();
   }
 }
 
-function savePins(pins) {
+function writePins(pinSet) {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pins));
+    localStorage.setItem(PIN_KEY, JSON.stringify([...pinSet]));
   } catch {
-    // Ignore storage quota errors in private mode
+    /* ignore storage quota failures */
   }
 }
 
-function formatIcsContent(tracksToExport) {
-  const dtStamp = '20261114T000000Z';
+function buildMyAgendaIcs(sessions, pinSet) {
+  const chosen = sessions.filter((s) => pinSet.has(s.id));
+  const list = chosen.length ? chosen : sessions.slice(0, 1);
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//GDG Madurai//DevFest Madurai 2026 Demo Planner//EN',
+    'PRODID:-//GDG Madurai//DevFest Madurai 2026//EN',
     'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
   ];
-
-  tracksToExport.forEach((t, i) => {
-    const hourStart = 9 + i;
-    const pad = (n) => String(n).padStart(2, '0');
+  list.forEach((s) => {
     lines.push(
       'BEGIN:VEVENT',
-      `UID:devfest-madurai-2026-demo-${t.id || i}@gdgmadurai`,
-      `DTSTAMP:${dtStamp}`,
-      `DTSTART;TZID=Asia/Kolkata:20261212T${pad(hourStart)}0000`,
-      `DTEND;TZID=Asia/Kolkata:20261212T${pad(hourStart)}4500`,
-      `SUMMARY:[DEMO SLOT - SCHEDULE TBA] DevFest Madurai 2026: ${t.title}`,
-      `DESCRIPTION:${t.body} (Demo planning reminder - official venue & timetable to be announced by GDG Madurai.)`,
-      'LOCATION:Madurai, Tamil Nadu, India (Venue To Be Announced)',
-      'STATUS:TENTATIVE',
+      `UID:${s.id}@gdgmadurai.in`,
+      'DTSTAMP:20260101T000000Z',
+      'DTSTART;VALUE=DATE:20261212',
+      'DTEND;VALUE=DATE:20261213',
+      `SUMMARY:DevFest Madurai 2026 — ${s.title}`,
+      `DESCRIPTION:${s.description.replace(/\r?\n/g, ' ')}`,
+      `LOCATION:${s.room && s.room !== 'TBA' ? s.room : 'Madurai, Tamil Nadu, India'}`,
       'END:VEVENT',
     );
   });
-
   lines.push('END:VCALENDAR');
   return lines.join('\r\n');
 }
 
-function triggerIcsDownload(filename, content) {
-  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -77,157 +89,199 @@ function triggerIcsDownload(filename, content) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function renderAgendaSection() {
-  const tracks = agendaData.tracks || [];
+  const pins = readPins();
+  const speakerById = new Map((speakersData.speakers || []).map((sp) => [sp.id, sp]));
+  const orderedSessions = sortSessionsChronologically(agendaData.sessions || []);
+  const pinnedCount = orderedSessions.filter((s) => pins.has(s.id)).length;
 
   return `
-    <section id="agenda" class="stage-section ag-stage" data-waypoint="4" aria-labelledby="heading-agenda">
-      <div class="ag-header">
+    <section id="agenda" class="stage-section" aria-labelledby="heading-agenda">
+      ${renderGdgRule()}
+      <div class="gdg-section-head">
         <div>
-          <span class="stage-eyebrow" data-scramble="true">${esc(agendaData.tag)}</span>
-          <h2 id="heading-agenda" class="stage-display" data-reveal="mask" data-track-scroll="true">${esc(agendaData.heading)}</h2>
-          <p class="stage-lead">${esc(agendaData.copy)}</p>
+          <span class="stage-eyebrow">${esc(agendaData.tag)}</span>
+          <h2 id="heading-agenda" class="stage-display">${esc(agendaData.heading)}</h2>
         </div>
+        ${renderGdgMotif('bars')}
+      </div>
+      <p class="stage-lead">${esc(agendaData.copy)}</p>
 
-        <aside class="ag-planner-bar" aria-label="My Day Planner Controls">
-          <div class="ag-planner-status">
-            <span class="ag-planner-label">MY DAY PLANNER // <strong id="ag-pin-count">00</strong> PINNED</span>
-            <span class="ag-demo-tag">[DEMO SLOT — SCHEDULE TBA]</span>
-          </div>
-          <button type="button" id="ag-export-ics" class="ag-export-btn">EXPORT .ICS CALENDAR</button>
-        </aside>
+      <div class="ag-status-banner">
+        <div class="ag-status-copy">
+          ${renderStatusChip('SCHEDULE LOCK PENDING', 'tba')}
+          <span class="ag-status-note">${esc(agendaData.lockNote)}</span>
+        </div>
+        <div class="ag-planner-controls">
+          <span class="ag-planner-count">Saved sessions: <strong id="ag-pin-count">${pinnedCount}</strong></span>
+          <button type="button" id="ag-export-ics" class="btn-g-secondary">EXPORT MY SCHEDULE (.ICS)</button>
+        </div>
       </div>
 
-      <div class="ag-timeline-shell" id="ag-timeline-shell">
-        <div class="ag-spine-track" aria-hidden="true">
-          <div class="ag-spine-fill" id="ag-spine-fill"></div>
-        </div>
+      <div class="orbe-filter-bar" role="group" aria-label="Filter agenda by track">
+        ${(agendaData.filters || []).map((f, idx) => `
+          <button
+            type="button"
+            class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
+            data-ag-filter="${esc(f.id)}"
+            aria-pressed="${idx === 0 ? 'true' : 'false'}"
+          >
+            ${esc(f.label)}
+          </button>
+        `).join('')}
+      </div>
 
-        <div class="ag-rows-list" aria-label="Agenda Format &amp; Placeholders">
-          ${tracks.map((t, idx) => `
-            <article class="ag-row" data-ag-index="${idx}" data-track-id="${esc(t.id || `track-${idx}`)}" style="--ag-i:${idx}">
-              <span class="ag-row-node" aria-hidden="true"></span>
-              <div class="ag-row-top">
-                <div class="ag-row-meta">
-                  <span class="ag-row-num">0${idx + 1}</span>
-                  <span class="ag-pulse-badge"><span class="ag-lock-dot" aria-hidden="true"></span>${esc(t.badge)}</span>
-                </div>
-                <div class="ag-row-actions">
-                  <button type="button" class="ag-pin-btn" data-pin-id="${esc(t.id || `track-${idx}`)}" aria-pressed="false">PIN TO MY DAY</button>
-                  <button type="button" class="ag-expand-btn" aria-expanded="${idx === 0 ? 'true' : 'false'}" aria-controls="ag-panel-${idx}">
-                    <span>DETAILS</span>
-                    <span class="ag-chevron" aria-hidden="true">+</span>
-                  </button>
-                </div>
+      <div class="ag-timeline" id="ag-timeline">
+        ${orderedSessions.map((session) => {
+          const isPinned = pins.has(session.id);
+          const isTimeTba = !session.time || session.time.toUpperCase() === 'TBA';
+          const resolvedSpeaker = session.speakerId ? speakerById.get(session.speakerId) : null;
+          const hasConfirmedSpeaker = Boolean(resolvedSpeaker && resolvedSpeaker.status === 'confirmed');
+          const roomLabel = !session.room || session.room.toUpperCase() === 'TBA'
+            ? 'Room to be announced'
+            : session.room;
+
+          return `
+            <article class="ag-row ag-row--${esc(session.track)} ${isPinned ? 'is-pinned' : ''}" data-ag-id="${esc(session.id)}" data-track="${esc(session.track)}">
+              <div class="ag-row-node" aria-hidden="true"></div>
+              <div class="ag-row-time-col">
+                ${isTimeTba
+                  ? `<span class="ag-time-tba">Time to be announced</span>`
+                  : `<time class="ag-time-confirmed">${esc(session.time)}</time>`
+                }
               </div>
 
-              <h3 class="ag-row-title">${esc(t.title)}</h3>
-              <p class="ag-row-body">${esc(t.body)}</p>
+              <div class="ag-row-main">
+                <div class="ag-row-badges">
+                  ${renderTrackChip(session.track)}
+                  ${hasConfirmedSpeaker
+                    ? `<span class="ag-speaker-pill">${esc(resolvedSpeaker.name)}</span>`
+                    : `<span class="ag-speaker-pill ag-speaker-pill--tba">Speaker TBA</span>`
+                  }
+                  <span class="ag-room-pill">${esc(roomLabel)}</span>
+                </div>
 
-              <div class="ag-row-drawer" id="ag-panel-${idx}" ${idx === 0 ? '' : 'hidden'}>
-                <p class="ag-drawer-note">${esc(TRACK_DETAILS[idx] || t.body)}</p>
-                <div class="ag-drawer-foot">
-                  <span>DATE: 12 DEC 2026 // SECTOR: MADURAI</span>
-                  <span class="ag-demo-inline">[DEMO SLOT — SCHEDULE TBA]</span>
+                <h3 class="ag-row-title">${esc(session.title)}</h3>
+
+                <div class="ag-row-actions">
+                  <button
+                    type="button"
+                    class="ag-expand-btn"
+                    data-ag-expand="${esc(session.id)}"
+                    aria-expanded="false"
+                    aria-controls="ag-drawer-${esc(session.id)}"
+                  >
+                    SESSION DETAILS
+                  </button>
+                  <button
+                    type="button"
+                    class="ag-pin-btn ${isPinned ? 'is-pinned' : ''}"
+                    data-ag-pin="${esc(session.id)}"
+                    aria-pressed="${isPinned ? 'true' : 'false'}"
+                  >
+                    ${isPinned ? 'SAVED TO MY SCHEDULE' : '+ SAVE SESSION'}
+                  </button>
+                </div>
+
+                <div id="ag-drawer-${esc(session.id)}" class="ag-row-drawer" hidden>
+                  <p class="ag-drawer-note">${esc(session.description)}</p>
+                  <div class="ag-drawer-meta">
+                    <span>Speaker: ${hasConfirmedSpeaker ? esc(`${resolvedSpeaker.name} (${resolvedSpeaker.role})`) : 'To be announced'}</span>
+                    <span>Room: ${esc(roomLabel)}</span>
+                  </div>
                 </div>
               </div>
             </article>
-          `).join('')}
-        </div>
+          `;
+        }).join('')}
       </div>
+      <p id="ag-empty-state" class="spk-empty-state" hidden>No agenda sessions in this track yet.</p>
     </section>
   `;
 }
 
 export function mountAgendaSection() {
-  const shell = document.getElementById('ag-timeline-shell');
-  const spineFill = document.getElementById('ag-spine-fill');
-  const pinCountEl = document.getElementById('ag-pin-count');
+  const section = document.getElementById('agenda');
+  if (!section) return () => {};
+
+  const pins = readPins();
+  const countEl = document.getElementById('ag-pin-count');
   const exportBtn = document.getElementById('ag-export-ics');
-  if (!shell) return () => {};
+  const rows = Array.from(section.querySelectorAll('.ag-row'));
+  const filterBtns = Array.from(section.querySelectorAll('[data-ag-filter]'));
+  const emptyEl = document.getElementById('ag-empty-state');
+  const cleanups = [];
 
-  let pins = new Set(loadPins());
-  const pinBtns = Array.from(shell.querySelectorAll('.ag-pin-btn'));
-  const expandBtns = Array.from(shell.querySelectorAll('.ag-expand-btn'));
-  const rows = Array.from(shell.querySelectorAll('.ag-row'));
-
-  function syncPinsUi() {
-    if (pinCountEl) pinCountEl.textContent = String(pins.size).padStart(2, '0');
-    pinBtns.forEach((btn) => {
-      const id = btn.dataset.pinId;
-      const pinned = pins.has(id);
-      btn.classList.toggle('is-pinned', pinned);
-      btn.setAttribute('aria-pressed', pinned ? 'true' : 'false');
-      btn.textContent = pinned ? 'PINNED ✓' : 'PIN TO MY DAY';
-    });
-    rows.forEach((row) => {
-      row.classList.toggle('is-pinned', pins.has(row.dataset.trackId));
-    });
-  }
-
-  pinBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.pinId;
-      if (!id) return;
-      if (pins.has(id)) pins.delete(id);
-      else pins.add(id);
-      savePins([...pins]);
-      syncPinsUi();
-    });
-  });
-
-  expandBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('aria-controls');
-      const panel = targetId ? document.getElementById(targetId) : null;
-      const nextOpen = btn.getAttribute('aria-expanded') !== 'true';
-      btn.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
-      if (panel) panel.hidden = !nextOpen;
-    });
-  });
-
-  exportBtn?.addEventListener('click', () => {
-    const allTracks = agendaData.tracks || [];
-    const selected = pins.size
-      ? allTracks.filter((t, i) => pins.has(t.id || `track-${i}`))
-      : [allTracks[0]].filter(Boolean);
-    const ics = formatIcsContent(selected);
-    triggerIcsDownload('devfest-madurai-2026-demo-schedule-tba.ics', ics);
-    exportBtn.textContent = 'EXPORTED .ICS ✓';
-    window.setTimeout(() => {
-      exportBtn.textContent = 'EXPORT .ICS CALENDAR';
-    }, 1800);
-  });
-
-  syncPinsUi();
-
-  // Scroll-driven self-drawing timeline spine & row activation
-  const reduced = prefersReducedMotion();
-  function updateSpine() {
-    if (!spineFill) return;
-    if (reduced) {
-      spineFill.style.transform = 'scaleY(1)';
-      rows.forEach((r) => r.classList.add('is-lit'));
-      return;
-    }
-    const r = shell.getBoundingClientRect();
-    const vh = window.innerHeight || 800;
-    const raw = (vh * 0.72 - r.top) / Math.max(240, r.height);
-    const p = Math.max(0.05, Math.min(1, raw));
-    spineFill.style.transform = `scaleY(${p.toFixed(3)})`;
-    rows.forEach((row) => {
-      const rr = row.getBoundingClientRect();
-      row.classList.toggle('is-lit', rr.top < vh * 0.78);
-    });
-  }
-
-  window.addEventListener('scroll', updateSpine, { passive: true });
-  updateSpine();
-
-  return () => {
-    window.removeEventListener('scroll', updateSpine);
+  const refreshPinCount = () => {
+    const active = (agendaData.sessions || []).filter((s) => pins.has(s.id)).length;
+    if (countEl) countEl.textContent = String(active);
   };
+
+  filterBtns.forEach((btn) => {
+    const onClick = () => {
+      const fid = btn.dataset.agFilter || 'all';
+      filterBtns.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-pressed', String(active));
+      });
+      let visible = 0;
+      rows.forEach((row) => {
+        const show = matchesAgendaTrack(row.dataset.track || '', fid);
+        row.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (emptyEl) emptyEl.hidden = visible > 0;
+    };
+    btn.addEventListener('click', onClick);
+    cleanups.push(() => btn.removeEventListener('click', onClick));
+  });
+
+  section.querySelectorAll('[data-ag-pin]').forEach((btn) => {
+    const onClick = () => {
+      const id = btn.dataset.agPin;
+      if (!id) return;
+      if (pins.has(id)) {
+        pins.delete(id);
+      } else {
+        pins.add(id);
+      }
+      writePins(pins);
+      const isPinned = pins.has(id);
+      btn.classList.toggle('is-pinned', isPinned);
+      btn.setAttribute('aria-pressed', String(isPinned));
+      btn.textContent = isPinned ? 'SAVED TO MY SCHEDULE' : '+ SAVE SESSION';
+      btn.closest('.ag-row')?.classList.toggle('is-pinned', isPinned);
+      refreshPinCount();
+    };
+    btn.addEventListener('click', onClick);
+    cleanups.push(() => btn.removeEventListener('click', onClick));
+  });
+
+  section.querySelectorAll('[data-ag-expand]').forEach((btn) => {
+    const onClick = () => {
+      const id = btn.dataset.agExpand;
+      const drawer = document.getElementById(`ag-drawer-${id}`);
+      if (!drawer) return;
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.textContent = !open ? 'HIDE DETAILS' : 'SESSION DETAILS';
+      drawer.hidden = open;
+    };
+    btn.addEventListener('click', onClick);
+    cleanups.push(() => btn.removeEventListener('click', onClick));
+  });
+
+  if (exportBtn) {
+    const onExport = () => {
+      downloadText('devfest-madurai-2026-schedule.ics', buildMyAgendaIcs(agendaData.sessions || [], pins));
+    };
+    exportBtn.addEventListener('click', onExport);
+    cleanups.push(() => exportBtn.removeEventListener('click', onExport));
+  }
+
+  return () => cleanups.forEach((fn) => fn());
 }

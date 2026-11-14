@@ -13,101 +13,139 @@
     ]
   },
   "filters": [
-    { "id": "all", "label": "ALL TRACKS (07)" },
-    { "id": "hosts", "label": "COMMUNITY HOSTS" },
+    { "id": "all", "label": "All" },
     { "id": "ai", "label": "AI & ML" },
-    { "id": "cloud", "label": "WEB & CLOUD" },
-    { "id": "android", "label": "ANDROID" },
-    { "id": "workshop", "label": "WORKSHOPS" },
-    { "id": "opensource", "label": "OPEN SOURCE" },
-    { "id": "design", "label": "DESIGN & PRODUCT" }
+    { "id": "cloud", "label": "Web & Cloud" },
+    { "id": "android", "label": "Android" },
+    { "id": "opensource-design", "label": "Open Source & Design" },
+    { "id": "workshop", "label": "Workshops" },
+    { "id": "hosts", "label": "Hosts" }
   ],
   "speakers": [
     {
       "id": "spk-01",
-      "category": "hosts",
-      "code": "SPK_01 // HOSTS",
-      "monogram": "[ GDG ]",
-      "homeBadge": "COMMUNITY HOSTS",
-      "pageBadge": "COMMUNITY HOSTS",
-      "status": "MADURAI CHAPTER",
       "name": "GDG Madurai Organising Team",
-      "subtitle": "Community Hosts · Google Developer Group Madurai",
-      "bio": "Host chapter leads and community organisers curating DevFest Madurai 2026."
+      "role": "Community Hosts",
+      "organisation": "Google Developer Group Madurai",
+      "track": "hosts",
+      "topic": "Opening Welcome & Community Showcase",
+      "bio": "Host chapter leads and community organisers curating DevFest Madurai 2026 — bringing developers, designers and students together in Madurai.",
+      "photo": "",
+      "socials": {
+        "linkedin": "https://www.linkedin.com/company/gdg-madurai/",
+        "x": "https://x.com/gdgmadurai",
+        "github": "https://github.com/gdg-madurai",
+        "website": "https://gdg.community.dev/gdg-madurai/"
+      },
+      "status": "confirmed",
+      "showOnHome": true
     },
     {
       "id": "spk-02",
-      "category": "ai",
-      "code": "SPK_02 // KEYNOTE",
-      "monogram": "[ TBA ]",
-      "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "AI & ML TRACK",
       "name": "Keynote Speaker (TBA)",
-      "subtitle": "AI & ML Track · Placeholder · DevFest Madurai 2026",
-      "bio": "Keynote session: What’s Next in AI and Developer Technology? Speaker profile announcing soon."
+      "role": "Keynote Speaker",
+      "organisation": "Announcing Soon",
+      "track": "ai",
+      "topic": "What's Next in AI and Developer Technology?",
+      "bio": "Keynote speaker profile announcing soon. Submissions are currently open through the DevFest Madurai Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
+      "showOnHome": true
     },
     {
       "id": "spk-03",
-      "category": "cloud",
-      "code": "SPK_03 // CLOUD",
-      "monogram": "[ TBA ]",
-      "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
       "name": "Web & Cloud Speaker (TBA)",
-      "subtitle": "Web & Cloud Track · Placeholder · CFP Open · GDG Madurai",
-      "bio": "Building with Google Cloud: Tools, Platforms, and Modern Web Use Cases. Speaker profile announcing soon."
+      "role": "Technical Speaker · CFP Open",
+      "organisation": "Announcing Soon",
+      "track": "cloud",
+      "topic": "Building with Google Cloud: Tools, Platforms, and Modern Web Use Cases",
+      "bio": "Web & Cloud session profile announcing soon. Submit your talk proposal via Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
+      "showOnHome": true
     },
     {
       "id": "spk-04",
-      "category": "android",
-      "code": "SPK_04 // ANDROID",
-      "monogram": "[ TBA ]",
-      "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
       "name": "Android Speaker (TBA)",
-      "subtitle": "Android Track · Placeholder · CFP Open · GDG Madurai",
-      "bio": "Modern Android, Kotlin & Multiplatform mobile engineering insights. Speaker profile announcing soon."
+      "role": "Technical Speaker · CFP Open",
+      "organisation": "Announcing Soon",
+      "track": "android",
+      "topic": "Modern Android, Kotlin & Multiplatform Engineering",
+      "bio": "Android engineering speaker profile announcing soon. Submit your mobile or Kotlin talk proposal via Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
+      "showOnHome": true
     },
     {
       "id": "spk-05",
-      "category": "workshop",
-      "code": "SPK_05 // BUILD LAB",
-      "monogram": "[ TBA ]",
-      "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
       "name": "Workshop Lead (TBA)",
-      "subtitle": "Hands-on Workshop · Placeholder · CFP Open · GDG Madurai",
-      "bio": "Hands-on Workshop: Build a Small AI-Powered Project & practical guided learning. Lead announcing soon."
+      "role": "Hands-on Workshop Lead · CFP Open",
+      "organisation": "Announcing Soon",
+      "track": "workshop",
+      "topic": "Hands-on Workshop: Build a Small AI-Powered Project",
+      "bio": "Guided build lab lead profile announcing soon. Submit your interactive workshop proposal via Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
+      "showOnHome": true
     },
     {
       "id": "spk-06",
-      "category": "opensource",
-      "code": "SPK_06 // OSS",
-      "monogram": "[ TBA ]",
-      "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
-      "name": "Open Source & Design Speaker (TBA)",
-      "pageName": "Open Source Speaker (TBA)",
-      "homeSubtitle": "Open Source & Product Track · Placeholder · CFP Open · GDG Madurai",
-      "subtitle": "Open Source Track · Placeholder · CFP Open · GDG Madurai",
-      "bio": "Developer tools, open-source ecosystems and community-driven engineering. Speaker profile announcing soon.",
+      "name": "Open Source Speaker (TBA)",
+      "role": "Technical Speaker · CFP Open",
+      "organisation": "Announcing Soon",
+      "track": "opensource",
+      "topic": "Developer Tools & Open-Source Ecosystems",
+      "bio": "Open source speaker profile announcing soon. Submit your open-source tooling or community story via Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
       "showOnHome": true
     },
     {
       "id": "spk-07",
-      "category": "design",
-      "code": "SPK_07 // DESIGN",
-      "monogram": "[ TBA ]",
-      "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
       "name": "Design & Product Speaker (TBA)",
-      "subtitle": "Design & Product Track · Placeholder · CFP Open · GDG Madurai",
-      "bio": "Product thinking, design systems and human-centred interfaces for next-gen apps. Speaker profile announcing soon.",
+      "role": "Product & Design Speaker · CFP Open",
+      "organisation": "Announcing Soon",
+      "track": "design",
+      "topic": "Product Thinking & Human-Centred Interfaces",
+      "bio": "Design & product speaker profile announcing soon. Submit your design systems or UX proposal via Call for Speakers.",
+      "photo": "",
+      "socials": {
+        "linkedin": "",
+        "x": "",
+        "github": "",
+        "website": ""
+      },
+      "status": "tba",
       "showOnHome": false
     }
   ]

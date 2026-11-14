@@ -8,7 +8,7 @@ import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/s
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
 import { renderCfpSection, mountCfpSection } from '../sections/cfpSection.js';
-import { renderSponsorsSection } from '../sections/sponsorsSection.js';
+import { renderSponsorsSection, mountSponsorsSection } from '../sections/sponsorsSection.js';
 import { renderHomeMemoriesSection, mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
 
 export const HOME_META = {
@@ -53,11 +53,13 @@ export function mountHomePage() {
   const stopAgenda = mountAgendaSection();
   const stopTickets = mountTicketsSection();
   const stopCfp = mountCfpSection();
+  const stopSponsors = mountSponsorsSection();
   const stopMemories = mountMemoriesInteraction(view);
   const stopFooter = mountStageFooter(view);
   return () => {
     stopFooter();
     stopMemories();
+    stopSponsors();
     stopCfp();
     stopTickets();
     stopAgenda();

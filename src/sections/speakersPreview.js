@@ -1,94 +1,310 @@
 /**
- * Speakers Lineup Grid (replaces deleted 3D constellation with clear, accessible cards).
+ * Speakers Directory & Preview Section — 4:5 Portrait Cards, Neutral Silhouettes,
+ * Track Filters & Confirmed Speaker Bio/Socials Modal
  */
 import speakersData from '../data/speakers.json';
-import { esc } from '../utils/dom.js';
+import {
+  esc,
+  renderTrackChip,
+  renderStatusChip,
+  renderGdgRule,
+  renderGdgMotif,
+} from '../utils/dom.js';
+
+const SOCIAL_LABELS = [
+  ['linkedin', 'LinkedIn'],
+  ['x', 'X'],
+  ['github', 'GitHub'],
+  ['website', 'Website'],
+];
+
+function matchesFilter(track, filterId) {
+  if (!filterId || filterId === 'all') return true;
+  if (filterId === 'opensource-design') {
+    return track === 'opensource' || track === 'design';
+  }
+  return track === filterId;
+}
+
+function renderPortraitPlaceholder(isHost = false) {
+  return `
+    <div class="spk-silhouette" aria-hidden="true">
+      <svg viewBox="0 0 120 150" class="spk-silhouette-svg" focusable="false">
+        <rect x="6" y="6" width="108" height="138" rx="6" fill="none" stroke="rgba(207,214,230,0.16)" stroke-width="1" />
+        <circle cx="60" cy="54" r="22" fill="${isHost ? 'rgba(66,133,244,0.22)' : 'rgba(207,214,230,0.14)'}" stroke="${isHost ? '#4285F4' : 'rgba(207,214,230,0.34)'}" stroke-width="1.5" />
+        <path d="M24,132 C24,102 96,102 96,132" fill="${isHost ? 'rgba(66,133,244,0.16)' : 'rgba(207,214,230,0.1)'}" stroke="${isHost ? '#4285F4' : 'rgba(207,214,230,0.3)'}" stroke-width="1.5" />
+        <g transform="translate(36,16)">
+          <rect x="0" y="0" width="10" height="3" rx="1.5" fill="#4285F4" />
+          <rect x="12" y="0" width="10" height="3" rx="1.5" fill="#EA4335" />
+          <rect x="24" y="0" width="10" height="3" rx="1.5" fill="#FBBC04" />
+          <rect x="36" y="0" width="10" height="3" rx="1.5" fill="#34A853" />
+        </g>
+      </svg>
+      <span class="spk-silhouette-label">${isHost ? 'GDG MADURAI CHAPTER' : 'PROFILE PHOTO TBA'}</span>
+    </div>
+  `;
+}
+
+function renderSpeakerStatusBadge(speaker) {
+  if (speaker.status === 'confirmed') {
+    return speaker.track === 'hosts'
+      ? renderStatusChip('HOST CHAPTER', 'blue')
+      : renderStatusChip('CONFIRMED', 'open');
+  }
+  return renderStatusChip('TBA', 'tba');
+}
+
+function renderSpeakerCard(speaker) {
+  const isConfirmed = speaker.status === 'confirmed';
+  const isHost = speaker.track === 'hosts';
+  const hasPhoto = Boolean(speaker.photo && speaker.photo.trim());
+
+  return `
+    <article class="spk-card spk-card--${esc(speaker.track)} speaker-item" data-track="${esc(speaker.track)}" data-speaker-id="${esc(speaker.id)}">
+      <div class="spk-photo-frame">
+        ${hasPhoto
+          ? `<img src="${esc(speaker.photo)}" alt="${esc(speaker.name)} portrait" loading="lazy" decoding="async" class="spk-photo-img" data-spk-img />`
+          : ''}
+        <div class="spk-photo-fallback" ${hasPhoto ? 'hidden' : ''}>
+          ${renderPortraitPlaceholder(isHost)}
+        </div>
+        <div class="spk-photo-badge">
+          ${renderSpeakerStatusBadge(speaker)}
+        </div>
+      </div>
+
+      <div class="spk-card-body">
+        <div class="spk-card-meta-row">
+          ${renderTrackChip(speaker.track)}
+        </div>
+        <h3 class="spk-card-name">${esc(speaker.name)}</h3>
+        <p class="spk-card-role">${esc(speaker.role)} · ${esc(speaker.organisation)}</p>
+        <p class="spk-card-topic">${esc(speaker.topic)}</p>
+        ${isConfirmed
+          ? `<div class="spk-card-actions">
+              <button type="button" class="btn-g-secondary spk-bio-trigger" data-spk-open="${esc(speaker.id)}">
+                VIEW BIO &amp; SOCIALS
+              </button>
+            </div>`
+          : `<p class="spk-card-tba-note">${esc(speaker.bio)}</p>`
+        }
+      </div>
+    </article>
+  `;
+}
 
 export function renderSpeakersExperience({
   id = 'speakers',
   headingId = 'heading-speakers',
   isPage = false,
-  links,
-  cfpCtaLabel,
-}) {
+  links = {},
+  cfpCtaLabel = 'SUBMIT YOUR PROPOSAL.',
+} = {}) {
   const { homeSection, pageSection, filters = [], speakers = [] } = speakersData;
-  const meta = isPage ? pageSection : homeSection;
+  const sectionCopy = isPage ? pageSection : homeSection;
+  const visibleSpeakers = isPage ? speakers : speakers.filter((s) => s.showOnHome !== false);
+  const confirmedCount = speakers.filter((s) => s.status === 'confirmed').length;
 
   return `
-    <section id="${esc(id)}" class="stage-section spk-stage" aria-labelledby="${esc(headingId)}">
-      <div class="spk-header-row">
+    <section id="${esc(id)}" class="stage-section" aria-labelledby="${esc(headingId)}">
+      ${renderGdgRule()}
+      <div class="gdg-section-head">
         <div>
-          <span class="stage-eyebrow">${esc(meta.tag)}</span>
-          <h2 id="${esc(headingId)}" class="stage-display">${esc(meta.heading)}</h2>
-          ${meta.copy
-            ? `<p class="stage-lead">${esc(meta.copy)}</p>`
-            : (meta.paragraphs || []).map((p) => `<p class="stage-lead">${esc(p)}</p>`).join('')}
+          <span class="stage-eyebrow">${esc(sectionCopy.tag)}</span>
+          <h2 id="${esc(headingId)}" class="stage-display">${esc(sectionCopy.heading)}</h2>
         </div>
-
-        <div class="spk-count-chip" aria-live="polite">
-          <span>${speakers.length} SLOTS //</span>
-          <strong class="orbe-badge-tba">SPEAKERS TBA</strong>
-        </div>
+        ${renderGdgMotif('brackets')}
       </div>
 
-      ${filters.length ? `
-        <div class="orbe-filter-bar" role="group" aria-label="Filter Speakers by Track">
+      ${isPage
+        ? sectionCopy.paragraphs.map((p) => `<p class="stage-lead">${esc(p)}</p>`).join('')
+        : `<p class="stage-lead">${esc(sectionCopy.copy)}</p>`
+      }
+
+      <div class="spk-summary-bar">
+        ${renderStatusChip(confirmedCount > 1 ? `${confirmedCount} CONFIRMED` : 'LINEUP ANNOUNCING SOON', confirmedCount > 1 ? 'open' : 'tba')}
+        <span class="spk-summary-count">${visibleSpeakers.length} TRACK SLOTS · DEVFEST MADURAI 2026</span>
+      </div>
+
+      ${isPage ? `
+        <div class="orbe-filter-bar" role="group" aria-label="Filter speakers by track">
           ${filters.map((f, idx) => `
             <button
               type="button"
-              class="orbe-filter-btn${idx === 0 ? ' active' : ''}"
-              data-filter="${esc(f.id)}"
+              class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
+              data-spk-filter="${esc(f.id)}"
               aria-pressed="${idx === 0 ? 'true' : 'false'}"
-            >${esc(f.label)}</button>
+            >
+              ${esc(f.label)}
+            </button>
           `).join('')}
         </div>
       ` : ''}
 
-      <div class="orbe-grid-3 spk-cards-grid" aria-label="Speaker Slots">
-        ${speakers.map((s) => `
-          <article class="orbe-card speaker-item" data-track="${esc(s.category)}">
-            <div class="orbe-speaker-frame">
-              <span class="orbe-speaker-code">${esc(s.code)}</span>
-              <strong class="spk-slot-title">${esc(s.name)}</strong>
-              <span class="orbe-badge-tba">${esc(s.status || 'TBA')}</span>
-            </div>
-            <h3 class="orbe-card-title">${esc(s.subtitle)}</h3>
-            <p class="orbe-card-body">${esc(s.bio)}</p>
-          </article>
-        `).join('')}
+      <div class="spk-grid ${isPage ? 'spk-grid--full' : 'spk-grid--preview'}" id="${esc(id)}-grid">
+        ${visibleSpeakers.map(renderSpeakerCard).join('')}
+      </div>
+      <p id="${esc(id)}-empty" class="spk-empty-state" hidden>No speaker slots match this track yet.</p>
+
+      <div class="spk-cfp-callout">
+        <div class="spk-cfp-copy">
+          ${renderStatusChip('CFP OPEN', 'open')}
+          <h3 class="spk-cfp-title">Have a talk, demo, or workshop idea worth sharing?</h3>
+          <p class="spk-cfp-body">Both first-time and experienced speakers are welcome to submit proposals across AI &amp; ML, Web &amp; Cloud, Android, Open Source, and Design.</p>
+        </div>
+        <div class="spk-cfp-actions">
+          <a href="${esc(links.cfp || '#cfp')}" ${links.cfp ? 'target="_blank" rel="noopener noreferrer"' : ''} class="btn-g-primary">
+            ${esc(cfpCtaLabel)}
+          </a>
+          ${!isPage ? `<a href="/speakers" data-spa-link="true" class="btn-g-secondary">VIEW ALL SPEAKERS</a>` : ''}
+        </div>
       </div>
 
-      <div class="orbe-cta-row">
-        ${!isPage ? `<a href="/speakers" data-spa-link="true" class="btn-link-inline">VIEW ALL SPEAKERS</a>` : ''}
-        <a href="${esc(links.cfp)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">${esc(cfpCtaLabel)}</a>
+      <div id="spk-modal" class="spk-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="spk-modal-name" hidden>
+        <div class="spk-modal-card">
+          <div class="spk-modal-top">
+            <div id="spk-modal-chips" class="spk-modal-chips"></div>
+            <button type="button" id="spk-modal-close" class="spk-modal-close" aria-label="Close speaker profile">CLOSE ✕</button>
+          </div>
+          <div class="spk-modal-body">
+            <div class="spk-modal-media" id="spk-modal-media"></div>
+            <div class="spk-modal-info">
+              <h3 id="spk-modal-name" class="spk-modal-name"></h3>
+              <p id="spk-modal-role" class="spk-modal-role"></p>
+              <p id="spk-modal-topic" class="spk-modal-topic"></p>
+              <p id="spk-modal-bio" class="spk-modal-bio"></p>
+              <div id="spk-modal-socials" class="spk-modal-socials"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   `;
 }
 
 export function mountSpeakersExperience({ id = 'speakers' } = {}) {
-  const root = document.getElementById(id);
-  if (!root) return () => {};
-
-  const filterBtns = Array.from(root.querySelectorAll('.orbe-filter-btn'));
-  const cards = Array.from(root.querySelectorAll('.speaker-item'));
+  const section = document.getElementById(id);
+  if (!section) return () => {};
 
   const cleanups = [];
+  const speakerMap = new Map(speakersData.speakers.map((s) => [s.id, s]));
+
+  // Graceful fallback if a photo path is broken or fails to decode
+  section.querySelectorAll('[data-spk-img]').forEach((img) => {
+    const onError = () => {
+      img.hidden = true;
+      const fallback = img.parentElement?.querySelector('.spk-photo-fallback');
+      if (fallback) fallback.hidden = false;
+    };
+    img.addEventListener('error', onError);
+    cleanups.push(() => img.removeEventListener('error', onError));
+  });
+
+  // Track filter tabs
+  const filterBtns = Array.from(section.querySelectorAll('[data-spk-filter]'));
+  const cards = Array.from(section.querySelectorAll('.speaker-item'));
+  const emptyEl = section.querySelector(`#${id}-empty`);
+
   filterBtns.forEach((btn) => {
     const onClick = () => {
-      const target = btn.dataset.filter || 'all';
-      filterBtns.forEach((other) => {
-        const active = other === btn;
-        other.classList.toggle('active', active);
-        other.setAttribute('aria-pressed', active ? 'true' : 'false');
+      const filterId = btn.dataset.spkFilter || 'all';
+      filterBtns.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-pressed', String(active));
       });
+
+      let shown = 0;
       cards.forEach((card) => {
-        card.hidden = target !== 'all' && card.dataset.track !== target;
+        const track = card.dataset.track || '';
+        const visible = matchesFilter(track, filterId);
+        card.hidden = !visible;
+        if (visible) shown += 1;
       });
+      if (emptyEl) emptyEl.hidden = shown > 0;
     };
     btn.addEventListener('click', onClick);
     cleanups.push(() => btn.removeEventListener('click', onClick));
   });
+
+  // Accessible Speaker Bio & Socials Modal
+  const modal = section.querySelector('#spk-modal');
+  const closeBtn = section.querySelector('#spk-modal-close');
+  const nameEl = section.querySelector('#spk-modal-name');
+  const roleEl = section.querySelector('#spk-modal-role');
+  const topicEl = section.querySelector('#spk-modal-topic');
+  const bioEl = section.querySelector('#spk-modal-bio');
+  const chipsEl = section.querySelector('#spk-modal-chips');
+  const mediaEl = section.querySelector('#spk-modal-media');
+  const socialsEl = section.querySelector('#spk-modal-socials');
+  let lastTrigger = null;
+
+  const closeModal = () => {
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (lastTrigger && typeof lastTrigger.focus === 'function') {
+      lastTrigger.focus();
+    }
+    lastTrigger = null;
+  };
+
+  const openModal = (speaker, trigger) => {
+    if (!modal || !speaker) return;
+    lastTrigger = trigger || null;
+    if (chipsEl) {
+      chipsEl.innerHTML = `${renderTrackChip(speaker.track)} ${renderSpeakerStatusBadge(speaker)}`;
+    }
+    if (mediaEl) {
+      mediaEl.innerHTML = speaker.photo
+        ? `<img src="${esc(speaker.photo)}" alt="${esc(speaker.name)} portrait" class="spk-photo-img" />`
+        : renderPortraitPlaceholder(speaker.track === 'hosts');
+    }
+    if (nameEl) nameEl.textContent = speaker.name;
+    if (roleEl) roleEl.textContent = `${speaker.role} · ${speaker.organisation}`;
+    if (topicEl) topicEl.textContent = speaker.topic;
+    if (bioEl) bioEl.textContent = speaker.bio;
+    if (socialsEl) {
+      const linksHtml = SOCIAL_LABELS
+        .filter(([key]) => speaker.socials && speaker.socials[key])
+        .map(
+          ([key, label]) =>
+            `<a href="${esc(speaker.socials[key])}" target="_blank" rel="noopener noreferrer" class="btn-g-secondary spk-social-link">${esc(label)} ↗</a>`,
+        )
+        .join('');
+      socialsEl.innerHTML = linksHtml || '<span class="spk-card-tba-note">No public social links added yet.</span>';
+    }
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    closeBtn?.focus();
+  };
+
+  section.querySelectorAll('[data-spk-open]').forEach((btn) => {
+    const onClick = () => {
+      const spk = speakerMap.get(btn.dataset.spkOpen || '');
+      if (spk) openModal(spk, btn);
+    };
+    btn.addEventListener('click', onClick);
+    cleanups.push(() => btn.removeEventListener('click', onClick));
+  });
+
+  if (modal) {
+    const onBackdropClick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    };
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', onBackdropClick);
+    window.addEventListener('keydown', onKeyDown);
+    cleanups.push(() => {
+      closeBtn?.removeEventListener('click', closeModal);
+      modal.removeEventListener('click', onBackdropClick);
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = '';
+    });
+  }
 
   return () => cleanups.forEach((fn) => fn());
 }

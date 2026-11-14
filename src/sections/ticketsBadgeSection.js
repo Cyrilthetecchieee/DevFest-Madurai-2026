@@ -1,36 +1,81 @@
 /**
- * Tickets & Registration Section:
- * Flat boarding-stub card without holographic foil shaders or badge canvas generators.
+ * Tickets & Registration Section — Clean Perforated Event Ticket Stub & Google Blue CTA
  */
-import { esc } from '../utils/dom.js';
+import eventData from '../data/event.json';
+import {
+  esc,
+  renderGdgRule,
+  renderGdgMotif,
+  renderStatusChip,
+} from '../utils/dom.js';
 
 export function renderTicketsSection(ticketsData, links) {
   return `
-    <section id="tickets" class="stage-section tkt-stage" aria-labelledby="heading-tickets">
-      <div class="tkt-header">
-        <span class="stage-eyebrow">${esc(ticketsData.tag)}</span>
-        <h2 id="heading-tickets" class="stage-display">${esc(ticketsData.heading)}</h2>
-        <p class="stage-lead">${esc(ticketsData.copy)}</p>
+    <section id="tickets" class="stage-section" aria-labelledby="heading-tickets">
+      ${renderGdgRule()}
+      <div class="gdg-section-head">
+        <div>
+          <span class="stage-eyebrow">${esc(ticketsData.tag)}</span>
+          <h2 id="heading-tickets" class="stage-display">${esc(ticketsData.heading)}</h2>
+        </div>
+        ${renderGdgMotif('dots')}
       </div>
+      <p class="stage-lead">${esc(ticketsData.copy)}</p>
 
-      <div class="tkt-pass-card">
-        <div class="tkt-pass-main">
-          <div class="tkt-pass-top">
-            <span class="tkt-pass-code">DEVFEST MADURAI 2026</span>
-            <span class="orbe-badge-tba">12 DECEMBER 2026</span>
+      <article class="tkt-stub" aria-label="DevFest Madurai 2026 Pass Summary">
+        <div class="gdg-rule gdg-rule--wide" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+        <div class="tkt-stub-layout">
+          <div class="tkt-stub-main">
+            <div class="tkt-stub-top">
+              <span class="tkt-stub-kicker">OFFICIAL ATTENDEE PASS · GDG MADURAI</span>
+              ${renderStatusChip('REGISTRATION', 'blue')}
+            </div>
+
+            <h3 class="tkt-stub-title">${esc(eventData.event)}</h3>
+            <p class="tkt-stub-tagline">${esc(eventData.tagline)} · ${esc(eventData.pillars)}</p>
+
+            <dl class="tkt-stub-facts">
+              <div class="tkt-fact">
+                <dt>DATE</dt>
+                <dd>${esc(eventData.dateDisplay)}</dd>
+              </div>
+              <div class="tkt-fact">
+                <dt>LOCATION</dt>
+                <dd>${esc(eventData.locationDisplay)}</dd>
+              </div>
+              <div class="tkt-fact">
+                <dt>VENUE</dt>
+                <dd>
+                  <span>${esc(eventData.venueDisplay)}</span>
+                  ${renderStatusChip('TBA', 'tba')}
+                </dd>
+              </div>
+            </dl>
           </div>
 
-          <div class="tkt-pass-title-wrap">
-            <span class="tkt-pass-kicker">GDG MADURAI PRESENTS</span>
-            <h3 class="tkt-pass-title">DEVFEST MADURAI 2026</h3>
-            <p class="tkt-pass-meta">${esc(ticketsData.metaLine)}</p>
+          <div class="tkt-stub-divider" aria-hidden="true">
+            <span class="tkt-notch tkt-notch--top"></span>
+            <span class="tkt-perf-line"></span>
+            <span class="tkt-notch tkt-notch--bottom"></span>
           </div>
 
-          <div class="tkt-pass-cta">
-            <a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">${esc(ticketsData.ctaLabel)}</a>
+          <div class="tkt-stub-action">
+            <span class="tkt-action-code">DF26 // MADURAI</span>
+            <a
+              href="${esc(links.tickets)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-g-primary tkt-cta-btn"
+            >
+              ${esc(ticketsData.ctaLabel)}
+            </a>
+            <p class="tkt-platform-note">
+              Registration takes place on the official <strong>GDG Community</strong> platform.
+            </p>
           </div>
         </div>
-      </div>
+      </article>
     </section>
   `;
 }

@@ -1,43 +1,80 @@
 {
   "tag": "+++ // AGENDA · 12 DECEMBER 2026 · VENUE TBA",
   "heading": "A DAY BUILT FOR IDEAS.",
-  "copy": "Date: 12 December 2026 · Location: Madurai, Tamil Nadu, India · Venue: To be announced. Confirmed session timings and speaker assignments will be published upon final schedule lock.",
-  "tracks": [
+  "copy": "Date: 12 December 2026 · Location: Madurai, Tamil Nadu, India · Venue: To be announced.",
+  "lockNote": "Final schedule will be published after lock.",
+  "filters": [
+    { "id": "all", "label": "All Sessions" },
+    { "id": "general", "label": "Key Events" },
+    { "id": "ai", "label": "AI & ML" },
+    { "id": "cloud", "label": "Web & Cloud" },
+    { "id": "android", "label": "Android" },
+    { "id": "opensource-design", "label": "Open Source & Design" },
+    { "id": "workshop", "label": "Workshops" }
+  ],
+  "sessions": [
     {
-      "id": "agenda-event-sessions",
-      "badge": "COMING SOON",
-      "title": "Event sessions",
-      "body": "Opening remarks, community showcases, panel discussions and closing announcements. Exact session times to be announced."
+      "id": "ag-opening",
+      "time": "TBA",
+      "title": "Opening Welcome & Event Sessions",
+      "track": "general",
+      "description": "Opening remarks, chapter updates, community showcases, and festival orientation for DevFest Madurai 2026.",
+      "speakerId": "spk-01",
+      "room": "TBA"
     },
     {
-      "id": "agenda-keynotes",
-      "badge": "COMING SOON",
+      "id": "ag-keynote",
+      "time": "TBA",
       "title": "Keynotes",
-      "body": "Vision keynotes exploring what comes next in AI, developer tools and modern platforms. Speaker & time slot to be announced."
+      "track": "ai",
+      "description": "Vision keynotes exploring what comes next in AI, developer tools, and modern platforms.",
+      "speakerId": null,
+      "room": "TBA"
     },
     {
-      "id": "agenda-technical-talks",
-      "badge": "COMING SOON",
-      "title": "Technical talks",
-      "body": "Deep-dive technical sessions across AI & ML, Web & Cloud, Android, Open Source and Product Design. Lineup to be announced."
+      "id": "ag-cloud",
+      "time": "TBA",
+      "title": "Technical Talks · Web & Cloud",
+      "track": "cloud",
+      "description": "Deep-dive sessions covering modern web architecture, Google Cloud tools, and scalable engineering use cases.",
+      "speakerId": null,
+      "room": "TBA"
     },
     {
-      "id": "agenda-build-sessions",
-      "badge": "COMING SOON",
-      "title": "Build sessions",
-      "body": "Hands-on workshops and practical guided building for developers and creators. Lab schedule to be announced."
+      "id": "ag-android",
+      "time": "TBA",
+      "title": "Technical Talks · Android",
+      "track": "android",
+      "description": "Modern Android, Kotlin, and multiplatform mobile engineering sessions for production builders.",
+      "speakerId": null,
+      "room": "TBA"
     },
     {
-      "id": "agenda-networking",
-      "badge": "COMING SOON",
-      "title": "Networking",
-      "body": "Meet developers, creators, students and community builders across Madurai. Networking blocks to be announced."
+      "id": "ag-opensource",
+      "time": "TBA",
+      "title": "Technical Talks · Open Source & Design",
+      "track": "opensource",
+      "description": "Developer tooling, open-source ecosystems, design systems, and human-centred product craft.",
+      "speakerId": null,
+      "room": "TBA"
     },
     {
-      "id": "agenda-full-schedule",
-      "badge": "COMING SOON",
-      "title": "Full Schedule Status",
-      "body": "Official session times and room tracks are unconfirmed and will be announced soon."
+      "id": "ag-workshop",
+      "time": "TBA",
+      "title": "Build Sessions & Hands-On Labs",
+      "track": "workshop",
+      "description": "Hands-on guided workshops and practical building sessions for developers, students, and creators.",
+      "speakerId": null,
+      "room": "TBA"
+    },
+    {
+      "id": "ag-networking",
+      "time": "TBA",
+      "title": "Networking & Closing",
+      "track": "general",
+      "description": "Connect with developers, students, designers, and community builders across Madurai, followed by closing announcements.",
+      "speakerId": null,
+      "room": "TBA"
     }
   ]
 }

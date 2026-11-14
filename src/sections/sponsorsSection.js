@@ -1,92 +1,109 @@
 /**
- * Sponsors & Community Partners Section (#19):
- * - Scale hierarchy: monumental Platinum slot -> twin Gold slots -> dual-speed opposing marquee.
- * - Pause on hover / focus-within, monochrome-to-ink hover transition.
- * - Reduced-motion falls back cleanly to a static grid without marquee clones.
+ * Sponsors & Community Partners Section — Open Sponsor Tiers + Pauseable Partner Strip
  */
+import eventData from '../data/event.json';
 import sponsorsData from '../data/sponsors.json';
-import { esc } from '../utils/dom.js';
-
-function renderMarqueeItems(items, clone = false) {
-  return items
-    .map(
-      (p) => `
-      <div class="spn-marquee-item"${clone ? ' aria-hidden="true"' : ''}>
-        <img src="${esc(p.src)}" alt="${clone ? '' : esc(p.alt)}" width="220" height="72" loading="lazy" />
-        <span class="spn-marquee-label">${esc(p.label)}</span>
-      </div>
-    `
-    )
-    .join('');
-}
+import {
+  esc,
+  renderGdgRule,
+  renderGdgMotif,
+  renderStatusChip,
+} from '../utils/dom.js';
 
 export function renderSponsorsSection() {
   const sponsors = sponsorsData.sponsors || [];
   const platinum = sponsors[0];
-  const golds = sponsors.slice(1);
+  const goldSlots = sponsors.slice(1);
   const partners = sponsorsData.partners || [];
-  const split = Math.ceil(partners.length / 2);
-  const rowA = partners.slice(0, split);
-  const rowB = partners.slice(split).length ? partners.slice(split) : partners;
+
+  const renderPartnerTile = (p, duplicate = false) => `
+    <div class="spn-marquee-item" ${duplicate ? 'aria-hidden="true"' : ''}>
+      <img src="${esc(p.src)}" alt="${duplicate ? '' : esc(p.alt)}" loading="lazy" decoding="async" />
+      <span class="spn-marquee-label">${esc(p.alt || p.label)}</span>
+    </div>
+  `;
 
   return `
-    <section id="sponsors" class="stage-section spn-stage" data-waypoint="7" aria-labelledby="heading-sponsors">
-      <div class="spn-header">
-        <span class="stage-eyebrow" data-scramble="true">${esc(sponsorsData.tag)}</span>
-        <h2 id="heading-sponsors" class="stage-display" data-reveal="mask" data-track-scroll="true">${esc(sponsorsData.heading)}</h2>
-        <p class="stage-lead">${esc(sponsorsData.copy)}</p>
+    <section id="sponsors" class="stage-section" aria-labelledby="heading-sponsors">
+      ${renderGdgRule()}
+      <div class="gdg-section-head">
+        <div>
+          <span class="stage-eyebrow">${esc(sponsorsData.tag)}</span>
+          <h2 id="heading-sponsors" class="stage-display">${esc(sponsorsData.heading)}</h2>
+        </div>
+        ${renderGdgMotif('dots')}
+      </div>
+      <p class="stage-lead">${esc(sponsorsData.copy)}</p>
+
+      <div class="spn-tier-stack">
+        ${platinum ? `
+          <div class="spn-tier-card spn-tier-card--platinum">
+            <div class="spn-tier-meta">
+              <span class="spn-tier-rank">PLATINUM SPONSOR TIER</span>
+              ${renderStatusChip('SPONSOR SLOT OPEN', 'open')}
+            </div>
+            <div class="spn-logo-monolith spn-logo-platinum">
+              <img src="${esc(platinum.src)}" alt="${esc(platinum.alt)}" loading="lazy" decoding="async" />
+            </div>
+            <p class="spn-slot-note">Partner with Madurai's flagship developer conference — brand visibility, workshop tracks, and community booth presence.</p>
+          </div>
+        ` : ''}
+
+        <div class="spn-tier-gold-row">
+          ${goldSlots.map((slot, idx) => `
+            <div class="spn-tier-card spn-tier-card--gold">
+              <div class="spn-tier-meta">
+                <span class="spn-tier-rank">GOLD SPONSOR TIER 0${idx + 1}</span>
+                ${renderStatusChip('SPONSOR SLOT OPEN', 'tba')}
+              </div>
+              <div class="spn-logo-monolith spn-logo-gold">
+                <img src="${esc(slot.src)}" alt="${esc(slot.alt)}" loading="lazy" decoding="async" />
+              </div>
+            </div>
+          `).join('')}
+        </div>
       </div>
 
-      <div class="spn-tier-stack" aria-label="Sponsor Placeholders">
-        ${platinum ? `
-          <div class="spn-tier-platinum">
-            <div class="spn-tier-meta">
-              <span class="spn-tier-rank">TIER 01 // PLATINUM PARTNER</span>
-              <span class="orbe-badge-tba">${esc(platinum.label)}</span>
-            </div>
-            <div class="spn-logo-monolith spn-logo-platinum" tabindex="0">
-              <img src="${esc(platinum.src)}" alt="${esc(platinum.alt)}" width="420" height="104" loading="lazy" />
-            </div>
-          </div>
-        ` : ''}
-
-        ${golds.length ? `
-          <div class="spn-tier-gold-row">
-            ${golds.map((g, i) => `
-              <div class="spn-tier-gold-card">
-                <div class="spn-tier-meta">
-                  <span class="spn-tier-rank">TIER 02 // GOLD 0${i + 1}</span>
-                  <span class="orbe-badge-tba">${esc(g.label)}</span>
-                </div>
-                <div class="spn-logo-monolith spn-logo-gold" tabindex="0">
-                  <img src="${esc(g.src)}" alt="${esc(g.alt)}" width="320" height="80" loading="lazy" />
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
+      <div class="spn-cta-callout">
+        <p class="spn-cta-text">Interested in sponsoring DevFest Madurai 2026? Reach the GDG Madurai organising team directly.</p>
+        <a href="${esc(eventData.links.email)}" class="btn-g-primary">BECOME A SPONSOR · ${esc(eventData.links.emailLabel)}</a>
       </div>
 
       <div class="spn-partners-wrap" aria-label="Community Partners">
         <div class="spn-partners-head">
           <span class="spn-tier-rank">ECOSYSTEM // COMMUNITY PARTNERS</span>
-          <span class="spn-marquee-hint">HOVER OR FOCUS TO PAUSE</span>
+          <button
+            type="button"
+            id="spn-marquee-toggle"
+            class="btn-g-secondary spn-pause-btn"
+            aria-pressed="false"
+          >
+            PAUSE MARQUEE
+          </button>
         </div>
 
-        <div class="spn-marquee-band">
+        <div class="spn-marquee-band" id="spn-marquee-band">
           <div class="spn-marquee-track spn-marquee-fwd">
-            ${renderMarqueeItems(rowA, false)}
-            ${renderMarqueeItems(rowA, true)}
-          </div>
-        </div>
-
-        <div class="spn-marquee-band">
-          <div class="spn-marquee-track spn-marquee-rev">
-            ${renderMarqueeItems(rowB, false)}
-            ${renderMarqueeItems(rowB, true)}
+            ${partners.map((p) => renderPartnerTile(p, false)).join('')}
+            ${partners.map((p) => renderPartnerTile(p, true)).join('')}
           </div>
         </div>
       </div>
     </section>
   `;
+}
+
+export function mountSponsorsSection() {
+  const toggleBtn = document.getElementById('spn-marquee-toggle');
+  const band = document.getElementById('spn-marquee-band');
+  if (!toggleBtn || !band) return () => {};
+
+  const onToggle = () => {
+    const paused = band.classList.toggle('is-paused');
+    toggleBtn.setAttribute('aria-pressed', String(paused));
+    toggleBtn.textContent = paused ? 'RESUME MARQUEE' : 'PAUSE MARQUEE';
+  };
+
+  toggleBtn.addEventListener('click', onToggle);
+  return () => toggleBtn.removeEventListener('click', onToggle);
 }
