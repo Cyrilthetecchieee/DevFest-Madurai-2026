@@ -1,5 +1,64 @@
-/** Safe HTML serialization, responsive picture rendering, and shared HUD chrome markup. */
+/** Safe HTML serialization, responsive picture rendering, GDG UI primitives & Hero chrome. */
 import eventData from '../data/event.json';
+
+export const TRACK_META = {
+  ai: { id: 'ai', label: 'AI & ML', colorVar: '--g-blue', hex: '#4285F4', chipClass: 'track-chip--ai' },
+  cloud: { id: 'cloud', label: 'Web & Cloud', colorVar: '--g-green', hex: '#34A853', chipClass: 'track-chip--cloud' },
+  android: { id: 'android', label: 'Android', colorVar: '--g-yellow', hex: '#FBBC04', chipClass: 'track-chip--android' },
+  opensource: { id: 'opensource', label: 'Open Source & Design', colorVar: '--g-red', hex: '#EA4335', chipClass: 'track-chip--opensource' },
+  design: { id: 'design', label: 'Open Source & Design', colorVar: '--g-red', hex: '#EA4335', chipClass: 'track-chip--design' },
+  workshop: { id: 'workshop', label: 'Build Session', colorVar: '--g-green', hex: '#34A853', chipClass: 'track-chip--workshop' },
+  hosts: { id: 'hosts', label: 'Community Hosts', colorVar: '--g-blue', hex: '#4285F4', chipClass: 'track-chip--hosts' },
+  keynote: { id: 'keynote', label: 'Keynote', colorVar: '--g-blue', hex: '#4285F4', chipClass: 'track-chip--keynote' },
+  general: { id: 'general', label: 'Program', colorVar: '--g-blue', hex: '#4285F4', chipClass: 'track-chip--general' },
+};
+
+export function getTrackMeta(trackKey) {
+  return TRACK_META[trackKey] || TRACK_META.general;
+}
+
+export function renderTrackChip(trackKey, labelOverride = '') {
+  const meta = getTrackMeta(trackKey);
+  const label = labelOverride || meta.label;
+  return `<span class="track-chip ${esc(meta.chipClass)}">${esc(label)}</span>`;
+}
+
+export function renderStatusChip(label, variant = 'tba') {
+  const map = {
+    tba: 'status-chip--tba',
+    open: 'status-chip--open',
+    confirmed: 'status-chip--open',
+    deadline: 'status-chip--deadline',
+    red: 'status-chip--deadline',
+    blue: 'status-chip--blue',
+  };
+  const cls = map[variant] || map.tba;
+  return `<span class="status-chip ${cls}">${esc(label)}</span>`;
+}
+
+export function renderGdgRule(wide = false) {
+  return `<div class="gdg-rule${wide ? ' gdg-rule--wide' : ''}" aria-hidden="true"><span></span><span></span><span></span><span></span></div>`;
+}
+
+export function renderGdgMotif(variant = 'brackets') {
+  if (variant === 'dots') {
+    return `<svg class="gdg-motif" width="76" height="16" viewBox="0 0 76 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="5" fill="#4285F4"/><circle cx="28" cy="8" r="5" fill="#EA4335"/>
+      <circle cx="48" cy="8" r="5" fill="#FBBC04"/><circle cx="68" cy="8" r="5" fill="#34A853"/>
+    </svg>`;
+  }
+  if (variant === 'bars') {
+    return `<svg class="gdg-motif" width="64" height="24" viewBox="0 0 64 24" fill="none" aria-hidden="true">
+      <rect x="0" y="10" width="22" height="5" rx="2.5" fill="#4285F4"/><rect x="26" y="4" width="16" height="5" rx="2.5" fill="#EA4335"/>
+      <rect x="26" y="15" width="22" height="5" rx="2.5" fill="#FBBC04"/><rect x="52" y="8" width="12" height="5" rx="2.5" fill="#34A853"/>
+    </svg>`;
+  }
+  return `<svg class="gdg-motif" width="56" height="24" viewBox="0 0 56 24" fill="none" aria-hidden="true">
+    <path d="M18 4L6 12L18 20" stroke="#4285F4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="28" cy="12" r="3.5" fill="#FBBC04"/>
+    <path d="M38 4L50 12L38 20" stroke="#34A853" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
 
 export function esc(value) {
   return String(value ?? '')

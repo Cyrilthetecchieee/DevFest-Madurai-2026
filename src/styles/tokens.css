@@ -44,6 +44,20 @@
   --violet: #9b5cff;
   --violet-soft: rgba(155, 92, 255, 0.35);
 
+  /* Google Developer Group Identity Palette */
+  --g-blue: #4285F4;
+  --g-blue-cta: #1e62d8;
+  --g-blue-cta-hover: #154eb5;
+  --g-blue-soft: rgba(66, 133, 244, 0.16);
+  --g-blue-ink: #8ab4f8;
+  --g-red: #EA4335;
+  --g-red-soft: rgba(234, 67, 53, 0.18);
+  --g-red-ink: #ffa8a0;
+  --g-yellow: #FBBC04;
+  --g-yellow-soft: rgba(251, 188, 4, 0.18);
+  --g-green: #34A853;
+  --g-green-soft: rgba(52, 168, 83, 0.18);
+
   /* High-Contrast Ink Tokens (WCAG AA+ >= 4.5:1) */
   --ink: #f3f6ff;
   --ink-dim: #cfd8f3;

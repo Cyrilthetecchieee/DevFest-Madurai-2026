@@ -192,16 +192,16 @@ html.paused .marquee-track {
 }
 
 .hero-cta-primary {
-  background: var(--cyan);
-  color: #05081a;
+  background: var(--g-blue-cta);
+  color: #ffffff;
   font-weight: 700;
-  border: 1px solid var(--cyan);
+  border: 1px solid var(--g-blue);
 }
 
 .hero-cta-primary:hover,
 .hero-cta-primary:focus-visible {
-  background: #8ff8ff;
-  box-shadow: 0 0 20px rgba(94, 243, 255, 0.4);
+  background: var(--g-blue-cta-hover);
+  box-shadow: 0 4px 18px rgba(66, 133, 244, 0.4);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -339,6 +339,23 @@ html.is-scrolled .hud-coords {
   color: var(--cyan);
   min-width: 11ch;
   text-align: center;
+}
+
+.hud-dock-rule {
+  position: fixed;
+  top: 54px;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-hud) + 1);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.42s var(--ease-out-expo), transform 0.42s var(--ease-out-expo);
+}
+
+html.is-scrolled .hud-dock-rule {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hud-brand:hover,
