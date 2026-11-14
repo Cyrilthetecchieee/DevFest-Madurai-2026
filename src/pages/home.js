@@ -9,6 +9,7 @@ import { initSectionMotion } from '../motion/tokens.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
+import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -30,21 +31,7 @@ export function renderHomePage() {
 
       ${renderSpeakersExperience({ id: 'speakers', headingId: 'heading-speakers', isPage: false, links, cfpCtaLabel: sections.cfp.ctaLabel })}
 
-      <section id="agenda" class="orbe-section" aria-labelledby="heading-agenda">
-        <span class="orbe-section-tag">${esc(agendaData.tag)}</span>
-        <h2 id="heading-agenda" class="orbe-section-heading">${esc(agendaData.heading)}</h2>
-        <p class="orbe-section-copy">${esc(agendaData.copy)}</p>
-
-        <div class="orbe-grid-3" aria-label="Agenda Format &amp; Placeholders">
-          ${agendaData.tracks.map((t) => `
-            <article class="orbe-card">
-              <span class="orbe-badge-tba">${esc(t.badge)}</span>
-              <h3 class="orbe-card-title">${esc(t.title)}</h3>
-              <p class="orbe-card-body">${esc(t.body)}</p>
-            </article>
-          `).join('')}
-        </div>
-      </section>
+      ${renderAgendaSection()}
 
       <section id="tickets" class="orbe-section" aria-labelledby="heading-tickets">
         <span class="orbe-section-tag">${esc(sections.tickets.tag)}</span>
@@ -137,7 +124,9 @@ export function mountHomePage() {
   const stopAbout = mountAboutSection();
   const stopVenue = mountVenueSection();
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
+  const stopAgenda = mountAgendaSection();
   return () => {
+    stopAgenda();
     stopSpeakers();
     stopVenue();
     stopAbout();
