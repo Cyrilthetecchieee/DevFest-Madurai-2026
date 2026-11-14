@@ -11,6 +11,7 @@ import { renderVenueSection, mountVenueSection } from '../sections/venueSection.
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
+import { renderCfpSection, mountCfpSection } from '../sections/cfpSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -36,25 +37,7 @@ export function renderHomePage() {
 
       ${renderTicketsSection(sections.tickets, links)}
 
-      <section id="cfp" class="orbe-section" aria-labelledby="heading-cfp">
-        <span class="orbe-section-tag">${esc(sections.cfp.tag)}</span>
-        <h2 id="heading-cfp" class="orbe-section-heading">${esc(sections.cfp.heading)}</h2>
-        <p class="orbe-section-copy">${esc(sections.cfp.copy)}</p>
-
-        <div class="orbe-grid-2">
-          ${sections.cfp.homeCards.map((c) => `
-            <article class="orbe-card">
-              <span class="orbe-badge-tba">${esc(c.badge)}</span>
-              <h3 class="orbe-card-title">${esc(c.title)}</h3>
-              <p class="orbe-card-body">${esc(c.body)}</p>
-            </article>
-          `).join('')}
-        </div>
-
-        <div class="orbe-cta-row">
-          <a href="${esc(links.cfp)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">${esc(sections.cfp.ctaLabel)}</a>
-        </div>
-      </section>
+      ${renderCfpSection(sections.cfp, links)}
 
       <section id="sponsors" class="orbe-section" aria-labelledby="heading-sponsors">
         <span class="orbe-section-tag">${esc(sponsorsData.tag)}</span>
@@ -112,7 +95,9 @@ export function mountHomePage() {
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
   const stopAgenda = mountAgendaSection();
   const stopTickets = mountTicketsSection();
+  const stopCfp = mountCfpSection();
   return () => {
+    stopCfp();
     stopTickets();
     stopAgenda();
     stopSpeakers();
