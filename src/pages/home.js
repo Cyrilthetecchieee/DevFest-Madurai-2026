@@ -6,6 +6,7 @@ import sponsorsData from '../data/sponsors.json';
 import memoriesData from '../data/memories.json';
 import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter } from '../utils/dom.js';
 import { initSectionMotion } from '../motion/tokens.js';
+import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -21,20 +22,7 @@ export function renderHomePage() {
     ${renderHeroStage('home', 'GDG Madurai Presents DevFest Madurai 2026')}
 
     <main id="devfest-content">
-      <section id="about" class="orbe-section" aria-labelledby="heading-about">
-        <span class="orbe-section-tag">${esc(sections.about.tag)}</span>
-        <h2 id="heading-about" class="orbe-section-heading">${esc(sections.about.heading)}</h2>
-        ${sections.about.paragraphs.map((p) => `<p class="orbe-section-copy">${esc(p)}</p>`).join('')}
-
-        <div id="experience" class="orbe-grid-3" aria-label="DevFest Experience Sections">
-          ${sections.about.pillars.map((pillar) => `
-            <article class="orbe-card">
-              <h3 class="orbe-card-title">${esc(pillar.title)}</h3>
-              <p class="orbe-card-body">${esc(pillar.body)}</p>
-            </article>
-          `).join('')}
-        </div>
-      </section>
+      ${renderAboutSection(sections.about)}
 
       <section id="venue" class="orbe-section" aria-labelledby="heading-venue">
         <span class="orbe-section-tag">${esc(sections.venue.tag)}</span>
@@ -183,5 +171,9 @@ export function renderHomePage() {
 export function mountHomePage() {
   const view = document.getElementById('app-view') || document;
   const stopMotion = initSectionMotion(view);
-  return () => stopMotion();
+  const stopAbout = mountAboutSection();
+  return () => {
+    stopAbout();
+    stopMotion();
+  };
 }
