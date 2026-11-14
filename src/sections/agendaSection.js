@@ -7,8 +7,6 @@ import {
   esc,
   renderTrackChip,
   renderStatusChip,
-  renderGdgRule,
-  renderGdgMotif,
 } from '../utils/dom.js';
 
 const PIN_KEY = 'devfest_my_agenda_v2';
@@ -100,13 +98,11 @@ export function renderAgendaSection() {
 
   return `
     <section id="agenda" class="stage-section" aria-labelledby="heading-agenda">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(agendaData.tag)}</span>
           <h2 id="heading-agenda" class="stage-display">${esc(agendaData.heading)}</h2>
         </div>
-        ${renderGdgMotif('bars')}
       </div>
       <p class="stage-lead">${esc(agendaData.copy)}</p>
 

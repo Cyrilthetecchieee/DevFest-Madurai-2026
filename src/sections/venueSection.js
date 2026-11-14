@@ -1,6 +1,6 @@
 /** Venue & Event Info Section — Clear 4-Card Grid, Countdown, Maps & .ics Export */
 import eventData from '../data/event.json';
-import { esc, renderGdgRule, renderGdgMotif, renderStatusChip } from '../utils/dom.js';
+import { esc, renderStatusChip } from '../utils/dom.js';
 
 export const EVENT_TARGET_MS = Date.parse('2026-12-12T09:00:00+05:30');
 const MADURAI_MAPS_URL = 'https://maps.google.com/?q=Madurai,Tamil+Nadu,India';
@@ -36,7 +36,7 @@ function buildEventIcs(links) {
     'DTSTART;VALUE=DATE:20261212',
     'DTEND;VALUE=DATE:20261213',
     'SUMMARY:DevFest Madurai 2026 — GDG Madurai',
-    'DESCRIPTION:Where Curiosity Meets Creation. Build. Learn. Connect. Create. Full-day developer festival in Madurai, Tamil Nadu.',
+    'DESCRIPTION:Where Curiosity Meets Creation. Build. Learn. Connect. Create. Full-day tech festival in Madurai, Tamil Nadu.',
     'LOCATION:Madurai, Tamil Nadu, India',
     `URL:${url}`,
     'END:VEVENT',
@@ -61,20 +61,18 @@ export function renderVenueSection(venueData, links) {
 
   return `
     <section id="venue" class="stage-section" aria-labelledby="heading-venue">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(venueData.tag)}</span>
           <h2 id="heading-venue" class="stage-display">${esc(venueData.heading)}</h2>
         </div>
-        ${renderGdgMotif('dots')}
       </div>
       <p class="stage-lead">${esc(venueData.copy)}</p>
 
       <div class="venue-countdown-panel" aria-live="polite" aria-label="Countdown to DevFest Madurai 2026">
         <div class="venue-countdown-header">
           <span class="venue-countdown-kicker">COUNTDOWN TO DEVFEST MADURAI 2026</span>
-          ${renderStatusChip('12 DEC 2026', 'blue')}
+          ${renderStatusChip('12 DEC 2026', 'cyan')}
         </div>
         ${cd.passed
           ? `<p class="venue-countdown-passed">DevFest Madurai 2026 is underway in Madurai, Tamil Nadu.</p>`

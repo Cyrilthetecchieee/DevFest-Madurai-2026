@@ -5,8 +5,6 @@ import memoriesData from '../data/memories.json';
 import {
   esc,
   renderPicture,
-  renderGdgRule,
-  renderGdgMotif,
 } from '../utils/dom.js';
 
 function getLightboxImageUrl(item) {
@@ -19,13 +17,11 @@ export function renderHomeMemoriesSection() {
 
   return `
     <section id="memories" class="stage-section" aria-labelledby="heading-memories">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(teaser.tag)}</span>
           <h2 id="heading-memories" class="stage-display">${esc(teaser.heading)}</h2>
         </div>
-        ${renderGdgMotif('brackets')}
       </div>
       <p class="stage-lead">${esc(teaser.copy)}</p>
 

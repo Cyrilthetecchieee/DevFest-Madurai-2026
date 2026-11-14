@@ -1,17 +1,15 @@
 /**
- * Footer Section — Clear 4-Column Navigation, Official Socials, Email, Legal & GDG Disclaimer
+ * Footer Section — Clear 4-Column Navigation, Official Socials, Email, Legal & Disclaimer
  */
 import eventData from '../data/event.json';
-import { esc, renderGdgRule } from '../utils/dom.js';
+import { esc } from '../utils/dom.js';
 
-export function renderStageFooter({ cfpHref = '/#cfp' } = {}) {
+export function renderStageFooter() {
   const { footer, links } = eventData;
   const socials = links.socials || [];
 
   return `
     <footer class="stage-section ftr-stage" id="footer" aria-labelledby="heading-footer">
-      ${renderGdgRule(true)}
-
       <div class="ftr-top-meta">
         <span class="stage-eyebrow">${esc(footer.tag)}</span>
         <span class="ftr-pillars">${esc(footer.pillars)}</span>
@@ -36,7 +34,6 @@ export function renderStageFooter({ cfpHref = '/#cfp' } = {}) {
           <span class="ftr-col-label">PARTICIPATE</span>
           <ul class="ftr-link-list">
             <li><a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Register / Tickets ↗</a></li>
-            <li><a href="${esc(cfpHref)}" ${cfpHref.startsWith('#') ? '' : 'data-spa-link="true"'} class="ftr-link">Call for Speakers</a></li>
             <li><a href="${esc(links.codeOfConduct)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Code of Conduct ↗</a></li>
             <li><a href="${esc(links.privacyPolicy)}" target="_blank" rel="noopener noreferrer" class="ftr-link">Privacy Policy ↗</a></li>
           </ul>

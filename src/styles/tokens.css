@@ -33,48 +33,46 @@
 }
 
 :root {
-  /* Core Night-Sky Navy Palette */
+  /* Night-Sky Aurora Palette Tokens */
   --navy: #0b0f3a;
   --navy-deep: #070a1c;
   --navy-mid: #10184c;
   --cyan: #5ef3ff;
+  --cyan-cta: #1698b0;
+  --cyan-cta-hover: #21b8cf;
   --cyan-soft: rgba(94, 243, 255, 0.45);
   --cyan-tint: rgba(94, 243, 255, 0.14);
   --cyan-faint: rgba(94, 243, 255, 0.08);
   --violet: #9b5cff;
   --violet-soft: rgba(155, 92, 255, 0.35);
-
-  /* Google Developer Group Identity Palette */
-  --g-blue: #4285F4;
-  --g-blue-cta: #1e62d8;
-  --g-blue-cta-hover: #154eb5;
-  --g-blue-soft: rgba(66, 133, 244, 0.16);
-  --g-blue-ink: #8ab4f8;
-  --g-red: #EA4335;
-  --g-red-soft: rgba(234, 67, 53, 0.18);
-  --g-red-ink: #ffa8a0;
-  --g-yellow: #FBBC04;
-  --g-yellow-soft: rgba(251, 188, 4, 0.18);
-  --g-green: #34A853;
-  --g-green-soft: rgba(52, 168, 83, 0.18);
+  --violet-tint: rgba(155, 92, 255, 0.16);
+  --aurora-ice: #7dd3fc;
+  --aurora-aqua: #3ee8b5;
+  --aurora-aqua-soft: rgba(62, 232, 181, 0.16);
+  --aurora-rose: #f472b6;
+  --aurora-rose-soft: rgba(244, 114, 182, 0.16);
+  --aurora-indigo: #a5b4fc;
 
   /* High-Contrast Ink Tokens (WCAG AA+ >= 4.5:1) */
   --ink: #f3f6ff;
   --ink-dim: #cfd8f3;
   --ink-muted: #b8c5ea;
   --ink-on-accent: #070a1c;
-  --ink-border: rgba(207, 214, 230, 0.22);
+  --ink-border: rgba(94, 243, 255, 0.24);
   --bezel: #030409;
   --hud-bracket: #cfd6e6;
 
-  /* Opaque / High-Opacity Section & Card Surfaces over WebGL */
-  --surface-content: rgba(7, 10, 28, 0.92);
-  --surface-glass: rgba(8, 12, 34, 0.92);
-  --surface-section: rgba(9, 14, 42, 0.92);
-  --surface-card: #0e143e;
-  --surface-card-deep: #0b1033;
-  --surface-card-elevated: #141c52;
-  --surface-footer: #06091e;
+  /* Local Scrims & Translucent Beveled Glass Surfaces over WebGL */
+  --surface-content: transparent;
+  --surface-scrim: rgba(7, 10, 28, 0.82);
+  --surface-glass: rgba(8, 12, 34, 0.62);
+  --surface-section: transparent;
+  --surface-panel: rgba(7, 10, 28, 0.72);
+  --surface-card: rgba(11, 16, 52, 0.58);
+  --surface-card-deep: rgba(8, 12, 38, 0.74);
+  --surface-card-elevated: rgba(16, 24, 72, 0.76);
+  --surface-footer: rgba(6, 9, 30, 0.56);
+  --glass-border: rgba(94, 243, 255, 0.34);
 
   /* Typography */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

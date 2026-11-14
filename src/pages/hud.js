@@ -134,7 +134,7 @@ export function initHud({ onMotionChange, onNavigate }) {
     }
 
     const targets = Array.from(document.querySelectorAll('#app-view [id]')).filter((el) =>
-      ['home', 'about', 'venue', 'speakers', 'agenda', 'tickets', 'cfp', 'sponsors', 'memories'].includes(el.id),
+      ['home', 'about', 'venue', 'speakers', 'agenda', 'tickets', 'sponsors', 'memories'].includes(el.id),
     );
     if (!targets.length || !('IntersectionObserver' in window)) {
       setActiveNavSection('home');

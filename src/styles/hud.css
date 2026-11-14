@@ -192,16 +192,16 @@ html.paused .marquee-track {
 }
 
 .hero-cta-primary {
-  background: var(--g-blue-cta);
+  background: var(--cyan-cta);
   color: #ffffff;
   font-weight: 700;
-  border: 1px solid var(--g-blue);
+  border: 1px solid var(--cyan);
 }
 
 .hero-cta-primary:hover,
 .hero-cta-primary:focus-visible {
-  background: var(--g-blue-cta-hover);
-  box-shadow: 0 4px 18px rgba(66, 133, 244, 0.4);
+  background: var(--cyan-cta-hover);
+  box-shadow: 0 4px 18px rgba(94, 243, 255, 0.36);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -228,31 +228,20 @@ html.paused .marquee-track {
   right: 0;
   height: 60px;
   z-index: var(--z-hud);
-  background: rgba(7, 10, 28, 0.95);
-  border-bottom: 1px solid rgba(207, 214, 230, 0.14);
+  background: rgba(7, 10, 28, 0.72);
+  border-bottom: 1px solid rgba(94, 243, 255, 0.2);
 }
 
 .site-header-inner {
   width: 100%;
   max-width: 1480px;
-  height: 57px;
+  height: 60px;
   margin: 0 auto;
   padding: 0 clamp(14px, 2.5vw, 32px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-}
-
-.header-gdg-rule {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  margin: 0;
-  pointer-events: none;
 }
 
 .header-brand {
@@ -277,9 +266,9 @@ html.paused .marquee-track {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: var(--g-blue-ink);
-  border: 1px solid rgba(66, 133, 244, 0.45);
-  background: var(--g-blue-soft);
+  color: var(--cyan);
+  border: 1px solid rgba(94, 243, 255, 0.45);
+  background: var(--cyan-tint);
   border-radius: 4px;
   padding: 3px 7px;
 }
@@ -321,11 +310,11 @@ html.paused .marquee-track {
 
 .header-nav-link.active {
   color: #ffffff;
-  border-bottom-color: var(--g-blue);
+  border-bottom-color: var(--cyan);
 }
 
 .header-nav-link:focus-visible {
-  outline: 2px solid var(--g-blue);
+  outline: 2px solid var(--cyan);
   outline-offset: -2px;
   border-radius: 4px;
 }
@@ -358,16 +347,16 @@ html.paused .marquee-track {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--g-green);
+  background: var(--aurora-aqua);
 }
 
 html.paused .hud-motion-dot {
-  background: var(--g-yellow);
+  background: var(--aurora-rose);
 }
 
 .hud-motion-btn:hover,
 .hud-motion-btn:focus-visible {
-  border-color: var(--g-blue);
+  border-color: var(--cyan);
   color: #ffffff;
   outline: 2px solid #ffffff;
   outline-offset: 2px;
@@ -380,8 +369,8 @@ html.paused .hud-motion-dot {
   min-height: 44px;
   padding: 0 14px;
   border-radius: 6px;
-  background: var(--g-blue-cta);
-  border: 1px solid var(--g-blue);
+  background: var(--cyan-cta);
+  border: 1px solid var(--cyan);
   color: #ffffff;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -393,7 +382,7 @@ html.paused .hud-motion-dot {
 
 .header-register-btn:hover,
 .header-register-btn:focus-visible {
-  background: var(--g-blue-cta-hover);
+  background: var(--cyan-cta-hover);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -418,8 +407,8 @@ html.paused .hud-motion-dot {
 
 .hud-menu-btn:hover,
 .hud-menu-btn:focus-visible {
-  border-color: var(--g-blue);
-  background: var(--g-blue-soft);
+  border-color: var(--cyan);
+  background: var(--cyan-tint);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -523,8 +512,8 @@ html.paused .hud-motion-dot {
 .hud-nav-link:focus-visible,
 .hud-nav-link.active {
   color: #ffffff;
-  background: var(--g-blue-soft);
-  border-left-color: var(--g-blue);
+  background: var(--cyan-tint);
+  border-left-color: var(--cyan);
   outline: none;
 }
 
@@ -548,7 +537,7 @@ html.paused .hud-motion-dot {
   min-width: 48px;
   padding: 10px 16px;
   background: var(--surface-panel);
-  border: 1px solid var(--g-blue);
+  border: 1px solid var(--cyan);
   border-radius: 999px;
   color: #ffffff;
   font-family: var(--font-mono);
@@ -565,7 +554,7 @@ html.paused .hud-motion-dot {
 
 .global-back-top:hover,
 .global-back-top:focus-visible {
-  background: var(--g-blue-cta);
+  background: var(--cyan-cta);
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -577,7 +566,7 @@ html.paused .hud-motion-dot {
   left: 0;
   height: 3px;
   width: 0%;
-  background: linear-gradient(90deg, var(--g-blue), var(--g-green));
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
   z-index: 50;
   pointer-events: none;
   display: none;
@@ -630,7 +619,7 @@ html.paused .hud-motion-dot {
     max-width: 100%;
     text-align: left;
     border-right: 1px solid rgba(243, 246, 255, 0.16);
-    border-left: 3px solid var(--g-blue);
+    border-left: 3px solid var(--cyan);
     padding: 14px 16px;
     font-size: 14px;
   }

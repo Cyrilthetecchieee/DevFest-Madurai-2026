@@ -5,8 +5,6 @@ import eventData from '../data/event.json';
 import sponsorsData from '../data/sponsors.json';
 import {
   esc,
-  renderGdgRule,
-  renderGdgMotif,
   renderStatusChip,
 } from '../utils/dom.js';
 
@@ -25,13 +23,11 @@ export function renderSponsorsSection() {
 
   return `
     <section id="sponsors" class="stage-section" aria-labelledby="heading-sponsors">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(sponsorsData.tag)}</span>
           <h2 id="heading-sponsors" class="stage-display">${esc(sponsorsData.heading)}</h2>
         </div>
-        ${renderGdgMotif('dots')}
       </div>
       <p class="stage-lead">${esc(sponsorsData.copy)}</p>
 
@@ -45,7 +41,7 @@ export function renderSponsorsSection() {
             <div class="spn-logo-monolith spn-logo-platinum">
               <img src="${esc(platinum.src)}" alt="${esc(platinum.alt)}" loading="lazy" decoding="async" />
             </div>
-            <p class="spn-slot-note">Partner with Madurai's flagship developer conference — brand visibility, workshop tracks, and community booth presence.</p>
+            <p class="spn-slot-note">Partner with Madurai's flagship tech festival — brand visibility, workshop tracks, and community booth presence.</p>
           </div>
         ` : ''}
 

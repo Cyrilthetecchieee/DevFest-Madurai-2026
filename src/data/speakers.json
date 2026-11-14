@@ -2,7 +2,7 @@
   "homeSection": {
     "tag": "+++ // SPEAKERS · DEVFEST MADURAI 2026",
     "heading": "THE MINDS BEHIND WHAT'S NEXT.",
-    "copy": "Speaker lineup and session leads for DevFest Madurai 2026 will be announced as confirmations conclude. Call for Speakers is open."
+    "copy": "Speaker lineup and session leads for DevFest Madurai 2026 will be announced as confirmations conclude."
   },
   "pageSection": {
     "tag": "+++ // SPEAKERS DIRECTORY · DEVFEST MADURAI 2026",
@@ -42,12 +42,12 @@
     },
     {
       "id": "spk-02",
-      "name": "Keynote Speaker (TBA)",
-      "role": "Keynote Speaker",
+      "name": "Keynote Speaker",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "ai",
       "topic": "What's Next in AI and Developer Technology?",
-      "bio": "Keynote speaker profile announcing soon. Submissions are currently open through the DevFest Madurai Call for Speakers.",
+      "bio": "Speaker to be announced. Official keynote profile and session takeaways will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",
@@ -60,12 +60,12 @@
     },
     {
       "id": "spk-03",
-      "name": "Web & Cloud Speaker (TBA)",
-      "role": "Technical Speaker · CFP Open",
+      "name": "Web & Cloud Speaker",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "cloud",
       "topic": "Building with Google Cloud: Tools, Platforms, and Modern Web Use Cases",
-      "bio": "Web & Cloud session profile announcing soon. Submit your talk proposal via Call for Speakers.",
+      "bio": "Speaker to be announced. Web & Cloud session profile will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",
@@ -78,12 +78,12 @@
     },
     {
       "id": "spk-04",
-      "name": "Android Speaker (TBA)",
-      "role": "Technical Speaker · CFP Open",
+      "name": "Android Speaker",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "android",
       "topic": "Modern Android, Kotlin & Multiplatform Engineering",
-      "bio": "Android engineering speaker profile announcing soon. Submit your mobile or Kotlin talk proposal via Call for Speakers.",
+      "bio": "Speaker to be announced. Mobile and Kotlin engineering profile will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",
@@ -96,12 +96,12 @@
     },
     {
       "id": "spk-05",
-      "name": "Workshop Lead (TBA)",
-      "role": "Hands-on Workshop Lead · CFP Open",
+      "name": "Workshop Lead",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "workshop",
       "topic": "Hands-on Workshop: Build a Small AI-Powered Project",
-      "bio": "Guided build lab lead profile announcing soon. Submit your interactive workshop proposal via Call for Speakers.",
+      "bio": "Speaker to be announced. Guided build lab lead profile will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",
@@ -114,12 +114,12 @@
     },
     {
       "id": "spk-06",
-      "name": "Open Source Speaker (TBA)",
-      "role": "Technical Speaker · CFP Open",
+      "name": "Open Source Speaker",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "opensource",
       "topic": "Developer Tools & Open-Source Ecosystems",
-      "bio": "Open source speaker profile announcing soon. Submit your open-source tooling or community story via Call for Speakers.",
+      "bio": "Speaker to be announced. Open-source engineering profile will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",
@@ -132,12 +132,12 @@
     },
     {
       "id": "spk-07",
-      "name": "Design & Product Speaker (TBA)",
-      "role": "Product & Design Speaker · CFP Open",
+      "name": "Design & Product Speaker",
+      "role": "Speaker to be announced",
       "organisation": "Announcing Soon",
       "track": "design",
       "topic": "Product Thinking & Human-Centred Interfaces",
-      "bio": "Design & product speaker profile announcing soon. Submit your design systems or UX proposal via Call for Speakers.",
+      "bio": "Speaker to be announced. Design & product session profile will be published here once confirmed.",
       "photo": "",
       "socials": {
         "linkedin": "",

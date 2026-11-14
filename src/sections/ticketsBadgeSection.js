@@ -1,35 +1,29 @@
 /**
- * Tickets & Registration Section — Clean Perforated Event Ticket Stub & Google Blue CTA
+ * Tickets & Registration Section — Night-Sky Pass Card
  */
 import eventData from '../data/event.json';
 import {
   esc,
-  renderGdgRule,
-  renderGdgMotif,
   renderStatusChip,
 } from '../utils/dom.js';
 
 export function renderTicketsSection(ticketsData, links) {
   return `
     <section id="tickets" class="stage-section" aria-labelledby="heading-tickets">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(ticketsData.tag)}</span>
           <h2 id="heading-tickets" class="stage-display">${esc(ticketsData.heading)}</h2>
         </div>
-        ${renderGdgMotif('dots')}
       </div>
       <p class="stage-lead">${esc(ticketsData.copy)}</p>
 
       <article class="tkt-stub" aria-label="DevFest Madurai 2026 Pass Summary">
-        <div class="gdg-rule gdg-rule--wide" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-
         <div class="tkt-stub-layout">
           <div class="tkt-stub-main">
             <div class="tkt-stub-top">
               <span class="tkt-stub-kicker">OFFICIAL ATTENDEE PASS · GDG MADURAI</span>
-              ${renderStatusChip('REGISTRATION', 'blue')}
+              ${renderStatusChip('REGISTRATION', 'cyan')}
             </div>
 
             <h3 class="tkt-stub-title">${esc(eventData.event)}</h3>

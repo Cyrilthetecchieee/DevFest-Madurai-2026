@@ -1,7 +1,7 @@
 /**
- * About Section — Editorial Overview & 2x3 / 3x2 Google-Accented Pillars Grid
+ * About Section — Editorial Overview & Asymmetric Pillars Grid
  */
-import { esc, renderGdgRule, renderGdgMotif } from '../utils/dom.js';
+import { esc } from '../utils/dom.js';
 
 const PILLAR_EMBLEMS = [
   '<rect x="6" y="10" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M13 18h10M18 13v10" stroke="currentColor" stroke-width="1.6"/>',
@@ -12,7 +12,7 @@ const PILLAR_EMBLEMS = [
   '<rect x="7" y="7" width="9" height="9" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="20" y="7" width="9" height="9" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="7" y="20" width="9" height="9" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="20" y="20" width="9" height="9" fill="currentColor"/>',
 ];
 
-const PILLAR_COLORS = ['blue', 'red', 'yellow', 'green', 'blue', 'green'];
+const PILLAR_COLORS = ['cyan', 'violet', 'aqua', 'ice', 'cyan', 'violet'];
 
 function parsePillarParts(rawTitle, index) {
   const idxMatch = String(rawTitle).match(/^(\d{2})\s*[—-]\s*(.+)$/);
@@ -27,13 +27,11 @@ export function renderAboutSection(aboutData) {
 
   return `
     <section id="about" class="stage-section about-stage" aria-labelledby="heading-about">
-      ${renderGdgRule()}
-      <div class="gdg-section-head">
+      <div class="stage-section-head">
         <div>
           <span class="stage-eyebrow">${esc(aboutData.tag)}</span>
           <h2 id="heading-about" class="stage-display">${esc(aboutData.heading)}</h2>
         </div>
-        ${renderGdgMotif('brackets')}
       </div>
 
       <div class="about-editorial-grid">

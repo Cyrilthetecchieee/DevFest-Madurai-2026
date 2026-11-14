@@ -1,4 +1,4 @@
-/** Home Page View (Hero Stage + About + Venue + Speakers Preview + Agenda + Tickets + CFP + Sponsors + Memories + Footer) */
+/** Home Page View (Hero Stage + About + Venue + Speakers Preview + Agenda + Tickets + Sponsors + Memories + Footer) */
 import eventData from '../data/event.json';
 import { renderHeroStage } from '../utils/dom.js';
 import { renderStageFooter, mountStageFooter } from '../sections/footerSection.js';
@@ -7,7 +7,6 @@ import { renderVenueSection, mountVenueSection } from '../sections/venueSection.
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersPreview.js';
 import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSection.js';
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
-import { renderCfpSection, mountCfpSection } from '../sections/cfpSection.js';
 import { renderSponsorsSection, mountSponsorsSection } from '../sections/sponsorsSection.js';
 import { renderHomeMemoriesSection, mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
 
@@ -28,19 +27,17 @@ export function renderHomePage() {
 
       ${renderVenueSection(sections.venue, links)}
 
-      ${renderSpeakersExperience({ id: 'speakers', headingId: 'heading-speakers', isPage: false, links, cfpCtaLabel: sections.cfp.ctaLabel })}
+      ${renderSpeakersExperience({ id: 'speakers', headingId: 'heading-speakers', isPage: false })}
 
       ${renderAgendaSection()}
 
       ${renderTicketsSection(sections.tickets, links)}
 
-      ${renderCfpSection(sections.cfp, links)}
-
       ${renderSponsorsSection()}
 
       ${renderHomeMemoriesSection()}
 
-      ${renderStageFooter({ cfpHref: '/#cfp' })}
+      ${renderStageFooter()}
     </main>
   `;
 }
@@ -52,7 +49,6 @@ export function mountHomePage() {
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
   const stopAgenda = mountAgendaSection();
   const stopTickets = mountTicketsSection();
-  const stopCfp = mountCfpSection();
   const stopSponsors = mountSponsorsSection();
   const stopMemories = mountMemoriesInteraction(view);
   const stopFooter = mountStageFooter(view);
@@ -60,7 +56,6 @@ export function mountHomePage() {
     stopFooter();
     stopMemories();
     stopSponsors();
-    stopCfp();
     stopTickets();
     stopAgenda();
     stopSpeakers();

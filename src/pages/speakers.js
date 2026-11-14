@@ -1,4 +1,4 @@
-/** Speakers Page View & Constellation/Track Controller */
+/** Speakers Page View & Track Filter Controller */
 import eventData from '../data/event.json';
 import { esc, renderHeroStage, renderDiscoverButton } from '../utils/dom.js';
 import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersPreview.js';
@@ -6,7 +6,7 @@ import { renderStageFooter, mountStageFooter } from '../sections/footerSection.j
 
 export const SPEAKERS_META = {
   title: 'Speakers — GDG Madurai · DevFest Madurai 2026',
-  description: 'Explore DevFest Madurai 2026 speakers, community hosts, and Call for Speakers guidelines. 12 December 2026 · Madurai, Tamil Nadu, India.',
+  description: 'Explore DevFest Madurai 2026 speakers and community hosts. 12 December 2026 · Madurai, Tamil Nadu, India.',
   canonical: '/speakers',
 };
 
@@ -21,38 +21,7 @@ export function renderSpeakersPage() {
         id: 'speakers-directory',
         headingId: 'heading-speakers-page',
         isPage: true,
-        links,
-        cfpCtaLabel: sections.cfp.ctaLabel,
       })}
-
-      <section id="cfp" class="stage-section" aria-labelledby="heading-cfp-page">
-        <span class="stage-eyebrow" data-scramble="true">${esc(sections.cfp.tag)}</span>
-        <h2 id="heading-cfp-page" class="stage-display" data-reveal="mask">${esc(sections.cfp.heading)}</h2>
-        <p class="stage-lead">${esc(sections.cfp.copy)}</p>
-
-        <div class="spk-guidelines-rail" aria-label="CFP Guidelines">
-          ${sections.cfp.guidelines.map((g) => `
-            <article class="spk-guideline-row">
-              <span class="orbe-badge-tba">${esc(g.badge)}</span>
-              <h3 class="spk-guideline-title">${esc(g.title)}</h3>
-              <p class="spk-guideline-body">${esc(g.body)}</p>
-            </article>
-          `).join('')}
-        </div>
-
-        <div class="orbe-cta-row">
-          ${renderDiscoverButton({
-            label: sections.cfp.ctaLabel,
-            ariaLabel: 'Submit Your Proposal',
-            href: links.cfp,
-            external: true,
-            inline: true,
-            compactLabel: true,
-          })}
-          <a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">${esc(sections.tickets.ctaLabel)}</a>
-          <a href="/#agenda" data-spa-link="true" class="btn-link-inline">EXPLORE AGENDA //</a>
-        </div>
-      </section>
 
       <section id="event-info" class="stage-section" aria-labelledby="heading-event-info-spk">
         <span class="stage-eyebrow" data-scramble="true">+++ // EVENT INFORMATION · DEVFEST MADURAI 2026</span>
@@ -65,9 +34,19 @@ export function renderSpeakersPage() {
             </div>
           `).join('')}
         </dl>
+        <div class="orbe-cta-row">
+          ${renderDiscoverButton({
+            label: sections.tickets.ctaLabel,
+            ariaLabel: 'Get Tickets',
+            href: links.tickets,
+            external: true,
+            inline: true,
+          })}
+          <a href="/#agenda" data-spa-link="true" class="btn-link-inline">EXPLORE AGENDA //</a>
+        </div>
       </section>
 
-      ${renderStageFooter({ cfpHref: '#cfp' })}
+      ${renderStageFooter()}
     </main>
   `;
 }

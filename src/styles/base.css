@@ -8,8 +8,6 @@
 html {
   width: 100%;
   min-height: 100%;
-  overflow-x: clip;
-  scroll-behavior: smooth;
   background-color: var(--navy);
   view-transition-name: none;
 }
@@ -17,7 +15,6 @@ html {
 body {
   width: 100%;
   min-height: 100dvh;
-  overflow-x: clip;
   background-color: var(--navy-deep);
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -27,6 +24,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   user-select: text;
   -webkit-user-select: text;
+}
+
+#app-view {
+  overflow-x: clip;
 }
 
 [id],
