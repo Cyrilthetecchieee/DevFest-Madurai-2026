@@ -17,13 +17,23 @@ export function renderHomeMemoriesSection() {
 
   return `
     <section id="memories" class="stage-section" aria-labelledby="heading-memories">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(teaser.tag)}</span>
-          <h2 id="heading-memories" class="stage-display">${esc(teaser.heading)}</h2>
+      <div class="stage-asymmetric">
+        <div class="content-zone local-scrim">
+          <div class="stage-section-head">
+            <div>
+              <span class="stage-eyebrow" data-scramble="true">${esc(teaser.tag)}</span>
+              <h2 id="heading-memories" class="stage-display" data-reveal="mask">${esc(teaser.heading)}</h2>
+            </div>
+          </div>
+          <p class="stage-lead">${esc(teaser.copy)}</p>
+
+          <div class="mem-home-cta">
+            <a href="/memories" data-spa-link="true" class="btn-g-primary">EXPLORE ALL MEMORIES</a>
+          </div>
         </div>
+
+        <div class="graphic-window" data-creature-zone="memories" aria-hidden="true"></div>
       </div>
-      <p class="stage-lead">${esc(teaser.copy)}</p>
 
       <div class="mem-home-grid">
         ${items.map((item, i) => `
@@ -52,10 +62,6 @@ export function renderHomeMemoriesSection() {
             </figcaption>
           </figure>
         `).join('')}
-      </div>
-
-      <div class="mem-home-cta">
-        <a href="/memories" data-spa-link="true" class="btn-g-primary">EXPLORE ALL MEMORIES</a>
       </div>
 
       <div id="archive-lightbox" class="mem-lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">

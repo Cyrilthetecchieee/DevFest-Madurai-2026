@@ -61,74 +61,80 @@ export function renderVenueSection(venueData, links) {
 
   return `
     <section id="venue" class="stage-section" aria-labelledby="heading-venue">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(venueData.tag)}</span>
-          <h2 id="heading-venue" class="stage-display">${esc(venueData.heading)}</h2>
+      <div class="stage-asymmetric stage-asymmetric--flip">
+        <div class="graphic-window" data-creature-zone="venue" aria-hidden="true"></div>
+
+        <div class="content-zone local-scrim">
+          <div class="stage-section-head">
+            <div>
+              <span class="stage-eyebrow" data-scramble="true">${esc(venueData.tag)}</span>
+              <h2 id="heading-venue" class="stage-display" data-reveal="mask">${esc(venueData.heading)}</h2>
+            </div>
+          </div>
+          <p class="stage-lead">${esc(venueData.copy)}</p>
+
+          <div class="hud-bevel-card venue-countdown-panel" aria-live="polite" aria-label="Countdown to DevFest Madurai 2026">
+            <div class="venue-countdown-header">
+              <span class="venue-countdown-kicker">COUNTDOWN TO DEVFEST MADURAI 2026</span>
+              ${renderStatusChip('12 DEC 2026', 'cyan')}
+            </div>
+            ${cd.passed
+              ? `<p class="venue-countdown-passed">DevFest Madurai 2026 is underway in Madurai, Tamil Nadu.</p>`
+              : `<div class="venue-countdown-digits" id="venue-countdown">
+                  <div class="venue-unit"><strong id="cd-days">${cd.days}</strong><span>DAYS</span></div>
+                  <span class="venue-colon" aria-hidden="true">:</span>
+                  <div class="venue-unit"><strong id="cd-hours">${cd.hours}</strong><span>HOURS</span></div>
+                  <span class="venue-colon" aria-hidden="true">:</span>
+                  <div class="venue-unit"><strong id="cd-mins">${cd.mins}</strong><span>MINUTES</span></div>
+                </div>`
+            }
+          </div>
+
+          <div class="venue-info-grid">
+            <article class="hud-bevel-card venue-info-card venue-info-card--blue">
+              <div class="venue-info-top">
+                <span class="venue-info-label">01 // DATE</span>
+                ${renderStatusChip('CONFIRMED', 'open')}
+              </div>
+              <h3 class="venue-info-value">${esc(eventData.dateDisplay)}</h3>
+              <p class="venue-info-note">${esc(eventData.dateSub)}</p>
+            </article>
+
+            <article class="hud-bevel-card venue-info-card venue-info-card--green">
+              <div class="venue-info-top">
+                <span class="venue-info-label">02 // TIME</span>
+                ${renderStatusChip('TBA', 'tba')}
+              </div>
+              <h3 class="venue-info-value">To be announced.</h3>
+              <p class="venue-info-note">Full-day tech festival schedule locking soon.</p>
+            </article>
+
+            <article class="hud-bevel-card venue-info-card venue-info-card--yellow">
+              <div class="venue-info-top">
+                <span class="venue-info-label">03 // LOCATION</span>
+                ${renderStatusChip('CITY CONFIRMED', 'blue')}
+              </div>
+              <h3 class="venue-info-value">${esc(eventData.locationDisplay)}</h3>
+              <p class="venue-info-note">${esc(eventData.locationSub)}</p>
+            </article>
+
+            <article class="hud-bevel-card venue-info-card venue-info-card--red">
+              <div class="venue-info-top">
+                <span class="venue-info-label">04 // VENUE</span>
+                ${renderStatusChip('TBA', 'tba')}
+              </div>
+              <h3 class="venue-info-value">${esc(eventData.venueDisplay)}</h3>
+              <p class="venue-info-note">${esc(eventData.venueSub)}</p>
+            </article>
+          </div>
+
+          <div class="venue-actions-row">
+            <a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="btn-g-primary">REGISTER NOW</a>
+            <a href="#agenda" class="btn-g-secondary">EXPLORE AGENDA</a>
+            <button type="button" id="venue-ics-btn" class="btn-g-secondary">ADD TO CALENDAR (.ICS)</button>
+            <a href="${MADURAI_MAPS_URL}" target="_blank" rel="noopener noreferrer" class="btn-g-secondary">VIEW MADURAI ON GOOGLE MAPS ↗</a>
+          </div>
         </div>
-      </div>
-      <p class="stage-lead">${esc(venueData.copy)}</p>
-
-      <div class="venue-countdown-panel" aria-live="polite" aria-label="Countdown to DevFest Madurai 2026">
-        <div class="venue-countdown-header">
-          <span class="venue-countdown-kicker">COUNTDOWN TO DEVFEST MADURAI 2026</span>
-          ${renderStatusChip('12 DEC 2026', 'cyan')}
-        </div>
-        ${cd.passed
-          ? `<p class="venue-countdown-passed">DevFest Madurai 2026 is underway in Madurai, Tamil Nadu.</p>`
-          : `<div class="venue-countdown-digits" id="venue-countdown">
-              <div class="venue-unit"><strong id="cd-days">${cd.days}</strong><span>DAYS</span></div>
-              <span class="venue-colon" aria-hidden="true">:</span>
-              <div class="venue-unit"><strong id="cd-hours">${cd.hours}</strong><span>HOURS</span></div>
-              <span class="venue-colon" aria-hidden="true">:</span>
-              <div class="venue-unit"><strong id="cd-mins">${cd.mins}</strong><span>MINUTES</span></div>
-            </div>`
-        }
-      </div>
-
-      <div class="venue-info-grid">
-        <article class="venue-info-card venue-info-card--blue">
-          <div class="venue-info-top">
-            <span class="venue-info-label">01 // DATE</span>
-            ${renderStatusChip('CONFIRMED', 'open')}
-          </div>
-          <h3 class="venue-info-value">${esc(eventData.dateDisplay)}</h3>
-          <p class="venue-info-note">${esc(eventData.dateSub)}</p>
-        </article>
-
-        <article class="venue-info-card venue-info-card--green">
-          <div class="venue-info-top">
-            <span class="venue-info-label">02 // TIME</span>
-            ${renderStatusChip('TBA', 'tba')}
-          </div>
-          <h3 class="venue-info-value">To be announced.</h3>
-          <p class="venue-info-note">Full-day tech festival schedule locking soon.</p>
-        </article>
-
-        <article class="venue-info-card venue-info-card--yellow">
-          <div class="venue-info-top">
-            <span class="venue-info-label">03 // LOCATION</span>
-            ${renderStatusChip('CITY CONFIRMED', 'blue')}
-          </div>
-          <h3 class="venue-info-value">${esc(eventData.locationDisplay)}</h3>
-          <p class="venue-info-note">${esc(eventData.locationSub)}</p>
-        </article>
-
-        <article class="venue-info-card venue-info-card--red">
-          <div class="venue-info-top">
-            <span class="venue-info-label">04 // VENUE</span>
-            ${renderStatusChip('TBA', 'tba')}
-          </div>
-          <h3 class="venue-info-value">${esc(eventData.venueDisplay)}</h3>
-          <p class="venue-info-note">${esc(eventData.venueSub)}</p>
-        </article>
-      </div>
-
-      <div class="venue-actions-row">
-        <a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="btn-g-primary">REGISTER NOW</a>
-        <a href="#agenda" class="btn-g-secondary">EXPLORE AGENDA</a>
-        <button type="button" id="venue-ics-btn" class="btn-g-secondary">ADD TO CALENDAR (.ICS)</button>
-        <a href="${MADURAI_MAPS_URL}" target="_blank" rel="noopener noreferrer" class="btn-g-secondary">VIEW MADURAI ON GOOGLE MAPS ↗</a>
       </div>
     </section>
   `;

@@ -98,40 +98,44 @@ export function renderAgendaSection() {
 
   return `
     <section id="agenda" class="stage-section" aria-labelledby="heading-agenda">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(agendaData.tag)}</span>
-          <h2 id="heading-agenda" class="stage-display">${esc(agendaData.heading)}</h2>
-        </div>
-      </div>
-      <p class="stage-lead">${esc(agendaData.copy)}</p>
+      <div class="stage-asymmetric stage-asymmetric--flip">
+        <div class="graphic-window" data-creature-zone="agenda" aria-hidden="true"></div>
 
-      <div class="ag-status-banner">
-        <div class="ag-status-copy">
-          ${renderStatusChip('SCHEDULE LOCK PENDING', 'tba')}
-          <span class="ag-status-note">${esc(agendaData.lockNote)}</span>
-        </div>
-        <div class="ag-planner-controls">
-          <span class="ag-planner-count">Saved sessions: <strong id="ag-pin-count">${pinnedCount}</strong></span>
-          <button type="button" id="ag-export-ics" class="btn-g-secondary">EXPORT MY SCHEDULE (.ICS)</button>
-        </div>
-      </div>
+        <div class="content-zone local-scrim">
+          <div class="stage-section-head">
+            <div>
+              <span class="stage-eyebrow" data-scramble="true">${esc(agendaData.tag)}</span>
+              <h2 id="heading-agenda" class="stage-display" data-reveal="mask">${esc(agendaData.heading)}</h2>
+            </div>
+          </div>
+          <p class="stage-lead">${esc(agendaData.copy)}</p>
 
-      <div class="orbe-filter-bar" role="group" aria-label="Filter agenda by track">
-        ${(agendaData.filters || []).map((f, idx) => `
-          <button
-            type="button"
-            class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
-            data-ag-filter="${esc(f.id)}"
-            aria-pressed="${idx === 0 ? 'true' : 'false'}"
-          >
-            ${esc(f.label)}
-          </button>
-        `).join('')}
-      </div>
+          <div class="ag-status-banner">
+            <div class="ag-status-copy">
+              ${renderStatusChip('SCHEDULE LOCK PENDING', 'tba')}
+              <span class="ag-status-note">${esc(agendaData.lockNote)}</span>
+            </div>
+            <div class="ag-planner-controls">
+              <span class="ag-planner-count">Saved sessions: <strong id="ag-pin-count">${pinnedCount}</strong></span>
+              <button type="button" id="ag-export-ics" class="btn-g-secondary">EXPORT MY SCHEDULE (.ICS)</button>
+            </div>
+          </div>
 
-      <div class="ag-timeline" id="ag-timeline">
-        ${orderedSessions.map((session) => {
+          <div class="orbe-filter-bar" role="group" aria-label="Filter agenda by track">
+            ${(agendaData.filters || []).map((f, idx) => `
+              <button
+                type="button"
+                class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
+                data-ag-filter="${esc(f.id)}"
+                aria-pressed="${idx === 0 ? 'true' : 'false'}"
+              >
+                ${esc(f.label)}
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="ag-timeline" id="ag-timeline">
+            ${orderedSessions.map((session) => {
           const isPinned = pins.has(session.id);
           const isTimeTba = !session.time || session.time.toUpperCase() === 'TBA';
           const resolvedSpeaker = session.speakerId ? speakerById.get(session.speakerId) : null;
@@ -193,8 +197,10 @@ export function renderAgendaSection() {
             </article>
           `;
         }).join('')}
+          </div>
+          <p id="ag-empty-state" class="spk-empty-state" hidden>No agenda sessions in this track yet.</p>
+        </div>
       </div>
-      <p id="ag-empty-state" class="spk-empty-state" hidden>No agenda sessions in this track yet.</p>
     </section>
   `;
 }

@@ -1027,6 +1027,131 @@
   scroll-margin-top: 84px;
 }
 
+/* === BALANCE RULE: ASYMMETRIC GRAPHIC WINDOWS, LOCAL SCRIMS & BEVELED GLASS === */
+.stage-asymmetric {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 60px);
+  min-height: clamp(440px, 66vh, 720px);
+}
+
+.stage-asymmetric--flip {
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+}
+
+.stage-asymmetric--flip .content-zone {
+  order: 2;
+}
+
+.stage-asymmetric--flip .graphic-window {
+  order: 1;
+}
+
+.graphic-window {
+  position: relative;
+  width: 100%;
+  min-height: clamp(260px, 44vh, 520px);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-zone {
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
+}
+
+.local-scrim {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.local-scrim::before {
+  content: "";
+  position: absolute;
+  inset: -40px -48px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 86% 82% at 48% 50%,
+    rgba(7, 10, 28, 0.84) 0%,
+    rgba(7, 10, 28, 0.70) 48%,
+    rgba(7, 10, 28, 0.24) 76%,
+    rgba(7, 10, 28, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(ellipse 92% 90% at 50% 50%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 92% 90% at 50% 50%, #000 45%, transparent 100%);
+}
+
+.hud-bevel-card {
+  position: relative;
+  isolation: isolate;
+  background: rgba(94, 243, 255, 0.35);
+  clip-path: polygon(
+    14px 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%,
+    0 14px
+  );
+  padding: clamp(18px, 2vw, 24px);
+  transition: background-color 0.25s var(--ease-hud), transform 0.25s var(--ease-hud);
+}
+
+.hud-bevel-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: rgba(8, 12, 38, 0.60);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
+  clip-path: polygon(
+    13.5px 0,
+    100% 0,
+    100% calc(100% - 13.5px),
+    calc(100% - 13.5px) 100%,
+    0 100%,
+    0 13.5px
+  );
+}
+
+.hud-bevel-card:hover,
+.hud-bevel-card:focus-within {
+  background: rgba(94, 243, 255, 0.68);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 960px) {
+  .stage-asymmetric,
+  .stage-asymmetric--flip {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 20px;
+  }
+
+  .stage-asymmetric .graphic-window,
+  .stage-asymmetric--flip .graphic-window {
+    order: 1;
+    min-height: clamp(170px, 24vh, 230px);
+  }
+
+  .stage-asymmetric .content-zone,
+  .stage-asymmetric--flip .content-zone {
+    order: 2;
+  }
+
+  .local-scrim::before {
+    inset: -24px -18px;
+  }
+}
+
 .stage-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -1097,23 +1222,19 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(16px, 2vw, 24px);
+  margin-top: clamp(24px, 3vh, 36px);
 }
 
 .about-pillar-card {
-  padding: clamp(20px, 2.2vw, 28px);
-  border: 1px solid rgba(94, 243, 255, 0.24);
-  border-top: 2px solid var(--cyan);
-  border-radius: 6px;
-  background: var(--surface-card);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.about-pillar-card--cyan { border-top-color: var(--cyan); }
-.about-pillar-card--violet { border-top-color: var(--violet); }
-.about-pillar-card--aqua { border-top-color: var(--aurora-aqua); }
-.about-pillar-card--ice { border-top-color: var(--aurora-ice); }
+.about-pillar-card--cyan { background: rgba(94, 243, 255, 0.35); }
+.about-pillar-card--violet { background: rgba(155, 92, 255, 0.36); }
+.about-pillar-card--aqua { background: rgba(62, 232, 181, 0.34); }
+.about-pillar-card--ice { background: rgba(125, 211, 252, 0.34); }
 
 .about-pillar-top {
   display: flex;
@@ -1171,12 +1292,7 @@
 
 /* === SECTION C2: VENUE & EVENT INFORMATION === */
 .venue-countdown-panel {
-  background: var(--surface-card-deep);
-  border: 1px solid rgba(94, 243, 255, 0.28);
-  border-top: 2px solid var(--cyan);
-  border-radius: 8px;
-  padding: clamp(20px, 3vw, 32px);
-  margin-bottom: clamp(20px, 3vh, 32px);
+  margin-bottom: clamp(18px, 2.5vh, 26px);
 }
 
 .venue-countdown-header {
@@ -1239,26 +1355,29 @@
 
 .venue-info-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(14px, 1.8vw, 20px);
-  margin-bottom: clamp(22px, 3vh, 32px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-bottom: clamp(22px, 3vh, 30px);
 }
 
 .venue-info-card {
-  background: var(--surface-card);
-  border: 1px solid rgba(94, 243, 255, 0.22);
-  border-top-width: 2px;
-  border-radius: 8px;
-  padding: clamp(18px, 2vw, 24px);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.venue-info-card--blue { border-top-color: var(--cyan); }
-.venue-info-card--green { border-top-color: var(--aurora-aqua); }
-.venue-info-card--yellow { border-top-color: var(--aurora-ice); }
-.venue-info-card--red { border-top-color: var(--violet); }
+.venue-info-card--blue,
+.venue-info-card--green,
+.venue-info-card--yellow,
+.venue-info-card--red {
+  border-top: none;
+}
+
+@media (max-width: 580px) {
+  .venue-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 .venue-info-top {
   display: flex;
@@ -1381,19 +1500,61 @@
   align-items: stretch;
 }
 
+.spk-grid--preview {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .spk-grid--full {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
+@media (max-width: 580px) {
+  .spk-grid--preview {
+    grid-template-columns: 1fr;
+  }
+}
+
 .spk-card {
-  background: var(--surface-card);
-  border: 1px solid rgba(94, 243, 255, 0.22);
-  border-top: 2px solid var(--cyan);
-  border-radius: 8px;
+  position: relative;
+  isolation: isolate;
+  background: rgba(94, 243, 255, 0.34);
+  clip-path: polygon(
+    14px 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%,
+    0 14px
+  );
+  padding: 1px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: background-color 0.28s var(--ease-hud), transform 0.28s var(--ease-hud);
+}
+
+.spk-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: rgba(8, 12, 38, 0.58);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
+  clip-path: polygon(
+    13.5px 0,
+    100% 0,
+    100% calc(100% - 13.5px),
+    calc(100% - 13.5px) 100%,
+    0 100%,
+    0 13.5px
+  );
+}
+
+.spk-card:hover {
+  background: rgba(94, 243, 255, 0.65);
+  transform: translateY(-3px);
 }
 
 .spk-card[hidden] {
@@ -1719,9 +1880,10 @@
   justify-content: space-between;
   gap: 14px;
   padding: 16px 20px;
-  background: var(--surface-card-deep);
-  border: 1px solid rgba(207, 214, 230, 0.2);
-  border-radius: 8px;
+  background: rgba(8, 12, 38, 0.60);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(94, 243, 255, 0.32);
   margin-bottom: 20px;
 }
 
@@ -1770,10 +1932,11 @@
   display: grid;
   grid-template-columns: 185px minmax(0, 1fr);
   gap: 18px;
-  background: var(--surface-card);
-  border: 1px solid rgba(207, 214, 230, 0.16);
+  background: rgba(8, 12, 38, 0.56);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(94, 243, 255, 0.28);
   border-left: 3px solid var(--cyan);
-  border-radius: 8px;
   padding: clamp(16px, 2vw, 22px);
 }
 
@@ -1963,8 +2126,10 @@
 
 /* === SECTION C5: TICKETS & REGISTRATION === */
 .tkt-stub {
-  background: var(--surface-card-deep);
-  border: 1px solid rgba(207, 214, 230, 0.24);
+  background: rgba(8, 12, 38, 0.68);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid rgba(94, 243, 255, 0.36);
   border-radius: 10px;
   overflow: hidden;
   max-width: 960px;
@@ -2154,15 +2319,40 @@
 }
 
 .spn-tier-card {
-  background: var(--surface-card);
-  border: 1px solid rgba(94, 243, 255, 0.22);
-  border-top: 2px solid var(--cyan);
-  border-radius: 8px;
+  position: relative;
+  isolation: isolate;
+  background: rgba(94, 243, 255, 0.34);
+  clip-path: polygon(
+    14px 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%,
+    0 14px
+  );
   padding: clamp(18px, 2.4vw, 28px);
 }
 
+.spn-tier-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: rgba(8, 12, 38, 0.58);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  clip-path: polygon(
+    13.5px 0,
+    100% 0,
+    100% calc(100% - 13.5px),
+    calc(100% - 13.5px) 100%,
+    0 100%,
+    0 13.5px
+  );
+}
+
 .spn-tier-card--gold {
-  border-top-color: var(--violet);
+  background: rgba(155, 92, 255, 0.36);
 }
 
 .spn-tier-meta {

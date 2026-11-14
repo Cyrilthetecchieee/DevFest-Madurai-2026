@@ -24,9 +24,14 @@ export function renderMemoriesPage() {
 
     <main id="devfest-content">
       <section id="community" class="stage-section" aria-labelledby="heading-community">
-        <span class="stage-eyebrow" data-scramble="true">${esc(community.tag)}</span>
-        <h2 id="heading-community" class="stage-display" data-reveal="mask">${esc(community.heading)}</h2>
-        <p class="stage-lead">${esc(community.copy)}</p>
+        <div class="stage-asymmetric">
+          <div class="content-zone local-scrim">
+            <span class="stage-eyebrow" data-scramble="true">${esc(community.tag)}</span>
+            <h2 id="heading-community" class="stage-display" data-reveal="mask">${esc(community.heading)}</h2>
+            <p class="stage-lead">${esc(community.copy)}</p>
+          </div>
+          <div class="graphic-window" data-creature-zone="about" aria-hidden="true"></div>
+        </div>
 
         <div class="mem-community-layout">
           <div class="mem-featured-frame" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
@@ -52,9 +57,11 @@ export function renderMemoriesPage() {
       </section>
 
       <section id="editions" class="stage-section" aria-labelledby="heading-editions">
-        <span class="stage-eyebrow" data-scramble="true">${esc(editions.tag)}</span>
-        <h2 id="heading-editions" class="stage-display" data-reveal="mask">${esc(editions.heading)}</h2>
-        <p class="stage-lead">${esc(editions.copy)}</p>
+        <div class="content-zone local-scrim">
+          <span class="stage-eyebrow" data-scramble="true">${esc(editions.tag)}</span>
+          <h2 id="heading-editions" class="stage-display" data-reveal="mask">${esc(editions.heading)}</h2>
+          <p class="stage-lead">${esc(editions.copy)}</p>
+        </div>
 
         <div class="mem-timeline">
           ${editions.items.map((ed) => `
@@ -82,9 +89,11 @@ export function renderMemoriesPage() {
       </section>
 
       <section id="gallery" class="stage-section" aria-labelledby="heading-gallery">
-        <span class="stage-eyebrow" data-scramble="true">${esc(gallery.tag)}</span>
-        <h2 id="heading-gallery" class="stage-display" data-reveal="mask">${esc(gallery.heading)}</h2>
-        <p class="stage-lead">${esc(gallery.copy)}</p>
+        <div class="content-zone local-scrim">
+          <span class="stage-eyebrow" data-scramble="true">${esc(gallery.tag)}</span>
+          <h2 id="heading-gallery" class="stage-display" data-reveal="mask">${esc(gallery.heading)}</h2>
+          <p class="stage-lead">${esc(gallery.copy)}</p>
+        </div>
 
         <div class="mem-cinematic-gallery">
           <div class="mem-panoramic-card" tabindex="0" role="button" aria-label="Open photo: ${esc(gallery.panoramic1.title)}" data-img="${esc(getLightboxImageUrl(gallery.panoramic1))}" data-caption="${esc(gallery.panoramic1.lightboxCaption)}">
@@ -124,9 +133,11 @@ export function renderMemoriesPage() {
       </section>
 
       <section id="human-moments" class="stage-section" aria-labelledby="heading-human">
-        <span class="stage-eyebrow" data-scramble="true">${esc(human.tag)}</span>
-        <h2 id="heading-human" class="stage-display" data-reveal="mask">${esc(human.heading)}</h2>
-        <p class="stage-lead">${esc(human.copy)}</p>
+        <div class="content-zone local-scrim">
+          <span class="stage-eyebrow" data-scramble="true">${esc(human.tag)}</span>
+          <h2 id="heading-human" class="stage-display" data-reveal="mask">${esc(human.heading)}</h2>
+          <p class="stage-lead">${esc(human.copy)}</p>
+        </div>
 
         <div class="mem-human-grid">
           ${human.cards.map((card) => `
@@ -140,21 +151,23 @@ export function renderMemoriesPage() {
       </section>
 
       <section id="closing" class="stage-section mem-closing-hero" aria-labelledby="heading-closing">
-        <span class="stage-eyebrow" data-scramble="true">${esc(closing.tag)}</span>
-        <h2 id="heading-closing" class="mem-closing-heading" data-reveal="mask">${esc(closing.heading)}</h2>
-        <p class="mem-closing-sub">${esc(closing.sub)}</p>
-        <p class="stage-lead orbe-section-copy-center">${esc(closing.copy)}</p>
+        <div class="content-zone local-scrim">
+          <span class="stage-eyebrow" data-scramble="true">${esc(closing.tag)}</span>
+          <h2 id="heading-closing" class="mem-closing-heading" data-reveal="mask">${esc(closing.heading)}</h2>
+          <p class="mem-closing-sub">${esc(closing.sub)}</p>
+          <p class="stage-lead orbe-section-copy-center">${esc(closing.copy)}</p>
 
-        <div class="orbe-cta-row orbe-cta-row-center">
-          ${renderDiscoverButton({
-            label: closing.ctaLabel,
-            ariaLabel: 'Join DevFest Madurai 2026',
-            href: links.tickets,
-            external: true,
-            inline: true,
-            compactLabel: true,
-          })}
-          <a href="/" data-spa-link="true" class="btn-link-inline">← RETURN TO HOME</a>
+          <div class="orbe-cta-row orbe-cta-row-center">
+            ${renderDiscoverButton({
+              label: closing.ctaLabel,
+              ariaLabel: 'Join DevFest Madurai 2026',
+              href: links.tickets,
+              external: true,
+              inline: true,
+              compactLabel: true,
+            })}
+            <a href="/" data-spa-link="true" class="btn-link-inline">← RETURN TO HOME</a>
+          </div>
         </div>
       </section>
 

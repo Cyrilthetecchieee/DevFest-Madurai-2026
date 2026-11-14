@@ -9,15 +9,16 @@ export function renderStageFooter() {
   const socials = links.socials || [];
 
   return `
-    <footer class="stage-section ftr-stage" id="footer" aria-labelledby="heading-footer">
-      <div class="ftr-top-meta">
-        <span class="stage-eyebrow">${esc(footer.tag)}</span>
-        <span class="ftr-pillars">${esc(footer.pillars)}</span>
-      </div>
+    <footer class="stage-section ftr-stage" id="footer" data-creature-zone="footer" aria-labelledby="heading-footer">
+      <div class="content-zone local-scrim">
+        <div class="ftr-top-meta">
+          <span class="stage-eyebrow" data-scramble="true">${esc(footer.tag)}</span>
+          <span class="ftr-pillars">${esc(footer.pillars)}</span>
+        </div>
 
-      <h2 id="heading-footer" class="ftr-heading">${esc(footer.heading)}</h2>
+        <h2 id="heading-footer" class="ftr-heading">${esc(footer.heading)}</h2>
 
-      <div class="ftr-grid">
+        <div class="ftr-grid">
         <div class="ftr-col">
           <span class="ftr-col-label">NAVIGATION</span>
           <ul class="ftr-link-list">
@@ -59,9 +60,10 @@ export function renderStageFooter() {
         </div>
       </div>
 
-      <div class="ftr-legal-bar">
-        <p class="ftr-disclaimer">${esc(footer.disclaimer)}</p>
-        <p class="ftr-copyright">${esc(footer.copyright)}</p>
+        <div class="ftr-legal-bar">
+          <p class="ftr-disclaimer">${esc(footer.disclaimer)}</p>
+          <p class="ftr-copyright">${esc(footer.copyright)}</p>
+        </div>
       </div>
     </footer>
   `;

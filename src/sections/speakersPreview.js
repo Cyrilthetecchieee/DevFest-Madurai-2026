@@ -99,48 +99,75 @@ export function renderSpeakersExperience({
 
   return `
     <section id="${esc(id)}" class="stage-section" aria-labelledby="${esc(headingId)}">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(sectionCopy.tag)}</span>
-          <h2 id="${esc(headingId)}" class="stage-display">${esc(sectionCopy.heading)}</h2>
-        </div>
-      </div>
-
-      ${isPage
-        ? sectionCopy.paragraphs.map((p) => `<p class="stage-lead">${esc(p)}</p>`).join('')
-        : `<p class="stage-lead">${esc(sectionCopy.copy)}</p>`
-      }
-
-      <div class="spk-summary-bar">
-        ${renderStatusChip(confirmedCount > 1 ? `${confirmedCount} CONFIRMED` : 'LINEUP ANNOUNCING SOON', confirmedCount > 1 ? 'open' : 'tba')}
-        <span class="spk-summary-count">${visibleSpeakers.length} TRACK SLOTS · DEVFEST MADURAI 2026</span>
-      </div>
-
-      ${isPage ? `
-        <div class="orbe-filter-bar" role="group" aria-label="Filter speakers by track">
-          ${filters.map((f, idx) => `
-            <button
-              type="button"
-              class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
-              data-spk-filter="${esc(f.id)}"
-              aria-pressed="${idx === 0 ? 'true' : 'false'}"
-            >
-              ${esc(f.label)}
-            </button>
-          `).join('')}
-        </div>
-      ` : ''}
-
-      <div class="spk-grid ${isPage ? 'spk-grid--full' : 'spk-grid--preview'}" id="${esc(id)}-grid">
-        ${visibleSpeakers.map(renderSpeakerCard).join('')}
-      </div>
-      <p id="${esc(id)}-empty" class="spk-empty-state" hidden>No speaker slots match this track yet.</p>
-
       ${!isPage ? `
-        <div class="spk-footer-cta">
-          <a href="/speakers" data-spa-link="true" class="btn-g-primary">VIEW ALL SPEAKERS</a>
+        <div class="stage-asymmetric">
+          <div class="content-zone">
+            <div class="local-scrim">
+              <div class="stage-section-head">
+                <div>
+                  <span class="stage-eyebrow" data-scramble="true">${esc(sectionCopy.tag)}</span>
+                  <h2 id="${esc(headingId)}" class="stage-display" data-reveal="mask">${esc(sectionCopy.heading)}</h2>
+                </div>
+              </div>
+              <p class="stage-lead">${esc(sectionCopy.copy)}</p>
+
+              <div class="spk-summary-bar">
+                ${renderStatusChip(confirmedCount > 1 ? `${confirmedCount} CONFIRMED` : 'LINEUP ANNOUNCING SOON', confirmedCount > 1 ? 'open' : 'tba')}
+                <span class="spk-summary-count">${visibleSpeakers.length} TRACK SLOTS · DEVFEST MADURAI 2026</span>
+              </div>
+            </div>
+
+            <div class="spk-grid spk-grid--preview" id="${esc(id)}-grid">
+              ${visibleSpeakers.map(renderSpeakerCard).join('')}
+            </div>
+            <p id="${esc(id)}-empty" class="spk-empty-state" hidden>No speaker slots match this track yet.</p>
+
+            <div class="spk-footer-cta">
+              <a href="/speakers" data-spa-link="true" class="btn-g-primary">VIEW ALL SPEAKERS</a>
+            </div>
+          </div>
+
+          <div class="graphic-window" data-creature-zone="speakers" aria-hidden="true"></div>
         </div>
-      ` : ''}
+      ` : `
+        <div class="stage-asymmetric">
+          <div class="content-zone local-scrim">
+            <div class="stage-section-head">
+              <div>
+                <span class="stage-eyebrow" data-scramble="true">${esc(sectionCopy.tag)}</span>
+                <h2 id="${esc(headingId)}" class="stage-display" data-reveal="mask">${esc(sectionCopy.heading)}</h2>
+              </div>
+            </div>
+
+            ${sectionCopy.paragraphs.map((p) => `<p class="stage-lead">${esc(p)}</p>`).join('')}
+
+            <div class="spk-summary-bar">
+              ${renderStatusChip(confirmedCount > 1 ? `${confirmedCount} CONFIRMED` : 'LINEUP ANNOUNCING SOON', confirmedCount > 1 ? 'open' : 'tba')}
+              <span class="spk-summary-count">${visibleSpeakers.length} TRACK SLOTS · DEVFEST MADURAI 2026</span>
+            </div>
+
+            <div class="orbe-filter-bar" role="group" aria-label="Filter speakers by track">
+              ${filters.map((f, idx) => `
+                <button
+                  type="button"
+                  class="orbe-filter-btn ${idx === 0 ? 'active' : ''}"
+                  data-spk-filter="${esc(f.id)}"
+                  aria-pressed="${idx === 0 ? 'true' : 'false'}"
+                >
+                  ${esc(f.label)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="graphic-window" data-creature-zone="speakers" aria-hidden="true"></div>
+        </div>
+
+        <div class="spk-grid spk-grid--full" id="${esc(id)}-grid">
+          ${visibleSpeakers.map(renderSpeakerCard).join('')}
+        </div>
+        <p id="${esc(id)}-empty" class="spk-empty-state" hidden>No speaker slots match this track yet.</p>
+      `}
 
       <div id="spk-modal" class="spk-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="spk-modal-name" hidden>
         <div class="spk-modal-card">

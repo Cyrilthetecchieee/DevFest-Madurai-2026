@@ -23,46 +23,52 @@ export function renderSponsorsSection() {
 
   return `
     <section id="sponsors" class="stage-section" aria-labelledby="heading-sponsors">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(sponsorsData.tag)}</span>
-          <h2 id="heading-sponsors" class="stage-display">${esc(sponsorsData.heading)}</h2>
-        </div>
-      </div>
-      <p class="stage-lead">${esc(sponsorsData.copy)}</p>
+      <div class="stage-asymmetric stage-asymmetric--flip">
+        <div class="graphic-window" data-creature-zone="sponsors" aria-hidden="true"></div>
 
-      <div class="spn-tier-stack">
-        ${platinum ? `
-          <div class="spn-tier-card spn-tier-card--platinum">
-            <div class="spn-tier-meta">
-              <span class="spn-tier-rank">PLATINUM SPONSOR TIER</span>
-              ${renderStatusChip('SPONSOR SLOT OPEN', 'open')}
+        <div class="content-zone local-scrim">
+          <div class="stage-section-head">
+            <div>
+              <span class="stage-eyebrow" data-scramble="true">${esc(sponsorsData.tag)}</span>
+              <h2 id="heading-sponsors" class="stage-display" data-reveal="mask">${esc(sponsorsData.heading)}</h2>
             </div>
-            <div class="spn-logo-monolith spn-logo-platinum">
-              <img src="${esc(platinum.src)}" alt="${esc(platinum.alt)}" loading="lazy" decoding="async" />
-            </div>
-            <p class="spn-slot-note">Partner with Madurai's flagship tech festival — brand visibility, workshop tracks, and community booth presence.</p>
           </div>
-        ` : ''}
+          <p class="stage-lead">${esc(sponsorsData.copy)}</p>
 
-        <div class="spn-tier-gold-row">
-          ${goldSlots.map((slot, idx) => `
-            <div class="spn-tier-card spn-tier-card--gold">
-              <div class="spn-tier-meta">
-                <span class="spn-tier-rank">GOLD SPONSOR TIER 0${idx + 1}</span>
-                ${renderStatusChip('SPONSOR SLOT OPEN', 'tba')}
+          <div class="spn-tier-stack">
+            ${platinum ? `
+              <div class="spn-tier-card spn-tier-card--platinum">
+                <div class="spn-tier-meta">
+                  <span class="spn-tier-rank">PLATINUM SPONSOR TIER</span>
+                  ${renderStatusChip('SPONSOR SLOT OPEN', 'open')}
+                </div>
+                <div class="spn-logo-monolith spn-logo-platinum">
+                  <img src="${esc(platinum.src)}" alt="${esc(platinum.alt)}" loading="lazy" decoding="async" />
+                </div>
+                <p class="spn-slot-note">Partner with Madurai's flagship tech festival — brand visibility, workshop tracks, and community booth presence.</p>
               </div>
-              <div class="spn-logo-monolith spn-logo-gold">
-                <img src="${esc(slot.src)}" alt="${esc(slot.alt)}" loading="lazy" decoding="async" />
-              </div>
+            ` : ''}
+
+            <div class="spn-tier-gold-row">
+              ${goldSlots.map((slot, idx) => `
+                <div class="spn-tier-card spn-tier-card--gold">
+                  <div class="spn-tier-meta">
+                    <span class="spn-tier-rank">GOLD SPONSOR TIER 0${idx + 1}</span>
+                    ${renderStatusChip('SPONSOR SLOT OPEN', 'tba')}
+                  </div>
+                  <div class="spn-logo-monolith spn-logo-gold">
+                    <img src="${esc(slot.src)}" alt="${esc(slot.alt)}" loading="lazy" decoding="async" />
+                  </div>
+                </div>
+              `).join('')}
             </div>
-          `).join('')}
-        </div>
-      </div>
+          </div>
 
-      <div class="spn-cta-callout">
-        <p class="spn-cta-text">Interested in sponsoring DevFest Madurai 2026? Reach the GDG Madurai organising team directly.</p>
-        <a href="${esc(eventData.links.email)}" class="btn-g-primary">BECOME A SPONSOR · ${esc(eventData.links.emailLabel)}</a>
+          <div class="spn-cta-callout">
+            <p class="spn-cta-text">Interested in sponsoring DevFest Madurai 2026? Reach the GDG Madurai organising team directly.</p>
+            <a href="${esc(eventData.links.email)}" class="btn-g-primary">BECOME A SPONSOR · ${esc(eventData.links.emailLabel)}</a>
+          </div>
+        </div>
       </div>
 
       <div class="spn-partners-wrap" aria-label="Community Partners">

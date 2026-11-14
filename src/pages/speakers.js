@@ -24,25 +24,30 @@ export function renderSpeakersPage() {
       })}
 
       <section id="event-info" class="stage-section" aria-labelledby="heading-event-info-spk">
-        <span class="stage-eyebrow" data-scramble="true">+++ // EVENT INFORMATION · DEVFEST MADURAI 2026</span>
-        <h2 id="heading-event-info-spk" class="stage-display" data-reveal="mask">${esc(sections.venue.heading)}</h2>
-        <dl class="venue-specs-list">
-          ${sections.venue.cards.map((c, idx) => `
-            <div class="venue-spec-row">
-              <dt class="venue-spec-term"><span class="venue-spec-idx">0${idx + 1}</span><span>${esc(c.title)}</span></dt>
-              <dd class="venue-spec-val"><strong>${esc(c.body)}</strong><span class="venue-spec-note">${esc(c.badge)}</span></dd>
+        <div class="stage-asymmetric stage-asymmetric--flip">
+          <div class="graphic-window" data-creature-zone="venue" aria-hidden="true"></div>
+          <div class="content-zone local-scrim">
+            <span class="stage-eyebrow" data-scramble="true">+++ // EVENT INFORMATION · DEVFEST MADURAI 2026</span>
+            <h2 id="heading-event-info-spk" class="stage-display" data-reveal="mask">${esc(sections.venue.heading)}</h2>
+            <dl class="venue-specs-list">
+              ${sections.venue.cards.map((c, idx) => `
+                <div class="hud-bevel-card venue-spec-row">
+                  <dt class="venue-spec-term"><span class="venue-spec-idx">0${idx + 1}</span><span>${esc(c.title)}</span></dt>
+                  <dd class="venue-spec-val"><strong>${esc(c.body)}</strong><span class="venue-spec-note">${esc(c.badge)}</span></dd>
+                </div>
+              `).join('')}
+            </dl>
+            <div class="orbe-cta-row">
+              ${renderDiscoverButton({
+                label: sections.tickets.ctaLabel,
+                ariaLabel: 'Get Tickets',
+                href: links.tickets,
+                external: true,
+                inline: true,
+              })}
+              <a href="/#agenda" data-spa-link="true" class="btn-link-inline">EXPLORE AGENDA //</a>
             </div>
-          `).join('')}
-        </dl>
-        <div class="orbe-cta-row">
-          ${renderDiscoverButton({
-            label: sections.tickets.ctaLabel,
-            ariaLabel: 'Get Tickets',
-            href: links.tickets,
-            external: true,
-            inline: true,
-          })}
-          <a href="/#agenda" data-spa-link="true" class="btn-link-inline">EXPLORE AGENDA //</a>
+          </div>
         </div>
       </section>
 

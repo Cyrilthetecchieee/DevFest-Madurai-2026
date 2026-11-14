@@ -27,21 +27,22 @@ export function renderAboutSection(aboutData) {
 
   return `
     <section id="about" class="stage-section about-stage" aria-labelledby="heading-about">
-      <div class="stage-section-head">
-        <div>
-          <span class="stage-eyebrow">${esc(aboutData.tag)}</span>
-          <h2 id="heading-about" class="stage-display">${esc(aboutData.heading)}</h2>
-        </div>
-      </div>
+      <div class="stage-asymmetric">
+        <div class="content-zone local-scrim">
+          <div class="stage-section-head">
+            <div>
+              <span class="stage-eyebrow" data-scramble="true">${esc(aboutData.tag)}</span>
+              <h2 id="heading-about" class="stage-display" data-reveal="mask">${esc(aboutData.heading)}</h2>
+            </div>
+          </div>
 
-      <div class="about-editorial-grid">
-        <div class="about-editorial-lead">
-          <p class="stage-lead">${esc(aboutData.paragraphs[0])}</p>
+          <div class="about-editorial-copy">
+            <p class="stage-lead">${esc(aboutData.paragraphs[0])}</p>
+            <p class="about-manifesto-quote">${esc(aboutData.paragraphs[1])}</p>
+          </div>
         </div>
 
-        <div class="about-editorial-copy">
-          <p class="about-manifesto-quote">${esc(aboutData.paragraphs[1])}</p>
-        </div>
+        <div class="graphic-window" data-creature-zone="about" aria-hidden="true"></div>
       </div>
 
       <div class="about-pillars-grid">
@@ -49,7 +50,7 @@ export function renderAboutSection(aboutData) {
           const parts = parsePillarParts(pillar.title, idx);
           const colorTone = PILLAR_COLORS[idx % PILLAR_COLORS.length];
           return `
-            <article class="about-pillar-card about-pillar-card--${colorTone}">
+            <article class="hud-bevel-card about-pillar-card about-pillar-card--${colorTone}">
               <div class="about-pillar-top">
                 <span class="about-pillar-num">${esc(parts.num)}</span>
                 <svg class="about-pillar-emblem" viewBox="0 0 36 36" width="28" height="28" aria-hidden="true">
