@@ -5,6 +5,7 @@ import agendaData from '../data/agenda.json';
 import sponsorsData from '../data/sponsors.json';
 import memoriesData from '../data/memories.json';
 import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter } from '../utils/dom.js';
+import { initSectionMotion } from '../motion/tokens.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -180,5 +181,7 @@ export function renderHomePage() {
 }
 
 export function mountHomePage() {
-  return () => {};
+  const view = document.getElementById('app-view') || document;
+  const stopMotion = initSectionMotion(view);
+  return () => stopMotion();
 }

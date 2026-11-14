@@ -837,3 +837,154 @@
     height: 12px;
   }
 }
+
+/* === STAGE SPATIAL ARCHITECTURE & KINETIC TYPOGRAPHY (S13) === */
+.stage-section {
+  position: relative;
+  width: 100%;
+  max-width: min(1440px, calc(100vw - clamp(32px, 6vw, 128px)));
+  margin: 0 auto;
+  padding: clamp(44px, 7vh, 88px) 0;
+  border-top: 1px solid rgba(94, 243, 255, 0.18);
+  scroll-margin-top: 76px;
+}
+
+.stage-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: clamp(12px, 1.8vw, 20px);
+}
+
+.stage-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+}
+
+.stage-display {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4.4vw, 66px);
+  line-height: 1.04;
+  letter-spacing: calc(0.02em + var(--track-p, 0) * 0.08em);
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: clamp(16px, 2.2vw, 28px);
+  transition: letter-spacing 0.2s linear;
+}
+
+.stage-lead {
+  font-size: clamp(15px, 1.3vw, 19px);
+  line-height: 1.62;
+  color: var(--ink);
+  opacity: 0.9;
+  max-width: 68ch;
+}
+
+/* Outline-to-fill scroll display numerals */
+.k-outline-display {
+  font-family: var(--font-mono);
+  font-size: clamp(44px, 9.2vw, 148px);
+  line-height: 0.94;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(94, 243, 255, 0.58);
+  background-image: linear-gradient(90deg, var(--ink) 0%, var(--cyan) 100%);
+  background-repeat: no-repeat;
+  background-size: calc(var(--fill-p, 0) * 100%) 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Per-digit counter roll / odometer */
+.k-counter-roll {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.k-digit-slot {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.k-digit-reel {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0%);
+  transition: transform 0.95s var(--ease-out-expo);
+  transition-delay: calc(var(--di, 0) * 55ms);
+}
+
+.k-digit-reel > span {
+  height: 1em;
+  line-height: 1em;
+  display: block;
+}
+
+.k-counter-roll.is-rolled .k-digit-reel {
+  transform: translateY(calc(var(--d, 0) * -10%));
+}
+
+.k-digit-gap {
+  display: inline-block;
+  width: 0.42em;
+}
+
+/* Hover chromatic glyph displacement */
+.k-hover-glyph {
+  position: relative;
+  display: inline-block;
+}
+
+.k-glyph-base {
+  display: inline-block;
+  transition: transform 0.26s var(--ease-out-expo), color 0.26s ease;
+}
+
+.k-glyph-echo {
+  position: absolute;
+  inset: 0;
+  color: var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(0, 0);
+  transition: transform 0.26s var(--ease-out-expo), opacity 0.22s ease;
+}
+
+.k-hover-glyph:hover .k-glyph-base,
+.k-hover-glyph:focus-visible .k-glyph-base {
+  transform: translate(-1.5px, -1px);
+  color: var(--ink);
+}
+
+.k-hover-glyph:hover .k-glyph-echo,
+.k-hover-glyph:focus-visible .k-glyph-echo {
+  opacity: 0.68;
+  transform: translate(2.5px, 1.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-outline-display {
+    --fill-p: 1;
+  }
+  .k-digit-reel {
+    transition: none;
+  }
+  .stage-display {
+    letter-spacing: 0.03em;
+  }
+}
