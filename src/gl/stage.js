@@ -9,6 +9,10 @@ import { createSkyPass } from './skyPass.js';
 import { createMarqueePlane } from './marqueePlane.js';
 import { createFigureRig } from './figureRig.js';
 import { createPostFxPass } from './postFx.js';
+import { createCameraFlythrough } from './cameraFlythrough.js';
+import { createParticleDirector } from './particleDirector.js';
+import { createProceduralGopuram } from '../visuals/gopuramBuilder.js';
+import { createMaduraiSkyline } from './skylineBuilder.js';
 import { stageBus } from '../motion/stageBus.js';
 
 const yieldTask = () => new Promise((resolve) => window.setTimeout(resolve, 0));
@@ -57,6 +61,13 @@ export async function mountWebGLStage({ canvas, quality }) {
   const marqueePlane = createMarqueePlane({ scene, renderer });
 
   const postFx = createPostFxPass({ renderer, tier: initialTier });
+
+  await yieldTask();
+  const worldScene = new THREE.Scene();
+  const cameraFly = createCameraFlythrough(window.innerWidth / Math.max(1, window.innerHeight));
+  const skyline = createMaduraiSkyline(worldScene);
+  const gopuram = createProceduralGopuram(worldScene, { isMobile: isSmallScreen });
+  const particles = createParticleDirector(worldScene, { tier: initialTier });
 
   await yieldTask();
   let figureVisibleReady = false;
@@ -136,6 +147,7 @@ export async function mountWebGLStage({ canvas, quality }) {
     skyPass.setSize(W, H);
     marqueePlane.setSize(W, H);
     figureRig.setSize(W, H);
+    cameraFly.setSize(W, H);
     postFx.setSize(W, H, renderer.getPixelRatio());
   }
 
@@ -145,6 +157,7 @@ export async function mountWebGLStage({ canvas, quality }) {
     renderer.setPixelRatio(computeEffectiveScale(config));
     renderer.setSize(state.W, state.H, false);
     skyPass.setTier(tier);
+    particles.setTier(tier);
     postFx.setTier(tier);
     postFx.setSize(state.W, state.H, renderer.getPixelRatio());
   });
@@ -234,7 +247,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       scrollProgress: stageBus.scrollProgress,
       auroraBoost: stageBus.warpBoost,
     });
-    marqueePlane.update({ dt, paused: state.paused });
+    marqueePlane.update({ dt, paused: state.paused, scrollProgress: stageBus.scrollProgress });
     figureRig.update({
       dt,
       time: state.time,
@@ -245,10 +258,37 @@ export async function mountWebGLStage({ canvas, quality }) {
       scrollProgress: stageBus.scrollProgress,
       pointerSpeed: stageBus.pointerSpeed,
     });
+    cameraFly.update({
+      dt,
+      scrollProgress: stageBus.scrollProgress,
+      pointerX: stageBus.pointerX,
+      pointerY: stageBus.pointerY,
+      routeKey: stageBus.routeKey,
+      warpBoost: stageBus.warpBoost,
+    });
+    skyline.update({ time: state.time, scrollProgress: stageBus.scrollProgress });
+    gopuram.update({
+      time: state.time,
+      scrollProgress: stageBus.scrollProgress,
+      routeKey: stageBus.routeKey,
+      warpBoost: stageBus.warpBoost,
+    });
+    particles.update({
+      time: state.time,
+      scrollProgress: stageBus.scrollProgress,
+      scrollVelocity: stageBus.scrollVelocity,
+      pointerX: stageBus.pointerX,
+      pointerY: stageBus.pointerY,
+      pointerSpeed: stageBus.pointerSpeed,
+      paused: state.paused,
+      warpBoost: stageBus.warpBoost,
+    });
 
     postFx.render({
       scene,
       camera,
+      worldScene,
+      worldCamera: cameraFly.camera,
       time: state.time,
       velocity: stageBus.scrollVelocity,
       warp: stageBus.warpBoost,
@@ -287,6 +327,9 @@ export async function mountWebGLStage({ canvas, quality }) {
       skyPass.dispose();
       marqueePlane.dispose();
       figureRig.dispose();
+      skyline.dispose();
+      gopuram.dispose();
+      particles.dispose();
       postFx.dispose();
       renderer.dispose();
     },

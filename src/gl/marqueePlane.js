@@ -20,13 +20,15 @@ const FS_MARQUEE = /* glsl */ `
   uniform sampler2D uTex;
   uniform float uOffsetX;
   uniform float uRepeatX;
+  uniform float uOpacity;
   varying vec2 vUv;
 
   void main() {
     vec2 uv = vec2(fract(vUv.x * uRepeatX + uOffsetX), vUv.y);
     vec4 col = texture2D(uTex, uv);
-    if (col.a < 0.01) discard;
-    gl_FragColor = col;
+    float a = col.a * uOpacity;
+    if (a < 0.01) discard;
+    gl_FragColor = vec4(col.rgb, a);
   }
 `;
 
@@ -92,6 +94,7 @@ export function createMarqueePlane({ scene, renderer }) {
       uTex: { value: null },
       uOffsetX: { value: 0 },
       uRepeatX: { value: 1 },
+      uOpacity: { value: 1 },
     },
   });
 
@@ -117,7 +120,12 @@ export function createMarqueePlane({ scene, renderer }) {
       console.warn('[marqueePlane] texture rasterization failed; retaining DOM SVG fallback:', err);
     });
 
+  let baseY = 0;
+  let basePlaneH = PERIOD_H;
+  let viewWidth = window.innerWidth;
+
   function setSize(W, H) {
+    viewWidth = W;
     const isMobile = W <= 820;
     const u = Math.min(W / 2048, H / 1150);
 
@@ -128,16 +136,27 @@ export function createMarqueePlane({ scene, renderer }) {
     const planeH = cssStripH * (PERIOD_H / 260);
     const scalePx = cssStripH / 260;
 
-    mesh.position.set(W / 2, -(cssTop + planeH / 2), -1200);
+    baseY = -(cssTop + planeH / 2);
+    basePlaneH = planeH;
+    mesh.position.set(W / 2, baseY, -1200);
     mesh.scale.set(W, planeH, 1);
     mat.uniforms.uRepeatX.value = W / Math.max(PERIOD_W * scalePx, 1);
   }
 
-  function update({ dt, paused }) {
-    if (!ready || paused) return;
-    // Matches CSS @keyframes marquee: -2352px over 34s = 1 full period every 34s
-    offsetPeriods = (offsetPeriods + dt / 34) % 1;
-    mat.uniforms.uOffsetX.value = offsetPeriods;
+  function update({ dt, paused, scrollProgress = 0 }) {
+    if (!ready) return;
+    if (!paused) {
+      // Matches CSS @keyframes marquee: -2352px over 34s = 1 full period every 34s
+      offsetPeriods = (offsetPeriods + dt / 34) % 1;
+      mat.uniforms.uOffsetX.value = offsetPeriods;
+    }
+
+    // Scrubbed Hero-to-Content Handoff (#7): marquee lifts & docks upward into sticky header bar
+    const dockT = Math.min(1, Math.max(0, scrollProgress / 0.11));
+    mesh.position.y = baseY + dockT * 115;
+    mesh.scale.set(viewWidth * (1 - dockT * 0.25), basePlaneH * (1 - dockT * 0.56), 1);
+    mat.uniforms.uOpacity.value = Math.max(0, 1 - dockT * 1.15);
+    mesh.visible = mat.uniforms.uOpacity.value > 0.01;
   }
 
   function dispose() {

@@ -230,6 +230,11 @@ html.paused .marquee-track {
   height: 100%;
   display: block;
   pointer-events: none;
+  transition: opacity 0.5s var(--ease-out-expo);
+}
+
+html.is-scrolled #hud-svg {
+  opacity: 0.22;
 }
 
 .hud-text {
@@ -249,7 +254,116 @@ html.paused .marquee-track {
   letter-spacing: 0.05em;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.35s var(--ease-out-expo), transform 0.35s var(--ease-out-expo);
+}
+
+html.is-scrolled .hud-brand {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(calc(-50% - 6 * var(--h))) translateY(-10px);
+}
+
+/* Sticky Scrolled HUD Dock Bar (#7 Scrubbed Handoff) */
+.hud-dock {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 132px;
+  background: rgba(6, 8, 22, 0.86);
+  border-bottom: 1px solid rgba(94, 243, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  transition: opacity 0.42s var(--ease-out-expo), transform 0.42s var(--ease-out-expo);
+}
+
+.hud-dock::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  transform-origin: left center;
+  transform: scaleX(var(--scroll-progress, 0));
+  pointer-events: none;
+}
+
+html.is-scrolled .hud-dock {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+html.is-scrolled .hud-motion-btn,
+html.is-scrolled .hud-menu-btn {
+  top: 13px;
+}
+
+html.is-scrolled .hud-coords {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud-dock-wordmark {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.hud-dock-sep {
+  color: var(--cyan);
+  opacity: 0.7;
+}
+
+.hud-dock-waypoint {
+  color: var(--cyan);
+  min-width: 11ch;
+  text-align: center;
+}
+
+.hud-cmd-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid rgba(94, 243, 255, 0.35);
+  border-radius: 3px;
+  background: rgba(11, 15, 58, 0.6);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.hud-cmd-btn:hover,
+.hud-cmd-btn:focus-visible {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(94, 243, 255, 0.12);
+  outline: none;
+}
+
+.hud-cmd-kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+  opacity: 0.9;
 }
 
 .hud-brand:hover,
@@ -264,6 +378,7 @@ html.paused .marquee-track {
   transform: translateX(-50%);
   font-size: calc(21.3 * var(--h));
   letter-spacing: 0.05em;
+  transition: opacity 0.3s ease;
 }
 
 .hud-menu-btn {
@@ -502,6 +617,28 @@ html.paused .marquee-track {
     top: max(6px, calc(12 * var(--h)));
   }
 
+  .hud-dock {
+    height: 52px;
+    padding: 0 96px;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .hud-dock-wordmark,
+  .hud-dock-sep {
+    display: none;
+  }
+
+  .hud-dock-waypoint {
+    min-width: auto;
+  }
+
+  .hud-cmd-btn {
+    min-height: 44px;
+    padding: 6px 10px;
+  }
+
   .hud-coords {
     bottom: max(8px, calc(20 * var(--h)));
     font-size: max(10px, calc(20 * var(--h)));
@@ -509,20 +646,30 @@ html.paused .marquee-track {
 
   .hud-motion-btn {
     left: 14px;
-    top: 18px;
+    top: 4px;
     font-size: 12px;
     background: rgba(3, 4, 9, 0.84);
-    padding: 4px 8px;
+    padding: 6px 10px;
+    min-height: 44px;
+    min-width: 44px;
     border-radius: 4px;
   }
 
   .hud-menu-btn {
     right: 14px;
-    top: 18px;
+    top: 4px;
     font-size: 12px;
     background: rgba(3, 4, 9, 0.84);
-    padding: 4px 8px;
+    padding: 6px 10px;
+    min-height: 44px;
+    min-width: 44px;
     border-radius: 4px;
+    text-align: center;
+  }
+
+  html.is-scrolled .hud-motion-btn,
+  html.is-scrolled .hud-menu-btn {
+    top: 4px;
   }
 
   .hud-nav-panel {

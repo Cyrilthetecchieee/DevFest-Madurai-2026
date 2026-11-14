@@ -1,4 +1,23 @@
-/** Pinned Mission Control HUD Chrome: Bezel SVG, Menu Drawer, Motion Toggle & Coordinates. */
+/** Pinned Mission Control HUD Chrome: Bezel SVG, Sticky Dock Handoff, Menu Drawer, Motion Toggle & Coordinates. */
+import { stageBus } from '../motion/stageBus.js';
+
+const HOME_WAYPOINTS = [
+  '01 / ORBIT',
+  '02 / ABOUT',
+  '03 / VENUE',
+  '04 / SPEAKERS',
+  '05 / AGENDA',
+  '06 / TICKETS',
+  '07 / CFP',
+  '08 / SPONSORS',
+  '09 / MEMORIES',
+  '10 / SIGNAL END',
+];
+
+const ROUTE_LABELS = {
+  speakers: 'G_010 // SPEAKERS',
+  memories: 'G_012 // MEMORIES',
+};
 
 export function initHud({ onMotionChange, onNavigate }) {
   const hudSvg = document.getElementById('hud-svg');
@@ -7,8 +26,13 @@ export function initHud({ onMotionChange, onNavigate }) {
   const coordsText = document.getElementById('coords-text');
   const menuToggle = document.getElementById('menu-toggle');
   const hudNav = document.getElementById('hud-nav');
+  const waypointEl = document.getElementById('hud-waypoint');
+  const cmdOpenBtn = document.getElementById('cmd-open-btn');
 
   let paused = false;
+  let lastScrolled = false;
+  let lastWaypointText = '';
+  let activeRouteKey = 'home';
 
   function redrawHUD() {
     if (!hudSvg) return;
@@ -157,7 +181,48 @@ export function initHud({ onMotionChange, onNavigate }) {
   window.addEventListener('resize', redrawHUD, { passive: true });
   redrawHUD();
 
+  function syncDockState(scrollProgress) {
+    const y = window.scrollY || 0;
+    const isScrolled = scrollProgress > 0.035 || y > Math.max(140, window.innerHeight * 0.22);
+    if (isScrolled !== lastScrolled) {
+      lastScrolled = isScrolled;
+      document.documentElement.classList.toggle('is-scrolled', isScrolled);
+    }
+
+    let nextWaypoint = ROUTE_LABELS[activeRouteKey];
+    if (!nextWaypoint) {
+      const idx = Math.min(
+        HOME_WAYPOINTS.length - 1,
+        Math.max(0, Math.round(scrollProgress * (HOME_WAYPOINTS.length - 1))),
+      );
+      nextWaypoint = HOME_WAYPOINTS[idx];
+    }
+    if (waypointEl && nextWaypoint !== lastWaypointText) {
+      lastWaypointText = nextWaypoint;
+      waypointEl.textContent = nextWaypoint;
+    }
+  }
+
+  const unsubBus = stageBus.on((ev, state) => {
+    if (ev === 'scroll' || ev === 'route') {
+      syncDockState(state.scrollProgress || 0);
+    }
+  });
+
+  window.addEventListener('scroll', () => {
+    const docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    syncDockState((window.scrollY || 0) / docMax);
+  }, { passive: true });
+
+  cmdOpenBtn?.addEventListener('click', () => {
+    stageBus.emit('command-palette:toggle', { source: 'hud' });
+  });
+
   function setActiveRoute(routeKey) {
+    activeRouteKey = routeKey || 'home';
+    stageBus.routeKey = activeRouteKey;
+    stageBus.emit('route', { routeKey: activeRouteKey });
+    syncDockState(stageBus.scrollProgress || 0);
     if (!hudNav) return;
     hudNav.querySelectorAll('.hud-nav-link').forEach((el) => {
       const targetRoute = el.dataset.route;
@@ -165,5 +230,5 @@ export function initHud({ onMotionChange, onNavigate }) {
     });
   }
 
-  return { setActiveRoute, closeMenu, isPaused: () => paused };
+  return { setActiveRoute, closeMenu, isPaused: () => paused, destroy: () => unsubBus() };
 }

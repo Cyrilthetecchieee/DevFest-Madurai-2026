@@ -128,22 +128,32 @@ export function createPostFxPass({ renderer, tier }) {
     enabled = nextTier !== 'LOW';
   }
 
-  function render({ scene, camera, time, velocity, warp, iris }) {
-    if (!enabled) {
-      renderer.setRenderTarget(null);
-      renderer.render(scene, camera);
-      return;
+  function render({ scene, camera, worldScene, worldCamera, time, velocity, warp, iris }) {
+    const prevAutoClear = renderer.autoClear;
+    renderer.autoClear = false;
+
+    const target = enabled ? rt : null;
+    renderer.setRenderTarget(target);
+    renderer.clear(true, true, true);
+    renderer.render(scene, camera);
+
+    if (worldScene && worldCamera) {
+      renderer.clearDepth();
+      renderer.render(worldScene, worldCamera);
     }
 
-    mat.uniforms.uTime.value = time;
-    mat.uniforms.uVelocity.value = velocity || 0;
-    mat.uniforms.uWarp.value = warp || 0;
-    mat.uniforms.uIris.value = iris || 0;
+    if (enabled) {
+      mat.uniforms.uTime.value = time;
+      mat.uniforms.uVelocity.value = velocity || 0;
+      mat.uniforms.uWarp.value = warp || 0;
+      mat.uniforms.uIris.value = iris || 0;
 
-    renderer.setRenderTarget(rt);
-    renderer.render(scene, camera);
-    renderer.setRenderTarget(null);
-    renderer.render(postScene, postCam);
+      renderer.setRenderTarget(null);
+      renderer.clear(true, false, false);
+      renderer.render(postScene, postCam);
+    }
+
+    renderer.autoClear = prevAutoClear;
   }
 
   function dispose() {
