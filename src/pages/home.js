@@ -8,6 +8,7 @@ import { esc, renderHeroStage, renderDiscoverButton, renderPicture, renderFooter
 import { initSectionMotion } from '../motion/tokens.js';
 import { renderAboutSection, mountAboutSection } from '../sections/aboutSection.js';
 import { renderVenueSection, mountVenueSection } from '../sections/venueSection.js';
+import { renderSpeakersExperience, mountSpeakersExperience } from '../sections/speakersConstellation.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -27,26 +28,7 @@ export function renderHomePage() {
 
       ${renderVenueSection(sections.venue, links)}
 
-      <section id="speakers" class="orbe-section" aria-labelledby="heading-speakers">
-        <span class="orbe-section-tag">${esc(speakersData.homeSection.tag)}</span>
-        <h2 id="heading-speakers" class="orbe-section-heading">${esc(speakersData.homeSection.heading)}</h2>
-        <p class="orbe-section-copy">${esc(speakersData.homeSection.copy)}</p>
-
-        <div class="orbe-grid-3" aria-label="Speaker Placeholders">
-          ${homeSpeakers.map((s) => `
-            <article class="orbe-card">
-              <span class="orbe-badge-tba">${esc(s.homeBadge)}</span>
-              <h3 class="orbe-card-title">${esc(s.name)}</h3>
-              <p class="orbe-card-body">${esc(s.homeSubtitle || s.subtitle)}</p>
-            </article>
-          `).join('')}
-        </div>
-
-        <div class="orbe-cta-row">
-          <a href="/speakers" data-spa-link="true" class="btn-link-inline">EXPLORE SPEAKERS PAGE //</a>
-          <a href="#cfp" class="btn-link-inline">${esc(sections.cfp.ctaLabel)}</a>
-        </div>
-      </section>
+      ${renderSpeakersExperience({ id: 'speakers', headingId: 'heading-speakers', isPage: false, links, cfpCtaLabel: sections.cfp.ctaLabel })}
 
       <section id="agenda" class="orbe-section" aria-labelledby="heading-agenda">
         <span class="orbe-section-tag">${esc(agendaData.tag)}</span>
@@ -154,7 +136,9 @@ export function mountHomePage() {
   const stopMotion = initSectionMotion(view);
   const stopAbout = mountAboutSection();
   const stopVenue = mountVenueSection();
+  const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
   return () => {
+    stopSpeakers();
     stopVenue();
     stopAbout();
     stopMotion();
