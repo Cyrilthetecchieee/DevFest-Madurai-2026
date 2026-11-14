@@ -56,12 +56,56 @@ const FS_SKY = /* glsl */ `
   uniform sampler2D uMainTex;
   uniform sampler2D uTrailTex;
   uniform vec2 uCoverScale;
+  uniform vec2 uPointer;
   uniform float uTime;
   uniform float uTrailWeight;
+  uniform float uScrollProgress;
+  uniform float uAuroraGain;
   varying vec2 vUv;
 
   vec2 toCoverUv(vec2 uv) {
     return clamp(vec2(0.5) + (uv - 0.5) * uCoverScale, 0.001, 0.999);
+  }
+
+  float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+
+  float vnoise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1.0, 0.0));
+    float c = hash21(i + vec2(0.0, 1.0));
+    float d = hash21(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  }
+
+  float fbm3(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+    for (int i = 0; i < 3; i++) {
+      v += a * vnoise(p);
+      p = rot * p * 2.04;
+      a *= 0.5;
+    }
+    return v;
+  }
+
+  float starLayer(vec2 uv, float scale, float parallax, float seed) {
+    vec2 st = (uv + (uPointer - 0.5) * parallax + vec2(0.0, uScrollProgress * parallax * 1.4)) * scale;
+    vec2 id = floor(st);
+    vec2 gv = fract(st) - 0.5;
+    float n = hash21(id + seed);
+    if (n < 0.915) return 0.0;
+    vec2 jitter = (vec2(hash21(id * 2.3 + seed), hash21(id * 5.7 + seed)) - 0.5) * 0.65;
+    float d = length(gv - jitter);
+    float twinkle = 0.55 + 0.45 * sin(uTime * (2.2 + n * 4.5) + n * 31.4);
+    return smoothstep(0.09, 0.0, d) * twinkle * smoothstep(0.915, 0.995, n);
   }
 
   void main() {
@@ -85,18 +129,38 @@ const FS_SKY = /* glsl */ `
     vec2 uvG = toCoverUv(v + off);
     vec2 uvB = toCoverUv(v + off * 0.75);
 
-    float r = texture2D(uMainTex, uvR).r;
-    float gCol = texture2D(uMainTex, uvG).g;
-    float b = texture2D(uMainTex, uvB).b;
-    vec3 col = vec3(r, gCol, b);
+    vec3 col = vec3(
+      texture2D(uMainTex, uvR).r,
+      texture2D(uMainTex, uvG).g,
+      texture2D(uMainTex, uvB).b
+    );
 
+    // Domain-warped FBM aurora curtains within #0b0f3a / #5ef3ff / #9b5cff palette
+    vec2 aUv = v * vec2(2.8, 1.9) + vec2(uTime * 0.035, -uScrollProgress * 0.45);
+    vec2 q = vec2(fbm3(aUv), fbm3(aUv + vec2(4.2, 1.7)));
+    float aurora = fbm3(aUv + 1.85 * q + vec2(uTime * 0.022));
+    float auroraBand = smoothstep(0.32, 0.78, aurora) * smoothstep(0.08, 0.88, v.y);
+    vec3 auroraCol = mix(vec3(0.369, 0.953, 1.0), vec3(0.608, 0.361, 1.0), clamp(q.y * 1.2 + uScrollProgress * 0.4, 0.0, 1.0));
+    col += auroraCol * auroraBand * (0.14 + uAuroraGain * 0.24);
+
+    // Dual-depth parallax twinkling starfield
+    float starsFar = starLayer(v, 36.0, 0.014, 13.7);
+    float starsNear = starLayer(v, 19.0, 0.032, 91.3);
+    col += vec3(0.92, 0.96, 1.0) * starsFar * 0.55;
+    col += mix(vec3(0.37, 0.95, 1.0), vec3(0.95, 0.96, 1.0), 0.6) * starsNear * 0.75;
+
+    // Cursor fluid ripple tint & luminescence
     vec3 tint = col * vec3(1.08, 0.98, 1.15) + vec3(0.05, 0.03, 0.09);
     col = mix(col, tint, smoothstep(0.0, 0.5, t));
+    col += vec3(0.37, 0.95, 1.0) * length(g) * 0.14;
+    col += vec3(0.61, 0.36, 1.0) * dot(rib, vec2(0.55, 0.83)) * 0.06 * smoothstep(0.0, 0.5, t);
 
-    col += vec3(0.37, 0.95, 1.0) * length(g) * 0.12;
-    col += vec3(0.61, 0.36, 1.0) * dot(rib, vec2(0.55, 0.83)) * 0.05 * smoothstep(0.0, 0.5, t);
+    // Scroll-linked subtle palette grade (navy -> cyan depth -> violet nebula -> deep horizon)
+    vec3 deepGrade = mix(vec3(1.0, 1.0, 1.0), vec3(0.86, 0.94, 1.06), smoothstep(0.0, 0.5, uScrollProgress));
+    deepGrade = mix(deepGrade, vec3(0.95, 0.84, 1.1), smoothstep(0.45, 1.0, uScrollProgress));
+    col *= deepGrade;
 
-    gl_FragColor = vec4(col, 1.0);
+    gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
   }
 `;
 
@@ -159,8 +223,11 @@ export function createSkyPass({ scene, renderer, plateImgUrl, videoUrl, tier }) 
       uMainTex: { value: plateTexture },
       uTrailTex: { value: readRT.texture },
       uCoverScale: { value: new THREE.Vector2(1, 1) },
+      uPointer: { value: new THREE.Vector2(0.5, 0.5) },
       uTime: { value: 0 },
       uTrailWeight: { value: tier === 'LOW' ? 0 : 1 },
+      uScrollProgress: { value: 0 },
+      uAuroraGain: { value: tier === 'LOW' ? 0.45 : 1.0 },
     },
   });
   const skyMesh = new THREE.Mesh(skyGeo, skyMat);
@@ -222,11 +289,16 @@ export function createSkyPass({ scene, renderer, plateImgUrl, videoUrl, tier }) 
 
   function setTier(nextTier) {
     skyMat.uniforms.uTrailWeight.value = nextTier === 'LOW' ? 0 : 1;
+    skyMat.uniforms.uAuroraGain.value = nextTier === 'LOW' ? 0.45 : 1.0;
     if (nextTier !== 'LOW') enableVideoIfPermitted(nextTier);
   }
 
-  function update({ time, pointer, W, H, paused, trailEnabled }) {
+  function update({ time, pointer, W, H, paused, trailEnabled, scrollProgress = 0, auroraBoost = 0 }) {
     skyMat.uniforms.uTime.value = time;
+    skyMat.uniforms.uScrollProgress.value = scrollProgress;
+    skyMat.uniforms.uPointer.value.set(pointer.x / Math.max(1, W), 1.0 - pointer.y / Math.max(1, H));
+    const baseGain = trailEnabled ? 1.0 : 0.45;
+    skyMat.uniforms.uAuroraGain.value = baseGain + auroraBoost;
 
     if (trailEnabled && !paused) {
       trailMat.uniforms.uPrevTrail.value = readRT.texture;

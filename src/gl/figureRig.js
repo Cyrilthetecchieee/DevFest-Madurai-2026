@@ -84,18 +84,35 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
   let curRoll = 0;
   let curParallaxX = 0;
   let curBobY = 0;
+  let revealElapsed = 0;
+  let rimPulse = 0;
 
-  // Device tilt (passive listener, permissionless where allowed, gracefully ignored otherwise)
+  // Device tilt (permission-gated on iOS Safari via first tap, passive elsewhere)
   let gyroOffsetX = 0;
   let gyroOffsetY = 0;
+  let gyroAttached = false;
   const onDeviceOrientation = (e) => {
     if (typeof e.gamma === 'number' && typeof e.beta === 'number') {
       gyroOffsetX = Math.max(-0.5, Math.min(0.5, e.gamma / 45));
       gyroOffsetY = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 45));
     }
   };
-  if (typeof window.DeviceOrientationEvent !== 'undefined' && typeof window.DeviceOrientationEvent.requestPermission !== 'function') {
+  const attachGyro = () => {
+    if (gyroAttached) return;
+    gyroAttached = true;
     window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true });
+  };
+  if (typeof window.DeviceOrientationEvent !== 'undefined') {
+    if (typeof window.DeviceOrientationEvent.requestPermission !== 'function') {
+      attachGyro();
+    } else {
+      const requestOnGesture = () => {
+        window.DeviceOrientationEvent.requestPermission()
+          .then((res) => { if (res === 'granted') attachGyro(); })
+          .catch(() => {});
+      };
+      window.addEventListener('pointerdown', requestOnGesture, { once: true, passive: true });
+    }
   }
 
   const useLowLod = tier === 'LOW' && Boolean(lowGlbUrl);
@@ -157,6 +174,8 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
 
         mat.onBeforeCompile = (shader) => {
           shader.uniforms.uTime = { value: 0 };
+          shader.uniforms.uRimPulse = { value: 0 };
+          shader.uniforms.uReveal = { value: 0 };
           shader.uniforms.uBBoxMin = { value: bbox.min };
           shader.uniforms.uBBoxMax = { value: bbox.max };
 
@@ -179,6 +198,8 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
             varying vec3 vObjPos;
             varying float vYF;
             uniform float uTime;
+            uniform float uRimPulse;
+            uniform float uReveal;
             ${shader.fragmentShader}
           `
             .replace(
@@ -205,8 +226,8 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
               bool isPlanetOrMoon = (distPlanetP <= 0.046) || (distMoonP <= 0.02);
 
               float rim = pow(1.0 - abs(vNormal.z), 2.0);
-
-              vec3 rimColor = mix(vec3(0.35, 0.95, 1.0), vec3(0.66, 0.4, 1.0), smoothstep(0.2, 0.8, vYF)) * rim * 1.8;
+              vec3 iriShift = mix(vec3(0.35, 0.95, 1.0), vec3(0.66, 0.4, 1.0), smoothstep(0.18, 0.82, vYF));
+              vec3 rimColor = iriShift * rim * (1.8 + uRimPulse * 1.15);
               totalEmissiveRadiance += rimColor;
 
               vec3 warmCore = vec3(1.0, 0.62, 0.55) * 0.55 * smoothstep(0.18, 0.42, vYF) * (1.0 - smoothstep(0.52, 0.68, vYF)) * pow(abs(vNormal.z), 2.5);
@@ -217,6 +238,12 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
               float haloEmissiveAtten = isPlanetOrMoon ? 0.5 : 1.0;
               vec3 haloEmissive = vec3(0.06, 0.7, 1.0) * ring * (0.9 + 2.2 * rim) * pulse * haloEmissiveAtten;
               totalEmissiveRadiance += haloEmissive;
+
+              // Holographic scan-sweep reveal wave on first entry
+              if (uReveal < 1.18) {
+                float wave = exp(-pow((vYF - uReveal) * 14.0, 2.0));
+                totalEmissiveRadiance += vec3(0.37, 0.95, 1.0) * wave * 2.4;
+              }
               `
             );
 
@@ -264,11 +291,17 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
     headScreenY = boxTop + 450 * coverUnit;
   }
 
-  function update({ dt, time, pointer, W, H, paused }) {
+  function update({ dt, time, pointer, W, H, paused, scrollProgress = 0, pointerSpeed = 0 }) {
     if (!loaded) return;
 
+    revealElapsed = Math.min(1.3, revealElapsed + dt * 0.95);
+    rimPulse = rimPulse * 0.88 + pointerSpeed * 0.12;
+
     for (const shader of customShaders) {
-      if (shader.uniforms?.uTime) shader.uniforms.uTime.value = time;
+      if (!shader.uniforms) continue;
+      if (shader.uniforms.uTime) shader.uniforms.uTime.value = time;
+      if (shader.uniforms.uReveal) shader.uniforms.uReveal.value = revealElapsed;
+      if (shader.uniforms.uRimPulse) shader.uniforms.uRimPulse.value = rimPulse;
     }
 
     if (paused) return;
@@ -280,11 +313,13 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
       dy = Math.max(-1, Math.min(1, (pointer.y - headScreenY) / Math.max(H / 2, 1)));
     }
 
-    const tYaw = 0.62 * dx + 0.025 * Math.sin(time * 0.6);
-    const tPitch = 0.2 * dy;
+    // Hero-to-content recession & scroll-linked yaw (#3, #7)
+    const heroExit = Math.min(1, scrollProgress * 4.5);
+    const tYaw = 0.62 * dx + 0.025 * Math.sin(time * 0.6) + heroExit * 0.42;
+    const tPitch = 0.2 * dy - heroExit * 0.12;
     const tRoll = -0.045 * dx;
     const tParallaxX = 14 * dx;
-    const tBobY = 5 * Math.sin(time * 0.9);
+    const tBobY = 5 * Math.sin(time * 0.9) - heroExit * 90;
 
     const easeK = 1.0 - Math.exp(-dt * 4.2);
     curYaw += (tYaw - curYaw) * easeK;
@@ -296,9 +331,11 @@ export function createFigureRig({ scene, renderer, camera, glbUrl, lowGlbUrl, ti
     turnGroup.rotation.y = curYaw;
     turnGroup.rotation.x = curPitch;
     turnGroup.rotation.z = curRoll;
+    turnGroup.scale.setScalar(1.0 - heroExit * 0.22);
 
     rootGroup.position.x = 982 + curParallaxX;
     rootGroup.position.y = -792 + curBobY;
+    rootGroup.position.z = -heroExit * 340;
   }
 
   function dispose() {

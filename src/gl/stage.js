@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { createSkyPass } from './skyPass.js';
 import { createMarqueePlane } from './marqueePlane.js';
 import { createFigureRig } from './figureRig.js';
+import { createPostFxPass } from './postFx.js';
+import { stageBus } from '../motion/stageBus.js';
 
 const yieldTask = () => new Promise((resolve) => window.setTimeout(resolve, 0));
 
@@ -53,6 +55,8 @@ export async function mountWebGLStage({ canvas, quality }) {
 
   await yieldTask();
   const marqueePlane = createMarqueePlane({ scene, renderer });
+
+  const postFx = createPostFxPass({ renderer, tier: initialTier });
 
   await yieldTask();
   let figureVisibleReady = false;
@@ -132,6 +136,7 @@ export async function mountWebGLStage({ canvas, quality }) {
     skyPass.setSize(W, H);
     marqueePlane.setSize(W, H);
     figureRig.setSize(W, H);
+    postFx.setSize(W, H, renderer.getPixelRatio());
   }
 
   resize();
@@ -140,6 +145,8 @@ export async function mountWebGLStage({ canvas, quality }) {
     renderer.setPixelRatio(computeEffectiveScale(config));
     renderer.setSize(state.W, state.H, false);
     skyPass.setTier(tier);
+    postFx.setTier(tier);
+    postFx.setSize(state.W, state.H, renderer.getPixelRatio());
   });
 
   const onPointerMove = (e) => {
@@ -224,6 +231,8 @@ export async function mountWebGLStage({ canvas, quality }) {
       H: state.H,
       paused: state.paused,
       trailEnabled: cfg.trailEnabled,
+      scrollProgress: stageBus.scrollProgress,
+      auroraBoost: stageBus.warpBoost,
     });
     marqueePlane.update({ dt, paused: state.paused });
     figureRig.update({
@@ -233,9 +242,18 @@ export async function mountWebGLStage({ canvas, quality }) {
       W: state.W,
       H: state.H,
       paused: state.paused,
+      scrollProgress: stageBus.scrollProgress,
+      pointerSpeed: stageBus.pointerSpeed,
     });
 
-    renderer.render(scene, camera);
+    postFx.render({
+      scene,
+      camera,
+      time: state.time,
+      velocity: stageBus.scrollVelocity,
+      warp: stageBus.warpBoost,
+      iris: stageBus.irisProgress,
+    });
     const renderCostMs = performance.now() - t0;
 
     state.pointer.prevX = state.pointer.x;
@@ -269,6 +287,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       skyPass.dispose();
       marqueePlane.dispose();
       figureRig.dispose();
+      postFx.dispose();
       renderer.dispose();
     },
   };
