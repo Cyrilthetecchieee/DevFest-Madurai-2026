@@ -16,6 +16,7 @@ import { initFluidCursor } from './motion/cursor.js';
 import { initHud } from './pages/hud.js';
 import { createRouter } from './pages/router.js';
 import { initCommandSystem } from './motion/commandPalette.js';
+import { initSoundscape } from './motion/soundscape.js';
 
 const quality = createQualityGovernor();
 
@@ -71,11 +72,13 @@ const lenis = (() => {
 let glStage = null;
 const viewRoot = document.getElementById('app-view');
 const cursorCtrl = initFluidCursor();
+const soundCtrl = initSoundscape();
 
 const hud = initHud({
   onMotionChange(paused) {
     lenis.setPaused(paused);
     cursorCtrl.setPaused(paused);
+    soundCtrl.setPaused(paused);
     glStage?.setPaused(paused);
   },
   onNavigate(href) {

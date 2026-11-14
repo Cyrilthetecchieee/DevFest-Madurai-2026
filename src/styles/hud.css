@@ -366,6 +366,60 @@ html.is-scrolled .hud-coords {
   opacity: 0.9;
 }
 
+.hud-sound-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid rgba(243, 246, 255, 0.24);
+  border-radius: 3px;
+  background: rgba(11, 15, 58, 0.48);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.hud-sound-btn.is-on {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(94, 243, 255, 0.12);
+}
+
+.hud-sound-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+}
+
+.hud-sound-bars i {
+  display: block;
+  width: 2px;
+  height: 4px;
+  background: currentColor;
+}
+
+.hud-sound-btn.is-on .hud-sound-bars i:nth-child(1) {
+  animation: hudBarEq 0.7s ease-in-out infinite alternate;
+}
+
+.hud-sound-btn.is-on .hud-sound-bars i:nth-child(2) {
+  animation: hudBarEq 0.55s ease-in-out 0.18s infinite alternate;
+}
+
+.hud-sound-btn.is-on .hud-sound-bars i:nth-child(3) {
+  animation: hudBarEq 0.8s ease-in-out 0.08s infinite alternate;
+}
+
+@keyframes hudBarEq {
+  from { height: 3px; }
+  to { height: 11px; }
+}
+
 .hud-brand:hover,
 .hud-brand:focus-visible {
   color: var(--cyan);
@@ -634,9 +688,14 @@ html.is-scrolled .hud-coords {
     min-width: auto;
   }
 
-  .hud-cmd-btn {
+  .hud-cmd-btn,
+  .hud-sound-btn {
     min-height: 44px;
-    padding: 6px 10px;
+    padding: 6px 8px;
+  }
+
+  .hud-cmd-kbd {
+    display: none;
   }
 
   .hud-coords {
