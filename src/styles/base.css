@@ -152,20 +152,21 @@ html.gl-active #stage-bg {
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Once-per-session skippable Mission Control loader (translucent HUD frame — never blocks LCP poster) */
+/* Once-per-session skippable Mission Control loader (#1: Kolam draw + telemetry + iris wipe) */
 #mc-loader {
   position: fixed;
   inset: 0;
   z-index: var(--z-loader);
-  background: radial-gradient(circle at 50% 42%, rgba(11, 15, 58, 0.04) 0%, rgba(3, 4, 9, 0.72) 85%);
+  background: radial-gradient(circle at 50% 45%, rgba(11, 15, 58, 0.78) 0%, rgba(3, 4, 9, 0.96) 80%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  padding: 24px 24px clamp(52px, 8dvh, 90px);
-  pointer-events: none;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: auto;
   opacity: 1;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  clip-path: circle(150% at 50% 50%);
+  transition: opacity 0.45s ease, clip-path 0.52s var(--ease-expo);
 }
 
 .mc-loader-shell {
@@ -174,18 +175,55 @@ html.gl-active #stage-bg {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 12px 18px;
-  background: rgba(3, 4, 9, 0.88);
-  border: 1px solid rgba(94, 243, 255, 0.42);
+  padding: 22px 26px;
+  background: rgba(3, 4, 9, 0.92);
+  border: 1px solid rgba(94, 243, 255, 0.35);
+  box-shadow: 0 0 42px rgba(94, 243, 255, 0.14);
+}
+
+.mc-loader-kolam {
+  width: 148px;
+  height: 148px;
+  display: grid;
+  place-items: center;
+}
+
+.mc-kolam-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.mc-loader-telemetry {
+  width: min(260px, 72vw);
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink-muted);
+}
+
+#mc-loader-pct {
+  color: var(--cyan);
 }
 
 #mc-loader[hidden] {
   display: none;
 }
 
-#mc-loader.fade-out {
+#mc-loader.is-acquired .mc-loader-shell {
+  border-color: var(--cyan);
+  box-shadow: 0 0 60px rgba(94, 243, 255, 0.45);
+}
+
+#mc-loader.is-acquired .mc-loader-tag {
+  color: var(--ink);
+  text-shadow: 0 0 12px var(--cyan);
+}
+
+#mc-loader.iris-out {
+  clip-path: circle(0% at 50% 50%);
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
 }
 
@@ -194,10 +232,11 @@ html.gl-active #stage-bg {
   letter-spacing: 0.22em;
   color: var(--cyan);
   text-transform: uppercase;
+  text-align: center;
 }
 
 .mc-loader-bar {
-  width: min(280px, 72vw);
+  width: min(260px, 72vw);
   height: 2px;
   background: rgba(94, 243, 255, 0.18);
   overflow: hidden;
@@ -208,11 +247,11 @@ html.gl-active #stage-bg {
   height: 100%;
   background: linear-gradient(90deg, var(--cyan), var(--violet));
   transform-origin: left center;
-  animation: loaderSweep 0.65s var(--ease-expo) forwards;
+  transform: scaleX(0.08);
 }
 
 .mc-loader-skip {
-  margin-top: 8px;
+  margin-top: 6px;
   background: transparent;
   border: 1px solid rgba(94, 243, 255, 0.45);
   color: var(--ink);
@@ -220,7 +259,8 @@ html.gl-active #stage-bg {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 8px 16px;
+  padding: 10px 18px;
+  min-height: 44px;
   cursor: pointer;
 }
 
@@ -231,12 +271,140 @@ html.gl-active #stage-bg {
   outline: none;
 }
 
-@keyframes loaderSweep {
-  from { transform: scaleX(0.08); }
-  to { transform: scaleX(1); }
+/* Kinetic masked line / word reveals (S13) */
+.k-word-clip {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.k-word-inner {
+  display: inline-block;
+  transform: translateY(108%);
+  opacity: 0;
+  transition: transform 0.65s var(--ease-expo) calc(var(--wi, 0) * 42ms), opacity 0.42s ease calc(var(--wi, 0) * 42ms);
+}
+
+.is-revealed .k-word-inner {
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+/* Fluid Cursor & Magnetic Controls (S11) */
+#hud-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 95;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: transform;
+}
+
+#hud-cursor.is-visible {
+  opacity: 1;
+}
+
+#hud-cursor.is-paused {
+  opacity: 0;
+}
+
+.hud-cursor-ring {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  border: 1.4px solid rgba(94, 243, 255, 0.72);
+  background: rgba(94, 243, 255, 0.04);
+  transition: width 0.22s var(--ease-expo), height 0.22s var(--ease-expo), margin 0.22s var(--ease-expo), border-color 0.2s ease;
+}
+
+#hud-cursor.is-active .hud-cursor-ring {
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-color: var(--cyan);
+  background: rgba(94, 243, 255, 0.1);
+}
+
+#hud-cursor.has-label .hud-cursor-ring {
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  border-color: var(--violet);
+}
+
+.hud-cursor-tag {
+  position: absolute;
+  left: 24px;
+  top: -8px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: rgba(3, 4, 9, 0.88);
+  padding: 2px 6px;
+  border: 1px solid rgba(94, 243, 255, 0.4);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+#hud-cursor.has-label .hud-cursor-tag {
+  opacity: 1;
+}
+
+#hud-ripple-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  overflow: hidden;
+}
+
+.hud-touch-ripple {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cyan);
+  animation: hudRipple 0.65s var(--ease-expo) forwards;
+}
+
+.hud-touch-ripple--violet {
+  border-color: var(--violet);
+}
+
+@keyframes hudRipple {
+  from {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(5.4);
+    opacity: 0;
+  }
+}
+
+.hud-menu-btn.is-magnet-active,
+.hud-motion-btn.is-magnet-active,
+.btn-secondary-hud.is-magnet-active,
+[data-magnetic].is-magnet-active {
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+}
+
+.btn-discover.is-magnet-active {
+  transform: translate3d(calc(-50% + var(--mag-x, 0px)), var(--mag-y, 0px), 0);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mc-loader-fill { animation: none; transform: scaleX(1); }
+  .mc-loader-fill { transform: scaleX(1); }
+  .k-word-inner { transform: none; opacity: 1; transition: none; }
+  #hud-cursor, #hud-ripple-layer { display: none; }
   #gl-stage, #stage-hl, #stage-fig-fallback, #stage-bg { transition: none; }
 }

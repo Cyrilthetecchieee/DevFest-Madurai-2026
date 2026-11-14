@@ -12,6 +12,7 @@ import './styles/sections.css';
 import { detectWebGL, isConstrainedData, prefersReducedMotion } from './utils/env.js';
 import { createQualityGovernor } from './utils/quality.js';
 import { initSessionLoader } from './motion/loader.js';
+import { initFluidCursor } from './motion/cursor.js';
 import { initHud } from './pages/hud.js';
 import { createRouter } from './pages/router.js';
 
@@ -68,10 +69,12 @@ const lenis = (() => {
 
 let glStage = null;
 const viewRoot = document.getElementById('app-view');
+const cursorCtrl = initFluidCursor();
 
 const hud = initHud({
   onMotionChange(paused) {
     lenis.setPaused(paused);
+    cursorCtrl.setPaused(paused);
     glStage?.setPaused(paused);
   },
   onNavigate(href) {
