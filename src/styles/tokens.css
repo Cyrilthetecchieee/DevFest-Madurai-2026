@@ -1,0 +1,91 @@
+/* Design Tokens — DevFest Madurai 2026 ("Mission Control for a Night-Sky Festival") */
+@font-face {
+  font-family: "Orbe Mono";
+  src: url("/fonts/orbe-mono.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Orbe Mono";
+  src: url("/fonts/orbe-mono-zero.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030;
+}
+
+:root {
+  /* Core Brand Palette */
+  --navy: #0b0f3a;
+  --navy-deep: #060922;
+  --navy-mid: #10184c;
+  --cyan: #5ef3ff;
+  --cyan-soft: rgba(94, 243, 255, 0.45);
+  --cyan-tint: rgba(94, 243, 255, 0.14);
+  --cyan-faint: rgba(94, 243, 255, 0.06);
+  --violet: #9b5cff;
+  --violet-soft: rgba(155, 92, 255, 0.35);
+  --ink: #f3f6ff;
+  --ink-dim: rgba(243, 246, 255, 0.84);
+  --ink-muted: rgba(243, 246, 255, 0.72);
+  --ink-border: rgba(207, 214, 230, 0.26);
+  --bezel: #030409;
+  --hud-bracket: #cfd6e6;
+  --surface-glass: rgba(3, 4, 9, 0.82);
+  --surface-card: rgba(11, 15, 58, 0.52);
+  --surface-card-deep: rgba(8, 13, 44, 0.78);
+  --surface-footer: rgba(3, 4, 9, 0.94);
+
+  /* Typography */
+  --font-mono: "Orbe Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Virtual Stage Coordinates */
+  --u: min(100vw / 2048, 100svh / 1150);
+  --h: min(100vw / 2048, 100svh / 1360);
+
+  /* Spacing & Radii Tokens */
+  --space-1: clamp(4px, 0.35vw, 8px);
+  --space-2: clamp(8px, 0.7vw, 14px);
+  --space-3: clamp(14px, 1.2vw, 24px);
+  --space-4: clamp(20px, 1.8vw, 36px);
+  --space-5: clamp(28px, 2.6vw, 52px);
+  --radius-sharp: 0px;
+  --radius-sm: 4px;
+  --radius-pill: 999px;
+
+  /* Type Scale (clamped to never drop below readable threshold on 320px–4K) */
+  --text-xs: clamp(11px, calc(14 * var(--u)), 15px);
+  --text-sm: clamp(12px, calc(16.5 * var(--u)), 18px);
+  --text-base: clamp(13px, calc(18.5 * var(--u)), 20px);
+  --text-lead: clamp(13.5px, calc(21.4 * var(--u)), 23px);
+  --text-card-title: clamp(15px, calc(22 * var(--u)), 26px);
+  --text-h2: clamp(20px, calc(38 * var(--u)), 44px);
+  --text-display: clamp(28px, calc(52 * var(--u)), 60px);
+
+  /* Motion & Easing */
+  --ease-hud: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 200ms;
+  --t-med: 280ms;
+  --t-slow: 600ms;
+
+  /* Z-Layers */
+  --z-bg: 1;
+  --z-hl: 2;
+  --z-fig: 3;
+  --z-gl: 4;
+  --z-ui: 5;
+  --z-content: 6;
+  --z-hud: 12;
+  --z-nav: 25;
+  --z-loader: 40;
+  --z-modal: 100;
+}
+
+@media (max-width: 820px) {
+  :root {
+    --h: calc(100vw / 860);
+  }
+}

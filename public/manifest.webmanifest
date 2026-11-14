@@ -1,0 +1,17 @@
+{
+  "name": "DevFest Madurai 2026 · GDG Madurai",
+  "short_name": "DevFest Madurai",
+  "description": "GDG Madurai presents DevFest Madurai 2026 — Where Curiosity Meets Creation. 12 December 2026 · Madurai, Tamil Nadu, India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f3a",
+  "theme_color": "#0b0f3a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

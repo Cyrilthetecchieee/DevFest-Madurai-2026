@@ -1,0 +1,226 @@
+{
+  "community": {
+    "tag": "+++ // 01 · THE COMMUNITY ARCHIVE",
+    "heading": "THE PEOPLE BEHIND WHAT WE BUILD.",
+    "copy": "An editorial collection of the faces, interactions, gatherings and spontaneous moments that give GDG Madurai its vibrant pulse. From our registration desks to packed keynote halls, community has always come first.",
+    "featured": {
+      "base": "2024-group-photo",
+      "dir": "archive",
+      "alt": "Closing Community Group Photo at DevFest 2024",
+      "lightboxCaption": "Closing Community Group Photo · Attendees, Speakers & Volunteers · DevFest 2024",
+      "title": "Community Group Photo · DevFest 2024",
+      "badge": "MAIN STAGE",
+      "width": 1920,
+      "height": 1280
+    },
+    "stack": [
+      {
+        "base": "2025-registration-desk",
+        "dir": "archive",
+        "alt": "Registration and welcoming team at DevFest",
+        "lightboxCaption": "Welcome Desk & Attendee Lanyards · Community Volunteers at Work",
+        "title": "Registration & Welcome Desk · 2025",
+        "badge": "CHECK-IN",
+        "width": 1920,
+        "height": 1281
+      },
+      {
+        "base": "2025-badges-held-up",
+        "dir": "archive",
+        "alt": "Attendees holding up DevFest badges",
+        "lightboxCaption": "Attendees Celebrating DevFest · Badges Held High",
+        "title": "DevFest Pride · Badges Held High · 2025",
+        "badge": "COMMUNITY",
+        "width": 1920,
+        "height": 1281
+      }
+    ]
+  },
+  "editions": {
+    "tag": "+++ // 02 · PREVIOUS EDITIONS CHRONICLE",
+    "heading": "EDITIONS SHAPED BY IDEAS.",
+    "copy": "A chronological timeline chronicling the milestones, keynotes, and landmark gatherings of Google Developer Group Madurai across past chapters.",
+    "items": [
+      {
+        "year": "2025",
+        "title": "DevFest Madurai · The New Frontier",
+        "copy": "A packed auditorium exploring generative AI, agentic architectures, and modern cloud deployment. Over hundreds of developers converged for full-day deep dives and interactive demos.",
+        "cards": [
+          {
+            "base": "2025-keynote-hall",
+            "dir": "archive",
+            "alt": "Keynote hall DevFest 2025",
+            "lightboxCaption": "Main Auditorium Keynote Hall · DevFest 2025",
+            "title": "Keynote Hall",
+            "badge": "2025",
+            "width": 1920,
+            "height": 1280
+          },
+          {
+            "base": "2025-full-house",
+            "dir": "archive",
+            "alt": "Packed auditorium watching speakers",
+            "lightboxCaption": "Full-House Inspiring Technical Talks · DevFest 2025",
+            "title": "Inspiring Talks",
+            "badge": "2025",
+            "width": 1920,
+            "height": 1281
+          },
+          {
+            "base": "2025-hosts-welcome",
+            "dir": "archive",
+            "alt": "Hosts welcoming room",
+            "lightboxCaption": "Organisers Welcoming Attendees with Vanakkam · DevFest 2025",
+            "title": "Vanakkam Welcome",
+            "badge": "2025",
+            "width": 1920,
+            "height": 1280
+          }
+        ]
+      },
+      {
+        "year": "2024",
+        "title": "DevFest Madurai · Community Foundations",
+        "copy": "Where developers across South Tamil Nadu gathered to build the foundations of regional open innovation, mobile architecture, and multi-track workshops.",
+        "cards": [
+          {
+            "base": "2024-opening-stage",
+            "dir": "archive",
+            "alt": "Opening ceremony DevFest 2024",
+            "lightboxCaption": "Opening Ceremony on Stage · DevFest 2024",
+            "title": "Opening Stage",
+            "badge": "2024",
+            "width": 1920,
+            "height": 1280
+          },
+          {
+            "base": "2024-panel-discussion",
+            "dir": "archive",
+            "alt": "Panel discussion on stage",
+            "lightboxCaption": "Expert Panel Discussion & Audience Q&A · DevFest 2024",
+            "title": "Panel Discussion",
+            "badge": "2024",
+            "width": 1920,
+            "height": 1280
+          },
+          {
+            "base": "2024-speaker-on-stage",
+            "dir": "archive",
+            "alt": "Speaker on stage DevFest 2024",
+            "lightboxCaption": "Technical Deep-Dive Talk on the DevFest 2024 Stage",
+            "title": "Speaker On Stage",
+            "badge": "2024",
+            "width": 1920,
+            "height": 1280
+          }
+        ]
+      }
+    ]
+  },
+  "gallery": {
+    "tag": "+++ // 03 · THE CINEMATIC GALLERY",
+    "heading": "WHERE HERITAGE MEETS CODE.",
+    "copy": "An immersive, wide-format photographic exploration capturing the scale, intensity, and distinct cultural backdrop of tech in Madurai.",
+    "panoramic1": {
+      "base": "hero-night",
+      "dir": "art",
+      "alt": "Meenakshi Amman Temple gopurams illuminated against the Madurai night sky",
+      "lightboxCaption": "Meenakshi Amman Temple Gopurams Illuminated Against the Madurai Night Sky",
+      "title": "MADURAI AT TWILIGHT · TEMPLE SKYLINE",
+      "desc": "9°55'10\"N · 78°07'10\"E · Where ancient stone craft inspires modern software architecture.",
+      "badge": "HERITAGE STUDY",
+      "width": 1536,
+      "height": 1024
+    },
+    "diptych": [
+      {
+        "base": "2025-speaker-research-park",
+        "dir": "archive",
+        "alt": "Speaker presenting technical insights from the main stage",
+        "lightboxCaption": "Research Park Keynote · Emerging AI & Architecture Presentation",
+        "title": "Keynote Presentation · Research Park",
+        "badge": "MAIN TRACK",
+        "width": 1920,
+        "height": 1280
+      },
+      {
+        "base": "2024-panel-question",
+        "dir": "archive",
+        "alt": "Panellist taking questions from audience",
+        "lightboxCaption": "Audience Q&A · Interactive Dialogue Between Developers & Mentors",
+        "title": "Audience Q&A · Live Exchange",
+        "badge": "INTERACTION",
+        "width": 1920,
+        "height": 1280
+      }
+    ],
+    "panoramic2": {
+      "base": "waterfront",
+      "dir": "art",
+      "alt": "Architectural panorama of Madurai heritage skyline and waterfront",
+      "lightboxCaption": "Vandiyur Mariamman Teppakulam & Madurai Waterfront Architectural Study",
+      "title": "TEPPAKULAM & WATERFRONT PANORAMA",
+      "desc": "A city whose heritage corridors and historic waters have anchored centuries of exchange and innovation.",
+      "badge": "CITY ARCHIVE",
+      "width": 1536,
+      "height": 1024
+    }
+  },
+  "human": {
+    "tag": "+++ // 04 · THE HUMAN EXPERIENCE",
+    "heading": "IT WAS NEVER JUST ABOUT TECHNOLOGY.",
+    "copy": "It was about the people we met, the ideas we shared and the things we built together. Here are the candid exchanges and genuine connections that define our community.",
+    "cards": [
+      {
+        "base": "2025-build",
+        "dir": "archive",
+        "alt": "Developers collaborating during build session",
+        "lightboxCaption": "Hands-on Code & Guided Build Sessions · Students and Engineers Collaborating",
+        "title": "01 · BUILDING TOGETHER",
+        "text": "Hands-on code workshops where students debug beside senior leads and new ideas turn into working prototypes.",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "base": "2024-dks06596",
+        "dir": "archive",
+        "alt": "Audience members engaged in discussion",
+        "lightboxCaption": "Audience Focus & Shared Curiosity · Listening to Keynote Technical Revelations",
+        "title": "02 · SHARED CURIOSITY",
+        "text": "Moments of quiet revelation in the auditorium as developers explore breakthroughs in AI and open frameworks.",
+        "width": 1920,
+        "height": 1280
+      },
+      {
+        "base": "2025-sponsor-thank-you",
+        "dir": "archive",
+        "alt": "Volunteer appreciation on stage",
+        "lightboxCaption": "Community Recognition & Volunteer Appreciation On Stage",
+        "title": "03 · CELEBRATING CRAFT",
+        "text": "Honouring the volunteers, mentors and community champions who dedicate their energy to lift others up.",
+        "width": 1920,
+        "height": 1311
+      }
+    ]
+  },
+  "closing": {
+    "tag": "+++ // 05 · THE NEXT CHAPTER",
+    "heading": "THE NEXT MEMORY STARTS HERE.",
+    "sub": "Be part of the next chapter of GDG Madurai.",
+    "copy": "12 December 2026 · Madurai, Tamil Nadu, India · Where curiosity meets creation.",
+    "ctaLabel": "JOIN DEVFEST 2026"
+  },
+  "homeTeaser": {
+    "tag": "+++ // MEMORIES · GDG MADURAI ARCHIVE",
+    "heading": "MOMENTS THAT BRING US TOGETHER.",
+    "copy": "Community moments and highlights from DevFest & GDG Madurai.",
+    "items": [
+      { "base": "2025-keynote-hall", "dir": "archive", "alt": "Keynote session at DevFest", "caption": "Keynote session · 2025", "width": 1920, "height": 1280 },
+      { "base": "2025-full-house", "dir": "archive", "alt": "Inspiring Talks at DevFest", "caption": "Inspiring Talks · 2025", "width": 1920, "height": 1281 },
+      { "base": "2025-build", "dir": "archive", "alt": "Build Sessions at DevFest", "caption": "Build Sessions · 2025", "width": 1920, "height": 1080 },
+      { "base": "2025-registration-desk", "dir": "archive", "alt": "Registration desk at DevFest", "caption": "Registration desk · 2025", "width": 1920, "height": 1281 },
+      { "base": "2025-group", "dir": "archive", "alt": "Community at DevFest", "caption": "Community · 2025", "width": 1920, "height": 1440 },
+      { "base": "2024-group-photo", "dir": "archive", "alt": "Community group photo at DevFest", "caption": "Community group photo · 2024", "width": 1920, "height": 1280 }
+    ]
+  }
+}

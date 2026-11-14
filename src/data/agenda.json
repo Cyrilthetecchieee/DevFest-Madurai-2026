@@ -1,0 +1,43 @@
+{
+  "tag": "+++ // AGENDA · 12 DECEMBER 2026 · VENUE TBA",
+  "heading": "A DAY BUILT FOR IDEAS.",
+  "copy": "Date: 12 December 2026 · Location: Madurai, Tamil Nadu, India · Venue: To be announced. Confirmed session timings and speaker assignments will be published upon final schedule lock.",
+  "tracks": [
+    {
+      "id": "agenda-event-sessions",
+      "badge": "COMING SOON",
+      "title": "Event sessions",
+      "body": "Opening remarks, community showcases, panel discussions and closing announcements. Exact session times to be announced."
+    },
+    {
+      "id": "agenda-keynotes",
+      "badge": "COMING SOON",
+      "title": "Keynotes",
+      "body": "Vision keynotes exploring what comes next in AI, developer tools and modern platforms. Speaker & time slot to be announced."
+    },
+    {
+      "id": "agenda-technical-talks",
+      "badge": "COMING SOON",
+      "title": "Technical talks",
+      "body": "Deep-dive technical sessions across AI & ML, Web & Cloud, Android, Open Source and Product Design. Lineup to be announced."
+    },
+    {
+      "id": "agenda-build-sessions",
+      "badge": "COMING SOON",
+      "title": "Build sessions",
+      "body": "Hands-on workshops and practical guided building for developers and creators. Lab schedule to be announced."
+    },
+    {
+      "id": "agenda-networking",
+      "badge": "COMING SOON",
+      "title": "Networking",
+      "body": "Meet developers, creators, students and community builders across Madurai. Networking blocks to be announced."
+    },
+    {
+      "id": "agenda-full-schedule",
+      "badge": "COMING SOON",
+      "title": "Full Schedule Status",
+      "body": "Official session times and room tracks are unconfirmed and will be announced soon."
+    }
+  ]
+}
