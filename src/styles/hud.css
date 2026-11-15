@@ -263,54 +263,9 @@ html.is-scrolled .hud-brand {
   transform: translateX(calc(-50% - 6 * var(--h))) translateY(-10px);
 }
 
-/* Sticky Scrolled HUD Dock Bar (#7 Scrubbed Handoff) */
+/* Sticky Scrolled HUD Dock Bar (#7 Scrubbed Handoff) — Removed per navbar-removal specification */
 .hud-dock {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 0 132px;
-  background: rgba(6, 8, 22, 0.86);
-  border-bottom: 1px solid rgba(94, 243, 255, 0.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  color: var(--ink);
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
-  transition: opacity 0.42s var(--ease-out-expo), transform 0.42s var(--ease-out-expo);
-}
-
-.hud-dock::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--cyan), var(--violet));
-  transform-origin: left center;
-  transform: scaleX(var(--scroll-progress, 0));
-  pointer-events: none;
-}
-
-html.is-scrolled .hud-dock {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-html.is-scrolled .hud-motion-btn,
-html.is-scrolled .hud-menu-btn {
-  top: 13px;
+  display: none !important;
 }
 
 html.is-scrolled .hud-coords {
@@ -615,28 +570,6 @@ html.is-scrolled .hud-coords {
 
   .hud-brand {
     top: max(6px, calc(12 * var(--h)));
-  }
-
-  .hud-dock {
-    height: 52px;
-    padding: 0 96px;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-  }
-
-  .hud-dock-wordmark,
-  .hud-dock-sep {
-    display: none;
-  }
-
-  .hud-dock-waypoint {
-    min-width: auto;
-  }
-
-  .hud-cmd-btn {
-    min-height: 44px;
-    padding: 6px 10px;
   }
 
   .hud-coords {
