@@ -15,7 +15,6 @@
   "hudCoords": "X.0052  //  Y.0053",
   "links": {
     "tickets": "https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/",
-    "cfp": "https://gdg-final-tau.vercel.app/cfp",
     "codeOfConduct": "https://developers.google.com/community-guidelines",
     "privacyPolicy": "https://policies.google.com/privacy",
     "email": "mailto:contact@gdgmadurai.in",
@@ -65,9 +64,9 @@
         ]
       },
       "right": {
-        "lead": "HAVE SOMETHING WORTH SHARING?",
+        "lead": "BUILD. LEARN. CONNECT. CREATE.",
         "subs": [
-          "Share your ideas, experiences and innovations with the developer community. Bring your knowledge to the DevFest Madurai stage."
+          "Sessions, keynotes, and hands-on workshops across AI & ML, Web & Cloud, Android, Open Source, and Design."
         ],
         "meta": [
           "Date: 12 December 2026",
@@ -76,7 +75,7 @@
         ]
       },
       "primaryCta": { "label": "VIEW SPEAKERS", "ariaLabel": "View Speakers", "href": "#speakers-directory", "external": false },
-      "secondaryCta": { "label": "SUBMIT YOUR PROPOSAL.", "href": "#cfp" }
+      "secondaryCta": { "label": "← RETURN TO HOME", "href": "/" }
     },
     "memories": {
       "left": {
@@ -130,30 +129,6 @@
         { "title": "DATE", "body": "12 December 2026", "badge": "Saturday · Full-day developer festival" },
         { "title": "VENUE", "body": "To be announced.", "badge": "Official venue announcement coming soon." }
       ]
-    },
-    "cfp": {
-      "tag": "+++ // CALL FOR SPEAKERS · SUBMIT CFP",
-      "heading": "HAVE SOMETHING WORTH SHARING?",
-      "copy": "Share your ideas, experiences and innovations with the developer community. Bring your knowledge to the DevFest Madurai stage.",
-      "homeCards": [
-        {
-          "badge": "TRACKS · AI, CLOUD, WEB, ANDROID, OPEN SOURCE, DESIGN",
-          "title": "01 — PRACTICAL & COMMUNITY-DRIVEN",
-          "body": "We welcome talks, hands-on workshops and lightning sessions across AI & ML, Web & Cloud, Android, Open Source, Design & Product, and Career stories."
-        },
-        {
-          "badge": "SELECTION TIMELINE ANNOUNCING SOON",
-          "title": "02 — FIRST-TIME & EXPERIENCED SPEAKERS",
-          "body": "Share your own work, experiments and practical takeaways for developers in Madurai."
-        }
-      ],
-      "guidelines": [
-        { "badge": "GUIDELINE 01", "title": "01 — PRACTICAL", "body": "Keep it practical and specific." },
-        { "badge": "GUIDELINE 02", "title": "02 — TAKEAWAYS", "body": "Tell us what attendees will take away." },
-        { "badge": "GUIDELINE 03", "title": "03 — INCLUSIVE", "body": "First-time speakers are welcome." },
-        { "badge": "GUIDELINE 04", "title": "04 — AUTHENTIC", "body": "Share your own work and experience." }
-      ],
-      "ctaLabel": "SUBMIT YOUR PROPOSAL."
     },
     "tickets": {
       "tag": "+++ // TICKETS & REGISTRATION",

@@ -18,7 +18,7 @@ function renderReactiveWordmark(text = 'DEVFEST MADURAI') {
     .join('');
 }
 
-export function renderStageFooter({ cfpHref = '/#cfp' } = {}) {
+export function renderStageFooter() {
   const { footer, links } = eventData;
 
   return `
@@ -44,8 +44,7 @@ export function renderStageFooter({ cfpHref = '/#cfp' } = {}) {
           <span class="ftr-col-label">PARTICIPATION</span>
           <ul class="ftr-link-list">
             <li><a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="ftr-link">GET YOUR TICKETS.</a></li>
-            <li><a href="${esc(cfpHref)}" class="ftr-link">SUBMIT YOUR PROPOSAL.</a></li>
-            <li><a href="${esc(links.cfp)}" target="_blank" rel="noopener noreferrer" class="ftr-link">EXTERNAL CFP PORTAL</a></li>
+            <li><a href="/#venue" class="ftr-link">VENUE &amp; COUNTDOWN</a></li>
             <li><a href="/#sponsors" class="ftr-link">SPONSORS &amp; PARTNERS</a></li>
           </ul>
         </div>

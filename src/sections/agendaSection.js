@@ -25,7 +25,7 @@ const TRACK_DETAILS = [
   'Deep-dive technical sessions across AI & ML, Web & Cloud, Android, Open Source, Design & Product.',
   'Hands-on guided build labs where attendees ship real prototypes and test modern developer toolchains.',
   'Open corridor networking, lightning exchanges, community booths, and peer mentoring across Madurai.',
-  'Full session timetable, room assignments, and speaker time slots will publish here once CFP closes.',
+  'Full session timetable, room assignments, and speaker time slots will publish here upon final schedule lock.',
 ];
 
 function loadPins() {

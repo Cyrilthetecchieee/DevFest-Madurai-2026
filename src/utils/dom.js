@@ -103,7 +103,7 @@ export function renderHeroStage(routeKey, headingText) {
   `;
 }
 
-export function renderFooter({ cfpHref = '/#cfp' } = {}) {
+export function renderFooter() {
   const f = eventData.footer;
   const l = eventData.links;
 
@@ -124,7 +124,6 @@ export function renderFooter({ cfpHref = '/#cfp' } = {}) {
             <li><a href="/speakers" data-spa-link="true">Speakers</a></li>
             <li><a href="/#tickets" data-spa-link="true">Tickets</a></li>
             <li><a href="/memories" data-spa-link="true">Memories</a></li>
-            <li><a href="${esc(cfpHref)}" data-spa-link="true">Submit CFP</a></li>
           </ul>
         </nav>
       </div>

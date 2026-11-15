@@ -159,7 +159,7 @@ export function renderMemoriesPage() {
         </div>
       </section>
 
-      ${renderStageFooter({ cfpHref: '/#cfp' })}
+      ${renderStageFooter()}
     </main>
 
     <div id="archive-lightbox" class="mem-lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">

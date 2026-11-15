@@ -55,7 +55,6 @@ export function renderSpeakersExperience({
   headingId = 'heading-speakers',
   isPage = false,
   links = {},
-  cfpCtaLabel = 'SUBMIT YOUR PROPOSAL.',
 } = {}) {
   const { homeSection, pageSection, filters, speakers } = speakersData;
   const meta = isPage ? pageSection : homeSection;
@@ -144,8 +143,6 @@ export function renderSpeakersExperience({
       ${!isPage ? `
         <div class="orbe-cta-row">
           <a href="/speakers" data-spa-link="true" class="btn-link-inline" data-magnetic="true">EXPLORE SPEAKERS PAGE //</a>
-          <a href="#cfp" class="btn-link-inline">${esc(cfpCtaLabel)}</a>
-          ${links?.cfp ? `<a href="${esc(links.cfp)}" target="_blank" rel="noopener noreferrer" class="btn-link-inline">DIRECT CFP FORM //</a>` : ''}
         </div>
       ` : ''}
     </section>

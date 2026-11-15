@@ -2,7 +2,7 @@
   "homeSection": {
     "tag": "+++ // SPEAKERS · DEVFEST MADURAI 2026",
     "heading": "THE MINDS BEHIND WHAT'S NEXT.",
-    "copy": "Speaker lineup and session leads for DevFest Madurai 2026 will be announced as confirmations conclude. Call for Speakers is open."
+    "copy": "Speaker lineup and session leads for DevFest Madurai 2026 will be announced as confirmations conclude."
   },
   "pageSection": {
     "tag": "+++ // SPEAKERS DIRECTORY · DEVFEST MADURAI 2026",
@@ -54,9 +54,9 @@
       "monogram": "[ TBA ]",
       "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
       "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
+      "status": "ANNOUNCING SOON",
       "name": "Web & Cloud Speaker (TBA)",
-      "subtitle": "Web & Cloud Track · Placeholder · CFP Open · GDG Madurai",
+      "subtitle": "Web & Cloud Track · Placeholder · GDG Madurai",
       "bio": "Building with Google Cloud: Tools, Platforms, and Modern Web Use Cases. Speaker profile announcing soon."
     },
     {
@@ -66,9 +66,9 @@
       "monogram": "[ TBA ]",
       "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
       "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
+      "status": "ANNOUNCING SOON",
       "name": "Android Speaker (TBA)",
-      "subtitle": "Android Track · Placeholder · CFP Open · GDG Madurai",
+      "subtitle": "Android Track · Placeholder · GDG Madurai",
       "bio": "Modern Android, Kotlin & Multiplatform mobile engineering insights. Speaker profile announcing soon."
     },
     {
@@ -78,9 +78,9 @@
       "monogram": "[ TBA ]",
       "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
       "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
+      "status": "ANNOUNCING SOON",
       "name": "Workshop Lead (TBA)",
-      "subtitle": "Hands-on Workshop · Placeholder · CFP Open · GDG Madurai",
+      "subtitle": "Hands-on Workshop · Placeholder · GDG Madurai",
       "bio": "Hands-on Workshop: Build a Small AI-Powered Project & practical guided learning. Lead announcing soon."
     },
     {
@@ -90,11 +90,11 @@
       "monogram": "[ TBA ]",
       "homeBadge": "ANNOUNCEMENT PLACEHOLDER · TBA",
       "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
+      "status": "ANNOUNCING SOON",
       "name": "Open Source & Design Speaker (TBA)",
       "pageName": "Open Source Speaker (TBA)",
-      "homeSubtitle": "Open Source & Product Track · Placeholder · CFP Open · GDG Madurai",
-      "subtitle": "Open Source Track · Placeholder · CFP Open · GDG Madurai",
+      "homeSubtitle": "Open Source & Product Track · Placeholder · GDG Madurai",
+      "subtitle": "Open Source Track · Placeholder · GDG Madurai",
       "bio": "Developer tools, open-source ecosystems and community-driven engineering. Speaker profile announcing soon.",
       "showOnHome": true
     },
@@ -104,9 +104,9 @@
       "code": "SPK_07 // DESIGN",
       "monogram": "[ TBA ]",
       "pageBadge": "ANNOUNCEMENT PLACEHOLDER",
-      "status": "CFP OPEN",
+      "status": "ANNOUNCING SOON",
       "name": "Design & Product Speaker (TBA)",
-      "subtitle": "Design & Product Track · Placeholder · CFP Open · GDG Madurai",
+      "subtitle": "Design & Product Track · Placeholder · GDG Madurai",
       "bio": "Product thinking, design systems and human-centred interfaces for next-gen apps. Speaker profile announcing soon.",
       "showOnHome": false
     }

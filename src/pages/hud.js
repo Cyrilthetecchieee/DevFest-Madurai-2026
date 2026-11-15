@@ -8,10 +8,9 @@ const HOME_WAYPOINTS = [
   '04 / SPEAKERS',
   '05 / AGENDA',
   '06 / TICKETS',
-  '07 / CFP',
-  '08 / SPONSORS',
-  '09 / MEMORIES',
-  '10 / SIGNAL END',
+  '07 / SPONSORS',
+  '08 / MEMORIES',
+  '09 / SIGNAL END',
 ];
 
 const ROUTE_LABELS = {
