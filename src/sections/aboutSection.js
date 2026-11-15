@@ -10,79 +10,76 @@ import { prefersReducedMotion } from '../utils/env.js';
 import { mountInteractiveKolamSvg } from '../visuals/kolamEngine.js';
 
 const PILLAR_EMBLEMS = [
-  // 01 Roadshows: concentric radar propagation arcs
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="1.3" stroke-dasharray="3 3"/>
-    <circle cx="24" cy="24" r="10.5" stroke="#5ef3ff" stroke-width="1.4"/>
-    <circle cx="24" cy="24" r="2.8" fill="#5ef3ff"/>
-    <line x1="24" y1="2" x2="24" y2="9" stroke="#5ef3ff" stroke-width="1.4"/>
-    <line x1="24" y1="39" x2="24" y2="46" stroke="#5ef3ff" stroke-width="1.4"/>
-    <line x1="2" y1="24" x2="9" y2="24" stroke="#5ef3ff" stroke-width="1.4"/>
-    <line x1="39" y1="24" x2="46" y2="24" stroke="#5ef3ff" stroke-width="1.4"/>
+  // 01 Roadshows: outreach signal waves
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="20" cy="20" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.65"/>
+    <circle cx="20" cy="20" r="8.5" stroke="#5ef3ff" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="2.5" fill="#5ef3ff"/>
+    <line x1="20" y1="3" x2="20" y2="7" stroke="#5ef3ff" stroke-width="1.5"/>
+    <line x1="20" y1="33" x2="20" y2="37" stroke="#5ef3ff" stroke-width="1.5"/>
+    <line x1="3" y1="20" x2="7" y2="20" stroke="#5ef3ff" stroke-width="1.5"/>
+    <line x1="33" y1="20" x2="37" y2="20" stroke="#5ef3ff" stroke-width="1.5"/>
   </svg>`,
-  // 02 Build Sessions: isometric architectural cube wireframe
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <polygon points="24,6 40,15 40,33 24,42 8,33 8,15" stroke="#5ef3ff" stroke-width="1.4"/>
-    <polyline points="8,15 24,24 40,15" stroke="currentColor" stroke-width="1.3"/>
-    <line x1="24" y1="24" x2="24" y2="42" stroke="currentColor" stroke-width="1.3"/>
-    <circle cx="24" cy="24" r="2.4" fill="#5ef3ff"/>
+  // 02 Build Sessions: architectural cube
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polygon points="20,5 33,12.5 33,27.5 20,35 7,27.5 7,12.5" stroke="#5ef3ff" stroke-width="1.5"/>
+    <polyline points="7,12.5 20,20 33,12.5" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="20" y1="20" x2="20" y2="35" stroke="currentColor" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="2.2" fill="#5ef3ff"/>
   </svg>`,
-  // 03 Competitions: twin orthogonal chevrons & apex prism
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <polygon points="24,6 38,24 24,42 10,24" stroke="currentColor" stroke-width="1.3"/>
-    <polyline points="15,18 24,11 33,18" stroke="#5ef3ff" stroke-width="1.4"/>
-    <polyline points="15,30 24,37 33,30" stroke="#5ef3ff" stroke-width="1.4"/>
-    <line x1="6" y1="24" x2="42" y2="24" stroke="currentColor" stroke-width="1.1" opacity="0.6"/>
+  // 03 Competitions: twin chevrons & apex prism
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polygon points="20,5 32,20 20,35 8,20" stroke="currentColor" stroke-width="1.5" opacity="0.8"/>
+    <polyline points="13,15 20,9 27,15" stroke="#5ef3ff" stroke-width="1.5"/>
+    <polyline points="13,25 20,31 27,25" stroke="#5ef3ff" stroke-width="1.5"/>
+    <line x1="6" y1="20" x2="34" y2="20" stroke="currentColor" stroke-width="1.3" opacity="0.55"/>
   </svg>`,
   // 04 Tech Talks: harmonic carrier waves
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <path d="M5 24 C11 10, 17 10, 24 24 C31 38, 37 38, 43 24" stroke="#5ef3ff" stroke-width="1.5"/>
-    <path d="M5 24 C11 38, 17 38, 24 24 C31 10, 37 10, 43 24" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
-    <line x1="4" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="1" stroke-dasharray="2.5 2.5" opacity="0.6"/>
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M5 20 C10 8, 15 8, 20 20 C25 32, 30 32, 35 20" stroke="#5ef3ff" stroke-width="1.6"/>
+    <path d="M5 20 C10 32, 15 32, 20 20 C25 8, 30 8, 35 20" stroke="currentColor" stroke-width="1.4" opacity="0.65"/>
+    <line x1="4" y1="20" x2="36" y2="20" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.5 2.5" opacity="0.5"/>
   </svg>`,
-  // 05 Networking: geodesic graph node lattice
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <circle cx="24" cy="10" r="2.8" fill="#5ef3ff"/>
-    <circle cx="10" cy="34" r="2.8" stroke="#5ef3ff" stroke-width="1.4"/>
-    <circle cx="38" cy="34" r="2.8" fill="#5ef3ff"/>
-    <circle cx="24" cy="25" r="3.2" stroke="currentColor" stroke-width="1.3"/>
-    <line x1="24" y1="10" x2="10" y2="34" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
-    <line x1="10" y1="34" x2="38" y2="34" stroke="#5ef3ff" stroke-width="1.3"/>
-    <line x1="38" y1="34" x2="24" y2="10" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
+  // 05 Networking: geodesic graph lattice
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="20" y1="9" x2="9" y2="29" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+    <line x1="9" y1="29" x2="31" y2="29" stroke="#5ef3ff" stroke-width="1.5"/>
+    <line x1="31" y1="29" x2="20" y2="9" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+    <circle cx="20" cy="9" r="2.5" fill="#5ef3ff"/>
+    <circle cx="9" cy="29" r="2.5" stroke="#5ef3ff" stroke-width="1.5" fill="#080d2c"/>
+    <circle cx="31" cy="29" r="2.5" fill="#5ef3ff"/>
+    <circle cx="20" cy="22" r="2.8" stroke="currentColor" stroke-width="1.4"/>
   </svg>`,
   // 06 Community: geometric kolam pulli loop
-  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
-    <path d="M15 9 C21 9, 21 18, 24 18 C27 18, 27 9, 33 9 C39 9, 39 18, 33 24 C39 30, 39 39, 33 39 C27 39, 27 30, 24 30 C21 30, 21 39, 15 39 C9 39, 9 30, 15 24 C9 18, 9 9, 15 9 Z" stroke="#5ef3ff" stroke-width="1.4"/>
-    <circle cx="16.5" cy="16.5" r="1.6" fill="currentColor"/>
-    <circle cx="31.5" cy="16.5" r="1.6" fill="currentColor"/>
-    <circle cx="24" cy="24" r="2" fill="#5ef3ff"/>
-    <circle cx="16.5" cy="31.5" r="1.6" fill="currentColor"/>
-    <circle cx="31.5" cy="31.5" r="1.6" fill="currentColor"/>
+  `<svg viewBox="0 0 40 40" width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M13 8 C18 8, 18 15, 20 15 C22 15, 22 8, 27 8 C32 8, 32 15, 27 20 C32 25, 32 32, 27 32 C22 32, 22 25, 20 25 C18 25, 18 32, 13 32 C8 32, 8 25, 13 20 C8 15, 8 8, 13 8 Z" stroke="#5ef3ff" stroke-width="1.5"/>
+    <circle cx="14" cy="14" r="1.5" fill="currentColor"/>
+    <circle cx="26" cy="14" r="1.5" fill="currentColor"/>
+    <circle cx="20" cy="20" r="2" fill="#5ef3ff"/>
+    <circle cx="14" cy="26" r="1.5" fill="currentColor"/>
+    <circle cx="26" cy="26" r="1.5" fill="currentColor"/>
   </svg>`,
 ];
 
-const PILLAR_CAPTIONS = [
-  'G_01 // OUTREACH',
-  'G_02 // DEVELOPMENT',
-  'G_03 // CHALLENGE',
-  'G_04 // KNOWLEDGE',
-  'G_05 // COMMUNITY',
-  'G_06 // CONNECTION',
+const PILLAR_CATEGORIES = [
+  'Community Outreach',
+  'Hands-On Labs',
+  'Challenges',
+  'Expert Sessions',
+  'Peer Networking',
+  'Developer Ecosystem',
 ];
 
-const PILLAR_COORDS = [
-  '09.92N · 01',
-  '09.92N · 02',
-  '09.92N · 03',
-  '09.92N · 04',
-  '09.92N · 05',
-  '09.92N · 06',
-];
+function formatTitleCase(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+}
 
 function parsePillarParts(rawTitle) {
   const m = String(rawTitle || '').match(/^(\d+)\s*[—-]\s*(.+)$/);
-  if (m) return { code: m[1].padStart(2, '0'), name: m[2].trim(), full: rawTitle };
-  return { code: '01', name: rawTitle, full: rawTitle };
+  if (m) return { code: m[1].padStart(2, '0'), name: formatTitleCase(m[2].trim()), full: rawTitle };
+  return { code: '01', name: formatTitleCase(rawTitle), full: rawTitle };
 }
 
 export function renderAboutSection(aboutData) {
@@ -111,7 +108,7 @@ export function renderAboutSection(aboutData) {
             <div class="about-rail-counter">
               <span class="about-rail-index" id="about-pillar-index">01</span>
               <span class="about-rail-total">/ ${totalStr}</span>
-              <span class="about-rail-kicker">PILLARS // WAYPOINT 02</span>
+              <span class="about-rail-kicker">EXPERIENCE PILLARS</span>
             </div>
             <div class="about-rail-controls">
               <button type="button" class="about-rail-btn" id="about-prev-btn" aria-label="Previous pillar">&#8592;</button>
@@ -128,13 +125,11 @@ export function renderAboutSection(aboutData) {
               ${pillars.map((pillar, i) => {
                 const { code, name } = parsePillarParts(pillar.title);
                 const emblem = PILLAR_EMBLEMS[i % PILLAR_EMBLEMS.length];
-                const caption = PILLAR_CAPTIONS[i] || `G_${code} // PILLAR`;
-                const coord = PILLAR_COORDS[i] || `09.92N · ${code}`;
+                const category = PILLAR_CATEGORIES[i] || 'Experience';
                 return `
                   <article class="about-pillar-card${i === 0 ? ' is-active' : ''}" data-pillar-index="${i}" style="--ci:${i}" tabindex="0">
-                    <span class="about-pillar-corners" aria-hidden="true"></span>
                     <div class="about-pillar-top">
-                      <span class="about-pillar-num" aria-hidden="true">${code}</span>
+                      <span class="about-pillar-category">${esc(category)}</span>
                       <div class="about-pillar-emblem">${emblem}</div>
                     </div>
                     <div class="about-pillar-content">
@@ -142,11 +137,8 @@ export function renderAboutSection(aboutData) {
                       <p class="about-pillar-body">${esc(pillar.body)}</p>
                     </div>
                     <footer class="about-pillar-foot">
-                      <div class="about-pillar-caption">${esc(caption)}</div>
-                      <div class="about-pillar-bottom">
-                        <span class="about-pillar-rule" aria-hidden="true"></span>
-                        <span class="about-pillar-coord" aria-hidden="true">${esc(coord)}</span>
-                      </div>
+                      <span class="about-pillar-rule" aria-hidden="true"></span>
+                      <span class="about-pillar-num" aria-hidden="true">${code}</span>
                     </footer>
                   </article>
                 `;

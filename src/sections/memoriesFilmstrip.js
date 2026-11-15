@@ -16,6 +16,8 @@ function getLightboxImageUrl(item) {
 export function renderHomeMemoriesSection() {
   const { homeTeaser } = memoriesData;
   const items = homeTeaser.items || [];
+  const featured = items[0];
+  const galleryItems = items.slice(1);
 
   return `
     <section id="memories" class="stage-section mem-home-stage" data-waypoint="8" aria-labelledby="heading-memories">
@@ -26,34 +28,55 @@ export function renderHomeMemoriesSection() {
           <p class="stage-lead">${esc(homeTeaser.copy)}</p>
         </div>
         <div class="mem-strip-controls">
-          <span class="mem-drag-hint">DRAG FILMSTRIP // CLICK TO INSPECT</span>
+          <span class="mem-drag-hint">DRAG SHOWCASE // CLICK TO INSPECT</span>
           <div class="mem-step-btns">
-            <button type="button" class="about-rail-btn" id="mem-strip-prev" aria-label="Scroll filmstrip left">&#8592;</button>
-            <button type="button" class="about-rail-btn" id="mem-strip-next" aria-label="Scroll filmstrip right">&#8594;</button>
+            <button type="button" class="about-rail-btn" id="mem-strip-prev" aria-label="Scroll showcase left">&#8592;</button>
+            <button type="button" class="about-rail-btn" id="mem-strip-next" aria-label="Scroll showcase right">&#8594;</button>
           </div>
         </div>
       </div>
 
+      ${featured ? `
+        <figure
+          class="mem-home-featured"
+          data-curtain="true"
+          data-img="${esc(getLightboxImageUrl(featured))}"
+          data-caption="${esc(featured.caption)}"
+          data-idx="0"
+          tabindex="0"
+          role="button"
+          aria-label="Open photo: ${esc(featured.caption)}"
+        >
+          <div class="mem-home-featured-frame" data-liquid-media="${esc(getLightboxImageUrl(featured))}">
+            ${renderPicture({ ...featured, sizes: '(max-width: 820px) 92vw, 84vw' })}
+            <figcaption class="mem-glass-overlay mem-glass-overlay--featured">
+              <span class="mem-overlay-tag">01 // FEATURED ARCHIVE</span>
+              <span class="mem-overlay-title">${esc(featured.caption)}</span>
+            </figcaption>
+          </div>
+        </figure>
+      ` : ''}
+
       <div class="mem-filmstrip-viewport" id="mem-filmstrip-viewport" aria-label="DevFest Memories Gallery">
         <div class="mem-filmstrip-track" id="mem-filmstrip-track">
-          ${items.map((item, idx) => `
+          ${galleryItems.map((item, idx) => `
             <figure
               class="mem-film-card"
               data-curtain="true"
               data-img="${esc(getLightboxImageUrl(item))}"
               data-caption="${esc(item.caption)}"
-              data-idx="${idx}"
+              data-idx="${idx + 1}"
               tabindex="0"
               role="button"
               aria-label="Open photo: ${esc(item.caption)}"
             >
               <div class="mem-film-frame" data-liquid-media="${esc(getLightboxImageUrl(item))}">
-                ${renderPicture({ ...item, sizes: '(max-width: 820px) 84vw, 34vw' })}
+                ${renderPicture({ ...item, sizes: '(max-width: 820px) 88vw, 44vw' })}
+                <figcaption class="mem-glass-overlay">
+                  <span class="mem-overlay-tag">0${idx + 2}</span>
+                  <span class="mem-overlay-title">${esc(item.caption)}</span>
+                </figcaption>
               </div>
-              <figcaption class="mem-film-caption">
-                <span>0${idx + 1} //</span>
-                <span>${esc(item.caption)}</span>
-              </figcaption>
             </figure>
           `).join('')}
         </div>
@@ -88,12 +111,23 @@ export function mountMemoriesInteraction(root = document) {
   const cleanups = [];
   const reduced = prefersReducedMotion();
 
-  // 1. Clip-path curtain reveals on scroll
+  // 1. Curtain reveals on scroll (with eager viewport check + generous threshold so tall cards never stall)
   const curtainEls = Array.from(root.querySelectorAll('[data-curtain="true"]'));
   if (curtainEls.length) {
     if (reduced) {
       curtainEls.forEach((el) => el.classList.add('is-curtain-open'));
     } else {
+      const revealIfVisible = () => {
+        const vh = window.innerHeight || 900;
+        curtainEls.forEach((el) => {
+          if (el.classList.contains('is-curtain-open')) return;
+          const r = el.getBoundingClientRect();
+          if (r.top < vh + 160 && r.bottom > -160) {
+            el.classList.add('is-curtain-open');
+          }
+        });
+      };
+
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -103,10 +137,15 @@ export function mountMemoriesInteraction(root = document) {
             }
           });
         },
-        { threshold: 0.14 }
+        { rootMargin: '160px 0px', threshold: 0.01 }
       );
       curtainEls.forEach((el) => io.observe(el));
-      cleanups.push(() => io.disconnect());
+      window.addEventListener('scroll', revealIfVisible, { passive: true });
+      revealIfVisible();
+      cleanups.push(() => {
+        io.disconnect();
+        window.removeEventListener('scroll', revealIfVisible);
+      });
     }
   }
 

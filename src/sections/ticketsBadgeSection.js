@@ -143,7 +143,7 @@ export function renderTicketsSection(ticketsData, links) {
           <div class="tkt-foil-layer" aria-hidden="true"></div>
           <div class="tkt-pass-main">
             <div class="tkt-pass-top">
-              <span class="tkt-pass-code">BOARDING PASS // DF-MDU-26</span>
+              <span class="tkt-pass-code">OFFICIAL PASS // DEVFEST 2026</span>
               <span class="orbe-badge-tba">12 DEC 2026</span>
             </div>
 
@@ -173,7 +173,7 @@ export function renderTicketsSection(ticketsData, links) {
         <!-- Client-Side Holographic Mission Badge Studio (S5) -->
         <aside class="tkt-badge-studio" aria-label="Mission Badge Studio">
           <div class="tkt-studio-head">
-            <span class="stage-eyebrow">S5 // HOLOGRAPHIC MISSION BADGE</span>
+            <span class="stage-eyebrow">HOLOGRAPHIC MISSION BADGE</span>
             <p class="tkt-local-note">Generated locally on your device — zero server upload.</p>
           </div>
 

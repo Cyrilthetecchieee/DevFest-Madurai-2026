@@ -31,20 +31,20 @@ export function renderMemoriesPage() {
 
         <div class="mem-community-layout">
           <div class="mem-featured-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(community.featured.title)}" data-img="${esc(getLightboxImageUrl(community.featured))}" data-caption="${esc(community.featured.lightboxCaption)}">
-            ${renderPicture({ ...community.featured, sizes: '(max-width: 820px) 92vw, 52vw' })}
-            <div class="mem-caption-bar">
-              <span>${esc(community.featured.title)}</span>
-              <span class="mem-caption-tag">${esc(community.featured.badge)}</span>
+            ${renderPicture({ ...community.featured, sizes: '(max-width: 820px) 92vw, 56vw' })}
+            <div class="mem-glass-overlay">
+              <span class="mem-overlay-tag">${esc(community.featured.badge)}</span>
+              <span class="mem-overlay-title">${esc(community.featured.title)}</span>
             </div>
           </div>
 
           <div class="mem-community-stack">
             ${community.stack.map((item) => `
               <div class="mem-sub-frame" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(item.title)}" data-img="${esc(getLightboxImageUrl(item))}" data-caption="${esc(item.lightboxCaption)}">
-                ${renderPicture({ ...item, sizes: '(max-width: 820px) 92vw, 32vw' })}
-                <div class="mem-caption-bar">
-                  <span>${esc(item.title)}</span>
-                  <span class="mem-caption-tag">${esc(item.badge)}</span>
+                ${renderPicture({ ...item, sizes: '(max-width: 820px) 92vw, 36vw' })}
+                <div class="mem-glass-overlay">
+                  <span class="mem-overlay-tag">${esc(item.badge)}</span>
+                  <span class="mem-overlay-title">${esc(item.title)}</span>
                 </div>
               </div>
             `).join('')}
@@ -67,12 +67,12 @@ export function renderMemoriesPage() {
               </div>
               <p class="stage-lead orbe-section-copy-flush">${esc(ed.copy)}</p>
               <div class="mem-edition-grid">
-                ${ed.cards.map((card) => `
-                  <div class="mem-edition-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
-                    ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 26vw' })}
-                    <div class="mem-caption-bar">
-                      <span>${esc(card.title)}</span>
-                      <span class="mem-caption-tag">${esc(card.badge)}</span>
+                ${ed.cards.map((card, cIdx) => `
+                  <div class="mem-edition-card${cIdx === 0 ? ' mem-edition-card--lead' : ''}" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
+                    ${renderPicture({ ...card, sizes: cIdx === 0 ? '(max-width: 820px) 92vw, 72vw' : '(max-width: 820px) 92vw, 36vw' })}
+                    <div class="mem-glass-overlay">
+                      <span class="mem-overlay-tag">${esc(card.badge)}</span>
+                      <span class="mem-overlay-title">${esc(card.title)}</span>
                     </div>
                   </div>
                 `).join('')}
@@ -103,9 +103,9 @@ export function renderMemoriesPage() {
             ${gallery.diptych.map((card) => `
               <div class="mem-diptych-card" data-curtain="true" tabindex="0" role="button" aria-label="Open photo: ${esc(card.title)}" data-img="${esc(getLightboxImageUrl(card))}" data-caption="${esc(card.lightboxCaption)}">
                 ${renderPicture({ ...card, sizes: '(max-width: 820px) 92vw, 42vw' })}
-                <div class="mem-caption-bar">
-                  <span>${esc(card.title)}</span>
-                  <span class="mem-caption-tag">${esc(card.badge)}</span>
+                <div class="mem-glass-overlay">
+                  <span class="mem-overlay-tag">${esc(card.badge)}</span>
+                  <span class="mem-overlay-title">${esc(card.title)}</span>
                 </div>
               </div>
             `).join('')}

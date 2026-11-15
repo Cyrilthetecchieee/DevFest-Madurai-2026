@@ -50,7 +50,7 @@ export function renderVenueSection(venueData, links) {
         <div class="venue-date-monument">
           <div class="k-outline-display venue-outline-date" data-outline-fill="true" aria-hidden="true">12 12 2026</div>
           <div class="venue-roll-wrap">
-            <span class="venue-roll-label">TARGET LAUNCH VECTOR //</span>
+            <span class="venue-roll-label">EVENT DATE //</span>
             ${renderCounterRoll('12 12 2026', { label: '12 December 2026', className: 'venue-counter-date' })}
           </div>
         </div>
@@ -61,7 +61,7 @@ export function renderVenueSection(venueData, links) {
           <div class="venue-map-meta">
             <span>LAT 9.9252° N</span>
             <span>LON 78.1198° E</span>
-            <span class="venue-map-live">SECTOR // MADURAI</span>
+            <span class="venue-map-live">MADURAI, INDIA</span>
           </div>
 
           <svg class="venue-radar-svg" viewBox="0 0 420 340" fill="none" role="img" aria-label="Madurai radar telemetry 9.9252 N 78.1198 E">
@@ -118,7 +118,7 @@ export function renderVenueSection(venueData, links) {
 
         <div class="venue-instrument-deck">
           <div class="venue-countdown-box" id="venue-countdown" aria-live="off" aria-label="Countdown to DevFest Madurai 2026">
-            <span class="venue-countdown-label">T-MINUS // 12 DEC 2026 · 09:00 IST</span>
+            <span class="venue-countdown-label">COUNTDOWN // 12 DEC 2026 · 09:00 IST</span>
             ${initial.passed ? `
               <div class="venue-countdown-passed">MISSION WINDOW OPEN — 12 DEC 2026</div>
             ` : `
@@ -173,7 +173,7 @@ export function mountVenueSection() {
   function tick() {
     const next = computeCountdownParts();
     if (next.passed) {
-      box.innerHTML = `<span class="venue-countdown-label">T-MINUS // 12 DEC 2026 · 09:00 IST</span><div class="venue-countdown-passed">MISSION WINDOW OPEN — 12 DEC 2026</div>`;
+      box.innerHTML = `<span class="venue-countdown-label">COUNTDOWN // 12 DEC 2026 · 09:00 IST</span><div class="venue-countdown-passed">MISSION WINDOW OPEN — 12 DEC 2026</div>`;
       window.clearInterval(timerId);
       return;
     }

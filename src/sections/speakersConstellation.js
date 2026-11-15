@@ -22,6 +22,34 @@ function fibonacciSpherePoint(i, n) {
   };
 }
 
+function renderSpeakerFrameGraphic(speaker) {
+  const isHost = speaker.category === 'hosts';
+  if (isHost) {
+    return `
+      <div class="spk-frame-art spk-frame-art--host" aria-hidden="true">
+        <svg viewBox="0 0 120 90" width="96" height="72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="60" cy="45" r="32" stroke="rgba(94, 243, 255, 0.36)" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <circle cx="60" cy="45" r="22" stroke="rgba(155, 92, 255, 0.45)" stroke-width="1.2"/>
+          <path d="M48 39 L40 45 L48 51" stroke="#5ef3ff" stroke-width="2.2"/>
+          <path d="M72 39 L80 45 L72 51" stroke="#5ef3ff" stroke-width="2.2"/>
+          <circle cx="60" cy="45" r="4" fill="#f3f6ff"/>
+        </svg>
+        <span class="spk-frame-monogram">GDG MADURAI</span>
+      </div>
+    `;
+  }
+  return `
+    <div class="spk-frame-art" aria-hidden="true">
+      <svg viewBox="0 0 120 90" width="96" height="72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="60" cy="45" r="32" stroke="rgba(94, 243, 255, 0.24)" stroke-width="1" stroke-dasharray="3 4"/>
+        <circle cx="60" cy="35" r="10.5" stroke="rgba(226, 236, 255, 0.55)" stroke-width="1.4"/>
+        <path d="M40 67 C40 55, 49 50, 60 50 C71 50, 80 55, 80 67" stroke="rgba(94, 243, 255, 0.55)" stroke-width="1.4"/>
+      </svg>
+      <span class="spk-frame-monogram">${esc(speaker.monogram || '[ TBA ]')}</span>
+    </div>
+  `;
+}
+
 export function renderSpeakersExperience({
   id = 'speakers',
   headingId = 'heading-speakers',
@@ -46,8 +74,8 @@ export function renderSpeakersExperience({
         </div>
 
         <div class="spk-mode-toggle" role="group" aria-label="Speakers view mode">
-          <button type="button" class="spk-mode-btn is-active" data-spk-mode="constellation" aria-pressed="true">CONSTELLATION</button>
-          <button type="button" class="spk-mode-btn" data-spk-mode="list" aria-pressed="false">ROSTER LIST</button>
+          <button type="button" class="spk-mode-btn is-active" data-spk-mode="list" aria-pressed="true">SPEAKER CARDS</button>
+          <button type="button" class="spk-mode-btn" data-spk-mode="constellation" aria-pressed="false">3D CONSTELLATION</button>
         </div>
       </div>
 
@@ -60,12 +88,35 @@ export function renderSpeakersExperience({
         </div>
       ` : ''}
 
-      <div class="spk-constellation-layout" data-spk-view="constellation">
+      <div class="spk-cards-grid" id="${esc(id)}-list" data-spk-view="list">
+        ${items.map((s, idx) => `
+          <article class="spk-card speaker-item${s.category === 'hosts' ? ' spk-card--host' : ''}" data-category="${esc(s.category)}" data-idx="${idx}">
+            <div class="spk-card-frame">
+              <span class="spk-frame-corner spk-frame-corner--tl" aria-hidden="true"></span>
+              <span class="spk-frame-corner spk-frame-corner--br" aria-hidden="true"></span>
+              ${renderSpeakerFrameGraphic(s)}
+              <span class="spk-frame-index">${String(idx + 1).padStart(2, '0')}</span>
+              <span class="spk-frame-status">${esc(s.status || s.homeBadge)}</span>
+            </div>
+
+            <div class="spk-card-body">
+              <div class="spk-card-meta-row">
+                <span class="orbe-badge-tba">${esc(s.pageBadge || s.homeBadge)}</span>
+              </div>
+              <h3 class="spk-card-name">${esc(isPage ? (s.pageName || s.name) : s.name)}</h3>
+              <p class="spk-card-role">${esc(isPage ? s.subtitle : (s.homeSubtitle || s.subtitle))}</p>
+              ${s.bio ? `<p class="spk-card-bio">${esc(s.bio)}</p>` : ''}
+            </div>
+          </article>
+        `).join('')}
+      </div>
+
+      <div class="spk-constellation-layout" data-spk-view="constellation" hidden>
         <div class="spk-canvas-wrap">
           <canvas class="spk-constellation-canvas" id="${esc(id)}-canvas" aria-label="Interactive 3D speaker signal constellation — drag to rotate, click any node to inspect"></canvas>
           <div class="spk-canvas-hud" aria-hidden="true">
             <span>ORBITAL SPHERE // DRAG TO ROTATE</span>
-            <span class="spk-signal-live">ACQUIRING 2026 SIGNALS</span>
+            <span class="spk-signal-live">2026 SPEAKER LINEUP</span>
           </div>
           <div class="spk-node-pills" role="list" aria-label="Constellation quick-select nodes">
             ${items.map((s, idx) => `
@@ -77,37 +128,17 @@ export function renderSpeakersExperience({
         <aside class="spk-inspector" id="${esc(id)}-inspector" aria-live="polite" aria-label="Selected Speaker Slot Telemetry">
           <div class="spk-inspector-top">
             <span class="spk-inspector-code" data-field="code">${esc(firstSpeaker?.code || 'SPK_01')}</span>
-            <span class="orbe-badge-tba" data-field="badge">${esc(firstSpeaker?.pageBadge || firstSpeaker?.homeBadge || 'SIGNAL ACQUIRING')}</span>
+            <span class="orbe-badge-tba" data-field="badge">${esc(firstSpeaker?.pageBadge || firstSpeaker?.homeBadge || 'ANNOUNCEMENT PLACEHOLDER')}</span>
           </div>
           <div class="spk-inspector-sigil" data-field="monogram">${esc(firstSpeaker?.monogram || '[ TBA ]')}</div>
           <h3 class="spk-inspector-name" data-field="name">${esc(isPage ? (firstSpeaker?.pageName || firstSpeaker?.name) : firstSpeaker?.name)}</h3>
           <p class="spk-inspector-sub" data-field="subtitle">${esc(firstSpeaker?.subtitle || '')}</p>
           <p class="spk-inspector-bio" data-field="bio">${esc(firstSpeaker?.bio || firstSpeaker?.homeSubtitle || '')}</p>
           <div class="spk-inspector-meta">
-            <span>STATUS: <strong data-field="status">${esc(firstSpeaker?.status || 'SIGNAL ACQUIRING')}</strong></span>
-            <span>SECTOR: <strong>MADURAI</strong></span>
+            <span>STATUS: <strong data-field="status">${esc(firstSpeaker?.status || 'ANNOUNCEMENT PLACEHOLDER')}</strong></span>
+            <span>CITY: <strong>MADURAI</strong></span>
           </div>
         </aside>
-      </div>
-
-      <div class="spk-roster-list" id="${esc(id)}-list" data-spk-view="list" hidden>
-        ${items.map((s, idx) => `
-          <article class="spk-roster-row speaker-item" data-category="${esc(s.category)}" data-idx="${idx}">
-            <div class="spk-roster-id">
-              <span class="spk-roster-num">${String(idx + 1).padStart(2, '0')}</span>
-              <span class="spk-roster-monogram">${esc(s.monogram || '[ TBA ]')}</span>
-            </div>
-            <div class="spk-roster-main">
-              <div class="spk-roster-head">
-                <h3 class="spk-roster-name">${esc(isPage ? (s.pageName || s.name) : s.name)}</h3>
-                <span class="orbe-badge-tba">${esc(s.pageBadge || s.homeBadge)}</span>
-              </div>
-              <p class="spk-roster-sub">${esc(isPage ? s.subtitle : (s.homeSubtitle || s.subtitle))}</p>
-              ${isPage && s.bio ? `<p class="spk-roster-bio">${esc(s.bio)}</p>` : ''}
-            </div>
-            <div class="spk-roster-state">${esc(s.status || s.homeBadge)}</div>
-          </article>
-        `).join('')}
       </div>
 
       ${!isPage ? `
@@ -219,6 +250,12 @@ export function mountSpeakersExperience({ id = 'speakers', isPage = false } = {}
       });
       if (constView) constView.hidden = showList;
       if (listView) listView.hidden = !showList;
+      if (!showList) {
+        requestAnimationFrame(() => {
+          resizeCanvas();
+          renderFrame(performance.now());
+        });
+      }
     });
   });
 

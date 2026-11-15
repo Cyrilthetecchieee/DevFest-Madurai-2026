@@ -51,11 +51,11 @@ export function renderStageFooter({ cfpHref = '/#cfp' } = {}) {
         </div>
 
         <div class="ftr-col">
-          <span class="ftr-col-label">COORDINATES</span>
+          <span class="ftr-col-label">EVENT DETAILS</span>
           <p class="ftr-coord-text">${esc(footer.heading)}</p>
-          <p class="ftr-coord-sub">12 DECEMBER 2026 · MADURAI, TAMIL NADU, INDIA</p>
-          <p class="ftr-coord-sub">09.9252° N // 78.1198° E</p>
-          <button type="button" id="ftr-scroll-top" class="ftr-top-btn">↑ RETURN TO ORBIT</button>
+          <p class="ftr-coord-sub">12 December 2026 · Madurai, Tamil Nadu, India</p>
+          <p class="ftr-coord-sub">Official venue to be announced soon.</p>
+          <button type="button" id="ftr-scroll-top" class="ftr-top-btn">↑ RETURN TO TOP</button>
         </div>
       </div>
 

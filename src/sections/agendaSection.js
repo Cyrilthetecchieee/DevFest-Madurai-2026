@@ -10,6 +10,15 @@ import { prefersReducedMotion } from '../utils/env.js';
 
 const STORAGE_KEY = 'df26_my_day_pins_v1';
 
+const TRACK_GROUPS = [
+  'Opening & Closing',
+  'Main Stage',
+  'Multi-Track',
+  'Hands-On Labs',
+  'Community',
+  'Schedule Status',
+];
+
 const TRACK_DETAILS = [
   'Community opening, opening remarks from GDG Madurai organizers, keynote launch, and end-of-day wrap.',
   'Full-stage flagship talks covering next-generation AI workflows, web platform advances, and community lessons.',
@@ -95,7 +104,7 @@ export function renderAgendaSection() {
         <aside class="ag-planner-bar" aria-label="My Day Planner Controls">
           <div class="ag-planner-status">
             <span class="ag-planner-label">MY DAY PLANNER // <strong id="ag-pin-count">00</strong> PINNED</span>
-            <span class="ag-demo-tag">[DEMO SLOT — SCHEDULE TBA]</span>
+            <span class="ag-demo-tag">SCHEDULE TBA · DRAFT REMINDER</span>
           </div>
           <button type="button" id="ag-export-ics" class="ag-export-btn">EXPORT .ICS CALENDAR</button>
         </aside>
@@ -113,6 +122,7 @@ export function renderAgendaSection() {
               <div class="ag-row-top">
                 <div class="ag-row-meta">
                   <span class="ag-row-num">0${idx + 1}</span>
+                  <span class="ag-group-tag">${esc(TRACK_GROUPS[idx] || 'Session Group')}</span>
                   <span class="ag-pulse-badge"><span class="ag-lock-dot" aria-hidden="true"></span>${esc(t.badge)}</span>
                 </div>
                 <div class="ag-row-actions">
@@ -130,8 +140,8 @@ export function renderAgendaSection() {
               <div class="ag-row-drawer" id="ag-panel-${idx}" ${idx === 0 ? '' : 'hidden'}>
                 <p class="ag-drawer-note">${esc(TRACK_DETAILS[idx] || t.body)}</p>
                 <div class="ag-drawer-foot">
-                  <span>DATE: 12 DEC 2026 // SECTOR: MADURAI</span>
-                  <span class="ag-demo-inline">[DEMO SLOT — SCHEDULE TBA]</span>
+                  <span>12 December 2026 · Madurai, Tamil Nadu</span>
+                  <span class="ag-demo-inline">TIME &amp; ROOM: TBA</span>
                 </div>
               </div>
             </article>
