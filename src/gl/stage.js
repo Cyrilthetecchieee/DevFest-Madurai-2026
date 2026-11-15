@@ -187,6 +187,7 @@ export async function mountWebGLStage({ canvas, quality }) {
       const base = ZONE_PRESETS[key] || ZONE_PRESETS.about;
       const r = el.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) continue;
+      const secRect = (el.closest('section') || el).getBoundingClientRect();
 
       const isFooter = key === 'footer';
       const screenX = isMobile || isFooter
@@ -202,7 +203,9 @@ export async function mountWebGLStage({ canvas, quality }) {
         yaw: isMobile ? base.yaw * 0.35 : base.yaw,
         screenX,
         screenY,
-        anchorY: isFooter ? r.top + r.height * 0.38 : r.top + Math.min(r.height * 0.5, H * 0.45),
+        anchorY: isFooter
+          ? secRect.top + secRect.height * 0.36
+          : secRect.top + Math.min(secRect.height * 0.28, H * 0.26),
       });
     }
 

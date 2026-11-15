@@ -113,6 +113,21 @@ function describeArc(cx, cy, r, startDeg, endDeg) {
   return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
 }
 
+function describeAnnularSector(cx, cy, rInner, rOuter, startDeg, endDeg) {
+  const o0 = polarToXY(cx, cy, rOuter, startDeg);
+  const o1 = polarToXY(cx, cy, rOuter, endDeg);
+  const i1 = polarToXY(cx, cy, rInner, endDeg);
+  const i0 = polarToXY(cx, cy, rInner, startDeg);
+  const large = endDeg - startDeg > 180 ? 1 : 0;
+  return [
+    `M ${o0.x.toFixed(2)} ${o0.y.toFixed(2)}`,
+    `A ${rOuter} ${rOuter} 0 ${large} 1 ${o1.x.toFixed(2)} ${o1.y.toFixed(2)}`,
+    `L ${i1.x.toFixed(2)} ${i1.y.toFixed(2)}`,
+    `A ${rInner} ${rInner} 0 ${large} 0 ${i0.x.toFixed(2)} ${i0.y.toFixed(2)}`,
+    'Z',
+  ].join(' ');
+}
+
 function renderRingArcsMarkup(sessions, activeId) {
   const count = Math.max(1, sessions.length);
   const span = 360 / count;
@@ -129,9 +144,13 @@ function renderRingArcsMarkup(sessions, activeId) {
       const pathD = count === 1
         ? describeArc(210, 210, 152, 0, 359.2)
         : describeArc(210, 210, 152, a0, a1);
+      const hitD = count === 1
+        ? describeAnnularSector(210, 210, 118, 198, 0, 359.2)
+        : describeAnnularSector(210, 210, 118, 198, a0, a1);
 
       return `
         <g class="ag-ring-sector ${isActive ? 'is-active' : ''}" data-ag-sector="${esc(s.id)}">
+          <path d="${hitD}" class="ag-ring-hit" />
           <path
             d="${pathD}"
             stroke="${col}"

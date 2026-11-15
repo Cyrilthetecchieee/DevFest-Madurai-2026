@@ -1093,18 +1093,25 @@
 .local-scrim::before {
   content: "";
   position: absolute;
-  inset: -40px -48px;
+  inset: -56px -64px;
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 86% 82% at 48% 50%,
-    rgba(7, 10, 28, 0.84) 0%,
-    rgba(7, 10, 28, 0.70) 48%,
-    rgba(7, 10, 28, 0.24) 76%,
-    rgba(7, 10, 28, 0) 100%
+    ellipse 50% 50% at 48% 50%,
+    rgba(6, 9, 26, 0.84) 0%,
+    rgba(6, 9, 26, 0.62) 48%,
+    rgba(6, 9, 26, 0.22) 76%,
+    rgba(6, 9, 26, 0) 100%
   );
-  -webkit-mask-image: radial-gradient(ellipse 92% 90% at 50% 50%, #000 45%, transparent 100%);
-  mask-image: radial-gradient(ellipse 92% 90% at 50% 50%, #000 45%, transparent 100%);
+}
+
+@media (min-width: 961px) {
+  .stage-asymmetric .graphic-window {
+    position: sticky;
+    top: 96px;
+    align-self: start;
+    min-height: clamp(380px, 64vh, 620px);
+  }
 }
 
 .hud-bevel-card {
@@ -3019,10 +3026,23 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+  pointer-events: none;
+}
+
+.ag-ring-sector {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.ag-ring-hit {
+  fill: rgba(255, 255, 255, 0.001);
+  pointer-events: all;
+  cursor: pointer;
 }
 
 .ag-ring-arc-path {
   cursor: pointer;
+  pointer-events: all;
   opacity: 0.72;
   transition: stroke-width 0.24s ease, opacity 0.24s ease, filter 0.24s ease;
 }
