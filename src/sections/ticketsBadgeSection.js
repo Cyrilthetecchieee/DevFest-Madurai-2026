@@ -1,134 +1,25 @@
 /**
- * Tickets & Client-Side Kolam Mission Badge Studio (#17, S5):
- * - Monumental holographic boarding pass with pointer/gyro foil shimmer and magnetic CTA.
- * - Live deterministic Kolam-seeded Mission Badge generator:
- *   - 1080x1350 Portrait PNG export
- *   - 1200x630 OG Social Card PNG export
- *   - Web Share API file sharing with download fallback
- *   - Explicit "Generated locally on your device" notice.
- */
-import { esc, renderDiscoverButton } from '../utils/dom.js';
+  * Tickets & Registration Banner Section (DevFest Madurai 2026):
+  * - Displays the transparent neon GDG Madurai DevFest 2026 REGISTRATION OPEN banner.
+  * - Provides an accessible, keyboard-focusable REGISTER NOW CTA overlay locked to the banner button.
+  * - Renders a real, scannable ISO/IEC 18004 QR code over the right-side QR bracket slot (also clickable).
+  * - Includes a responsive mobile companion bar on small viewports so both the CTA and QR code remain large and accessible.
+  */
+import { esc } from '../utils/dom.js';
 import { prefersReducedMotion } from '../utils/env.js';
-import { hashSeed, generateKolamSpec, mountInteractiveKolamSvg } from '../visuals/kolamEngine.js';
 
-const BADGE_ROLES = [
-  'AI & ML BUILDER',
-  'WEB & CLOUD ARCHITECT',
-  'ANDROID DEVELOPER',
-  'OPEN SOURCE CONTRIBUTOR',
-  'DESIGN & PRODUCT',
-  'MADURAI COMMUNITY',
-];
+export const OFFICIAL_REGISTRATION_URL =
+  'https://gdg.community.dev/events/details/google-gdg-madurai-presents-devfest-2026/';
 
-function drawBadgeCanvas(canvas, { callsign, role, width, height }) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+const QR_SVG_MARKUP = `<svg class="tkt-qr-svg" xmlns="http://www.w3.org/2000/svg" viewBox="1.5 1.5 42 42" shape-rendering="crispEdges" role="img" aria-label="Scannable QR code for GDG Madurai DevFest 2026 official registration">
+  <title>Scan to register for GDG Madurai DevFest 2026</title>
+  <rect x="1.5" y="1.5" width="42" height="42" fill="#ffffff" rx="2"/>
+  <g fill="#060922">
+    <rect x="4" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/><rect x="17" y="4" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="22" y="4" width="1" height="1"/><rect x="23" y="4" width="1" height="1"/><rect x="24" y="4" width="1" height="1"/><rect x="26" y="4" width="1" height="1"/><rect x="27" y="4" width="1" height="1"/><rect x="29" y="4" width="1" height="1"/><rect x="30" y="4" width="1" height="1"/><rect x="31" y="4" width="1" height="1"/><rect x="32" y="4" width="1" height="1"/><rect x="34" y="4" width="1" height="1"/><rect x="35" y="4" width="1" height="1"/><rect x="36" y="4" width="1" height="1"/><rect x="37" y="4" width="1" height="1"/><rect x="38" y="4" width="1" height="1"/><rect x="39" y="4" width="1" height="1"/><rect x="40" y="4" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="15" y="5" width="1" height="1"/><rect x="16" y="5" width="1" height="1"/><rect x="18" y="5" width="1" height="1"/><rect x="19" y="5" width="1" height="1"/><rect x="20" y="5" width="1" height="1"/><rect x="21" y="5" width="1" height="1"/><rect x="22" y="5" width="1" height="1"/><rect x="23" y="5" width="1" height="1"/><rect x="24" y="5" width="1" height="1"/><rect x="26" y="5" width="1" height="1"/><rect x="27" y="5" width="1" height="1"/><rect x="30" y="5" width="1" height="1"/><rect x="31" y="5" width="1" height="1"/><rect x="32" y="5" width="1" height="1"/><rect x="34" y="5" width="1" height="1"/><rect x="40" y="5" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="12" y="6" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="17" y="6" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="23" y="6" width="1" height="1"/><rect x="24" y="6" width="1" height="1"/><rect x="31" y="6" width="1" height="1"/><rect x="32" y="6" width="1" height="1"/><rect x="34" y="6" width="1" height="1"/><rect x="36" y="6" width="1" height="1"/><rect x="37" y="6" width="1" height="1"/><rect x="38" y="6" width="1" height="1"/><rect x="40" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="8" y="7" width="1" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/><rect x="14" y="7" width="1" height="1"/><rect x="15" y="7" width="1" height="1"/><rect x="17" y="7" width="1" height="1"/><rect x="18" y="7" width="1" height="1"/><rect x="19" y="7" width="1" height="1"/><rect x="22" y="7" width="1" height="1"/><rect x="23" y="7" width="1" height="1"/><rect x="24" y="7" width="1" height="1"/><rect x="27" y="7" width="1" height="1"/><rect x="30" y="7" width="1" height="1"/><rect x="31" y="7" width="1" height="1"/><rect x="32" y="7" width="1" height="1"/><rect x="34" y="7" width="1" height="1"/><rect x="36" y="7" width="1" height="1"/><rect x="37" y="7" width="1" height="1"/><rect x="38" y="7" width="1" height="1"/><rect x="40" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="14" y="8" width="1" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="22" y="8" width="1" height="1"/><rect x="23" y="8" width="1" height="1"/><rect x="25" y="8" width="1" height="1"/><rect x="26" y="8" width="1" height="1"/><rect x="27" y="8" width="1" height="1"/><rect x="30" y="8" width="1" height="1"/><rect x="31" y="8" width="1" height="1"/><rect x="34" y="8" width="1" height="1"/><rect x="36" y="8" width="1" height="1"/><rect x="37" y="8" width="1" height="1"/><rect x="38" y="8" width="1" height="1"/><rect x="40" y="8" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="21" y="9" width="1" height="1"/><rect x="22" y="9" width="1" height="1"/><rect x="23" y="9" width="1" height="1"/><rect x="25" y="9" width="1" height="1"/><rect x="26" y="9" width="1" height="1"/><rect x="27" y="9" width="1" height="1"/><rect x="28" y="9" width="1" height="1"/><rect x="29" y="9" width="1" height="1"/><rect x="30" y="9" width="1" height="1"/><rect x="31" y="9" width="1" height="1"/><rect x="34" y="9" width="1" height="1"/><rect x="40" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/><rect x="7" y="10" width="1" height="1"/><rect x="8" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="10" y="10" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="14" y="10" width="1" height="1"/><rect x="16" y="10" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="22" y="10" width="1" height="1"/><rect x="24" y="10" width="1" height="1"/><rect x="26" y="10" width="1" height="1"/><rect x="28" y="10" width="1" height="1"/><rect x="30" y="10" width="1" height="1"/><rect x="32" y="10" width="1" height="1"/><rect x="34" y="10" width="1" height="1"/><rect x="35" y="10" width="1" height="1"/><rect x="36" y="10" width="1" height="1"/><rect x="37" y="10" width="1" height="1"/><rect x="38" y="10" width="1" height="1"/><rect x="39" y="10" width="1" height="1"/><rect x="40" y="10" width="1" height="1"/><rect x="12" y="11" width="1" height="1"/><rect x="13" y="11" width="1" height="1"/><rect x="14" y="11" width="1" height="1"/><rect x="16" y="11" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="18" y="11" width="1" height="1"/><rect x="20" y="11" width="1" height="1"/><rect x="21" y="11" width="1" height="1"/><rect x="23" y="11" width="1" height="1"/><rect x="24" y="11" width="1" height="1"/><rect x="25" y="11" width="1" height="1"/><rect x="26" y="11" width="1" height="1"/><rect x="28" y="11" width="1" height="1"/><rect x="29" y="11" width="1" height="1"/><rect x="31" y="11" width="1" height="1"/><rect x="32" y="11" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="5" y="12" width="1" height="1"/><rect x="6" y="12" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="9" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="15" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="21" y="12" width="1" height="1"/><rect x="25" y="12" width="1" height="1"/><rect x="28" y="12" width="1" height="1"/><rect x="29" y="12" width="1" height="1"/><rect x="33" y="12" width="1" height="1"/><rect x="34" y="12" width="1" height="1"/><rect x="38" y="12" width="1" height="1"/><rect x="5" y="13" width="1" height="1"/><rect x="6" y="13" width="1" height="1"/><rect x="7" y="13" width="1" height="1"/><rect x="11" y="13" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="13" y="13" width="1" height="1"/><rect x="14" y="13" width="1" height="1"/><rect x="15" y="13" width="1" height="1"/><rect x="18" y="13" width="1" height="1"/><rect x="19" y="13" width="1" height="1"/><rect x="21" y="13" width="1" height="1"/><rect x="24" y="13" width="1" height="1"/><rect x="28" y="13" width="1" height="1"/><rect x="29" y="13" width="1" height="1"/><rect x="32" y="13" width="1" height="1"/><rect x="33" y="13" width="1" height="1"/><rect x="34" y="13" width="1" height="1"/><rect x="37" y="13" width="1" height="1"/><rect x="38" y="13" width="1" height="1"/><rect x="40" y="13" width="1" height="1"/><rect x="5" y="14" width="1" height="1"/><rect x="6" y="14" width="1" height="1"/><rect x="8" y="14" width="1" height="1"/><rect x="9" y="14" width="1" height="1"/><rect x="10" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/><rect x="12" y="14" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="17" y="14" width="1" height="1"/><rect x="24" y="14" width="1" height="1"/><rect x="32" y="14" width="1" height="1"/><rect x="40" y="14" width="1" height="1"/><rect x="5" y="15" width="1" height="1"/><rect x="8" y="15" width="1" height="1"/><rect x="13" y="15" width="1" height="1"/><rect x="15" y="15" width="1" height="1"/><rect x="19" y="15" width="1" height="1"/><rect x="21" y="15" width="1" height="1"/><rect x="22" y="15" width="1" height="1"/><rect x="24" y="15" width="1" height="1"/><rect x="25" y="15" width="1" height="1"/><rect x="26" y="15" width="1" height="1"/><rect x="27" y="15" width="1" height="1"/><rect x="28" y="15" width="1" height="1"/><rect x="29" y="15" width="1" height="1"/><rect x="30" y="15" width="1" height="1"/><rect x="32" y="15" width="1" height="1"/><rect x="36" y="15" width="1" height="1"/><rect x="37" y="15" width="1" height="1"/><rect x="40" y="15" width="1" height="1"/><rect x="4" y="16" width="1" height="1"/><rect x="7" y="16" width="1" height="1"/><rect x="10" y="16" width="1" height="1"/><rect x="11" y="16" width="1" height="1"/><rect x="14" y="16" width="1" height="1"/><rect x="16" y="16" width="1" height="1"/><rect x="20" y="16" width="1" height="1"/><rect x="21" y="16" width="1" height="1"/><rect x="23" y="16" width="1" height="1"/><rect x="24" y="16" width="1" height="1"/><rect x="25" y="16" width="1" height="1"/><rect x="27" y="16" width="1" height="1"/><rect x="28" y="16" width="1" height="1"/><rect x="29" y="16" width="1" height="1"/><rect x="31" y="16" width="1" height="1"/><rect x="32" y="16" width="1" height="1"/><rect x="33" y="16" width="1" height="1"/><rect x="34" y="16" width="1" height="1"/><rect x="40" y="16" width="1" height="1"/><rect x="4" y="17" width="1" height="1"/><rect x="7" y="17" width="1" height="1"/><rect x="9" y="17" width="1" height="1"/><rect x="11" y="17" width="1" height="1"/><rect x="12" y="17" width="1" height="1"/><rect x="14" y="17" width="1" height="1"/><rect x="15" y="17" width="1" height="1"/><rect x="16" y="17" width="1" height="1"/><rect x="17" y="17" width="1" height="1"/><rect x="19" y="17" width="1" height="1"/><rect x="20" y="17" width="1" height="1"/><rect x="21" y="17" width="1" height="1"/><rect x="22" y="17" width="1" height="1"/><rect x="24" y="17" width="1" height="1"/><rect x="25" y="17" width="1" height="1"/><rect x="29" y="17" width="1" height="1"/><rect x="30" y="17" width="1" height="1"/><rect x="32" y="17" width="1" height="1"/><rect x="34" y="17" width="1" height="1"/><rect x="38" y="17" width="1" height="1"/><rect x="40" y="17" width="1" height="1"/><rect x="4" y="18" width="1" height="1"/><rect x="5" y="18" width="1" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="7" y="18" width="1" height="1"/><rect x="8" y="18" width="1" height="1"/><rect x="10" y="18" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="15" y="18" width="1" height="1"/><rect x="16" y="18" width="1" height="1"/><rect x="18" y="18" width="1" height="1"/><rect x="19" y="18" width="1" height="1"/><rect x="20" y="18" width="1" height="1"/><rect x="21" y="18" width="1" height="1"/><rect x="26" y="18" width="1" height="1"/><rect x="33" y="18" width="1" height="1"/><rect x="34" y="18" width="1" height="1"/><rect x="35" y="18" width="1" height="1"/><rect x="36" y="18" width="1" height="1"/><rect x="37" y="18" width="1" height="1"/><rect x="39" y="18" width="1" height="1"/><rect x="40" y="18" width="1" height="1"/><rect x="4" y="19" width="1" height="1"/><rect x="5" y="19" width="1" height="1"/><rect x="6" y="19" width="1" height="1"/><rect x="7" y="19" width="1" height="1"/><rect x="8" y="19" width="1" height="1"/><rect x="14" y="19" width="1" height="1"/><rect x="16" y="19" width="1" height="1"/><rect x="17" y="19" width="1" height="1"/><rect x="18" y="19" width="1" height="1"/><rect x="20" y="19" width="1" height="1"/><rect x="21" y="19" width="1" height="1"/><rect x="23" y="19" width="1" height="1"/><rect x="24" y="19" width="1" height="1"/><rect x="25" y="19" width="1" height="1"/><rect x="26" y="19" width="1" height="1"/><rect x="27" y="19" width="1" height="1"/><rect x="28" y="19" width="1" height="1"/><rect x="29" y="19" width="1" height="1"/><rect x="31" y="19" width="1" height="1"/><rect x="32" y="19" width="1" height="1"/><rect x="33" y="19" width="1" height="1"/><rect x="37" y="19" width="1" height="1"/><rect x="39" y="19" width="1" height="1"/><rect x="6" y="20" width="1" height="1"/><rect x="7" y="20" width="1" height="1"/><rect x="10" y="20" width="1" height="1"/><rect x="11" y="20" width="1" height="1"/><rect x="12" y="20" width="1" height="1"/><rect x="13" y="20" width="1" height="1"/><rect x="15" y="20" width="1" height="1"/><rect x="18" y="20" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="20" y="20" width="1" height="1"/><rect x="21" y="20" width="1" height="1"/><rect x="24" y="20" width="1" height="1"/><rect x="25" y="20" width="1" height="1"/><rect x="28" y="20" width="1" height="1"/><rect x="29" y="20" width="1" height="1"/><rect x="32" y="20" width="1" height="1"/><rect x="33" y="20" width="1" height="1"/><rect x="34" y="20" width="1" height="1"/><rect x="35" y="20" width="1" height="1"/><rect x="40" y="20" width="1" height="1"/><rect x="4" y="21" width="1" height="1"/><rect x="5" y="21" width="1" height="1"/><rect x="6" y="21" width="1" height="1"/><rect x="8" y="21" width="1" height="1"/><rect x="9" y="21" width="1" height="1"/><rect x="13" y="21" width="1" height="1"/><rect x="14" y="21" width="1" height="1"/><rect x="15" y="21" width="1" height="1"/><rect x="18" y="21" width="1" height="1"/><rect x="19" y="21" width="1" height="1"/><rect x="21" y="21" width="1" height="1"/><rect x="24" y="21" width="1" height="1"/><rect x="25" y="21" width="1" height="1"/><rect x="28" y="21" width="1" height="1"/><rect x="29" y="21" width="1" height="1"/><rect x="32" y="21" width="1" height="1"/><rect x="34" y="21" width="1" height="1"/><rect x="38" y="21" width="1" height="1"/><rect x="40" y="21" width="1" height="1"/><rect x="6" y="22" width="1" height="1"/><rect x="8" y="22" width="1" height="1"/><rect x="9" y="22" width="1" height="1"/><rect x="10" y="22" width="1" height="1"/><rect x="14" y="22" width="1" height="1"/><rect x="17" y="22" width="1" height="1"/><rect x="21" y="22" width="1" height="1"/><rect x="28" y="22" width="1" height="1"/><rect x="30" y="22" width="1" height="1"/><rect x="32" y="22" width="1" height="1"/><rect x="35" y="22" width="1" height="1"/><rect x="36" y="22" width="1" height="1"/><rect x="37" y="22" width="1" height="1"/><rect x="39" y="22" width="1" height="1"/><rect x="40" y="22" width="1" height="1"/><rect x="6" y="23" width="1" height="1"/><rect x="7" y="23" width="1" height="1"/><rect x="8" y="23" width="1" height="1"/><rect x="11" y="23" width="1" height="1"/><rect x="13" y="23" width="1" height="1"/><rect x="14" y="23" width="1" height="1"/><rect x="15" y="23" width="1" height="1"/><rect x="20" y="23" width="1" height="1"/><rect x="21" y="23" width="1" height="1"/><rect x="25" y="23" width="1" height="1"/><rect x="27" y="23" width="1" height="1"/><rect x="28" y="23" width="1" height="1"/><rect x="29" y="23" width="1" height="1"/><rect x="30" y="23" width="1" height="1"/><rect x="32" y="23" width="1" height="1"/><rect x="36" y="23" width="1" height="1"/><rect x="39" y="23" width="1" height="1"/><rect x="4" y="24" width="1" height="1"/><rect x="6" y="24" width="1" height="1"/><rect x="7" y="24" width="1" height="1"/><rect x="8" y="24" width="1" height="1"/><rect x="10" y="24" width="1" height="1"/><rect x="11" y="24" width="1" height="1"/><rect x="14" y="24" width="1" height="1"/><rect x="16" y="24" width="1" height="1"/><rect x="19" y="24" width="1" height="1"/><rect x="20" y="24" width="1" height="1"/><rect x="21" y="24" width="1" height="1"/><rect x="25" y="24" width="1" height="1"/><rect x="27" y="24" width="1" height="1"/><rect x="28" y="24" width="1" height="1"/><rect x="29" y="24" width="1" height="1"/><rect x="34" y="24" width="1" height="1"/><rect x="39" y="24" width="1" height="1"/><rect x="40" y="24" width="1" height="1"/><rect x="5" y="25" width="1" height="1"/><rect x="6" y="25" width="1" height="1"/><rect x="8" y="25" width="1" height="1"/><rect x="9" y="25" width="1" height="1"/><rect x="15" y="25" width="1" height="1"/><rect x="16" y="25" width="1" height="1"/><rect x="17" y="25" width="1" height="1"/><rect x="21" y="25" width="1" height="1"/><rect x="24" y="25" width="1" height="1"/><rect x="25" y="25" width="1" height="1"/><rect x="26" y="25" width="1" height="1"/><rect x="28" y="25" width="1" height="1"/><rect x="32" y="25" width="1" height="1"/><rect x="33" y="25" width="1" height="1"/><rect x="34" y="25" width="1" height="1"/><rect x="40" y="25" width="1" height="1"/><rect x="4" y="26" width="1" height="1"/><rect x="5" y="26" width="1" height="1"/><rect x="8" y="26" width="1" height="1"/><rect x="9" y="26" width="1" height="1"/><rect x="10" y="26" width="1" height="1"/><rect x="12" y="26" width="1" height="1"/><rect x="14" y="26" width="1" height="1"/><rect x="15" y="26" width="1" height="1"/><rect x="16" y="26" width="1" height="1"/><rect x="18" y="26" width="1" height="1"/><rect x="20" y="26" width="1" height="1"/><rect x="30" y="26" width="1" height="1"/><rect x="33" y="26" width="1" height="1"/><rect x="35" y="26" width="1" height="1"/><rect x="36" y="26" width="1" height="1"/><rect x="37" y="26" width="1" height="1"/><rect x="39" y="26" width="1" height="1"/><rect x="40" y="26" width="1" height="1"/><rect x="6" y="27" width="1" height="1"/><rect x="8" y="27" width="1" height="1"/><rect x="11" y="27" width="1" height="1"/><rect x="14" y="27" width="1" height="1"/><rect x="16" y="27" width="1" height="1"/><rect x="17" y="27" width="1" height="1"/><rect x="18" y="27" width="1" height="1"/><rect x="20" y="27" width="1" height="1"/><rect x="21" y="27" width="1" height="1"/><rect x="22" y="27" width="1" height="1"/><rect x="23" y="27" width="1" height="1"/><rect x="24" y="27" width="1" height="1"/><rect x="25" y="27" width="1" height="1"/><rect x="26" y="27" width="1" height="1"/><rect x="28" y="27" width="1" height="1"/><rect x="29" y="27" width="1" height="1"/><rect x="30" y="27" width="1" height="1"/><rect x="31" y="27" width="1" height="1"/><rect x="32" y="27" width="1" height="1"/><rect x="33" y="27" width="1" height="1"/><rect x="34" y="27" width="1" height="1"/><rect x="36" y="27" width="1" height="1"/><rect x="39" y="27" width="1" height="1"/><rect x="4" y="28" width="1" height="1"/><rect x="6" y="28" width="1" height="1"/><rect x="9" y="28" width="1" height="1"/><rect x="10" y="28" width="1" height="1"/><rect x="12" y="28" width="1" height="1"/><rect x="14" y="28" width="1" height="1"/><rect x="15" y="28" width="1" height="1"/><rect x="18" y="28" width="1" height="1"/><rect x="21" y="28" width="1" height="1"/><rect x="24" y="28" width="1" height="1"/><rect x="25" y="28" width="1" height="1"/><rect x="28" y="28" width="1" height="1"/><rect x="29" y="28" width="1" height="1"/><rect x="32" y="28" width="1" height="1"/><rect x="33" y="28" width="1" height="1"/><rect x="34" y="28" width="1" height="1"/><rect x="39" y="28" width="1" height="1"/><rect x="40" y="28" width="1" height="1"/><rect x="9" y="29" width="1" height="1"/><rect x="15" y="29" width="1" height="1"/><rect x="18" y="29" width="1" height="1"/><rect x="21" y="29" width="1" height="1"/><rect x="22" y="29" width="1" height="1"/><rect x="24" y="29" width="1" height="1"/><rect x="25" y="29" width="1" height="1"/><rect x="26" y="29" width="1" height="1"/><rect x="28" y="29" width="1" height="1"/><rect x="32" y="29" width="1" height="1"/><rect x="33" y="29" width="1" height="1"/><rect x="34" y="29" width="1" height="1"/><rect x="40" y="29" width="1" height="1"/><rect x="4" y="30" width="1" height="1"/><rect x="6" y="30" width="1" height="1"/><rect x="7" y="30" width="1" height="1"/><rect x="8" y="30" width="1" height="1"/><rect x="9" y="30" width="1" height="1"/><rect x="10" y="30" width="1" height="1"/><rect x="13" y="30" width="1" height="1"/><rect x="17" y="30" width="1" height="1"/><rect x="20" y="30" width="1" height="1"/><rect x="21" y="30" width="1" height="1"/><rect x="22" y="30" width="1" height="1"/><rect x="24" y="30" width="1" height="1"/><rect x="25" y="30" width="1" height="1"/><rect x="26" y="30" width="1" height="1"/><rect x="33" y="30" width="1" height="1"/><rect x="34" y="30" width="1" height="1"/><rect x="35" y="30" width="1" height="1"/><rect x="38" y="30" width="1" height="1"/><rect x="39" y="30" width="1" height="1"/><rect x="40" y="30" width="1" height="1"/><rect x="5" y="31" width="1" height="1"/><rect x="6" y="31" width="1" height="1"/><rect x="8" y="31" width="1" height="1"/><rect x="13" y="31" width="1" height="1"/><rect x="14" y="31" width="1" height="1"/><rect x="15" y="31" width="1" height="1"/><rect x="21" y="31" width="1" height="1"/><rect x="22" y="31" width="1" height="1"/><rect x="25" y="31" width="1" height="1"/><rect x="28" y="31" width="1" height="1"/><rect x="29" y="31" width="1" height="1"/><rect x="32" y="31" width="1" height="1"/><rect x="33" y="31" width="1" height="1"/><rect x="36" y="31" width="1" height="1"/><rect x="39" y="31" width="1" height="1"/><rect x="4" y="32" width="1" height="1"/><rect x="8" y="32" width="1" height="1"/><rect x="9" y="32" width="1" height="1"/><rect x="10" y="32" width="1" height="1"/><rect x="11" y="32" width="1" height="1"/><rect x="14" y="32" width="1" height="1"/><rect x="16" y="32" width="1" height="1"/><rect x="21" y="32" width="1" height="1"/><rect x="25" y="32" width="1" height="1"/><rect x="27" y="32" width="1" height="1"/><rect x="28" y="32" width="1" height="1"/><rect x="29" y="32" width="1" height="1"/><rect x="31" y="32" width="1" height="1"/><rect x="32" y="32" width="1" height="1"/><rect x="33" y="32" width="1" height="1"/><rect x="34" y="32" width="1" height="1"/><rect x="35" y="32" width="1" height="1"/><rect x="36" y="32" width="1" height="1"/><rect x="12" y="33" width="1" height="1"/><rect x="13" y="33" width="1" height="1"/><rect x="14" y="33" width="1" height="1"/><rect x="15" y="33" width="1" height="1"/><rect x="16" y="33" width="1" height="1"/><rect x="17" y="33" width="1" height="1"/><rect x="21" y="33" width="1" height="1"/><rect x="22" y="33" width="1" height="1"/><rect x="24" y="33" width="1" height="1"/><rect x="25" y="33" width="1" height="1"/><rect x="28" y="33" width="1" height="1"/><rect x="29" y="33" width="1" height="1"/><rect x="30" y="33" width="1" height="1"/><rect x="31" y="33" width="1" height="1"/><rect x="32" y="33" width="1" height="1"/><rect x="36" y="33" width="1" height="1"/><rect x="39" y="33" width="1" height="1"/><rect x="40" y="33" width="1" height="1"/><rect x="4" y="34" width="1" height="1"/><rect x="5" y="34" width="1" height="1"/><rect x="6" y="34" width="1" height="1"/><rect x="7" y="34" width="1" height="1"/><rect x="8" y="34" width="1" height="1"/><rect x="9" y="34" width="1" height="1"/><rect x="10" y="34" width="1" height="1"/><rect x="12" y="34" width="1" height="1"/><rect x="13" y="34" width="1" height="1"/><rect x="15" y="34" width="1" height="1"/><rect x="16" y="34" width="1" height="1"/><rect x="18" y="34" width="1" height="1"/><rect x="20" y="34" width="1" height="1"/><rect x="24" y="34" width="1" height="1"/><rect x="26" y="34" width="1" height="1"/><rect x="29" y="34" width="1" height="1"/><rect x="30" y="34" width="1" height="1"/><rect x="31" y="34" width="1" height="1"/><rect x="32" y="34" width="1" height="1"/><rect x="34" y="34" width="1" height="1"/><rect x="36" y="34" width="1" height="1"/><rect x="37" y="34" width="1" height="1"/><rect x="39" y="34" width="1" height="1"/><rect x="40" y="34" width="1" height="1"/><rect x="4" y="35" width="1" height="1"/><rect x="10" y="35" width="1" height="1"/><rect x="12" y="35" width="1" height="1"/><rect x="14" y="35" width="1" height="1"/><rect x="16" y="35" width="1" height="1"/><rect x="17" y="35" width="1" height="1"/><rect x="18" y="35" width="1" height="1"/><rect x="19" y="35" width="1" height="1"/><rect x="21" y="35" width="1" height="1"/><rect x="23" y="35" width="1" height="1"/><rect x="25" y="35" width="1" height="1"/><rect x="26" y="35" width="1" height="1"/><rect x="28" y="35" width="1" height="1"/><rect x="29" y="35" width="1" height="1"/><rect x="30" y="35" width="1" height="1"/><rect x="31" y="35" width="1" height="1"/><rect x="32" y="35" width="1" height="1"/><rect x="36" y="35" width="1" height="1"/><rect x="37" y="35" width="1" height="1"/><rect x="39" y="35" width="1" height="1"/><rect x="40" y="35" width="1" height="1"/><rect x="4" y="36" width="1" height="1"/><rect x="6" y="36" width="1" height="1"/><rect x="7" y="36" width="1" height="1"/><rect x="8" y="36" width="1" height="1"/><rect x="10" y="36" width="1" height="1"/><rect x="12" y="36" width="1" height="1"/><rect x="15" y="36" width="1" height="1"/><rect x="18" y="36" width="1" height="1"/><rect x="21" y="36" width="1" height="1"/><rect x="22" y="36" width="1" height="1"/><rect x="25" y="36" width="1" height="1"/><rect x="27" y="36" width="1" height="1"/><rect x="28" y="36" width="1" height="1"/><rect x="29" y="36" width="1" height="1"/><rect x="30" y="36" width="1" height="1"/><rect x="32" y="36" width="1" height="1"/><rect x="33" y="36" width="1" height="1"/><rect x="34" y="36" width="1" height="1"/><rect x="35" y="36" width="1" height="1"/><rect x="36" y="36" width="1" height="1"/><rect x="40" y="36" width="1" height="1"/><rect x="4" y="37" width="1" height="1"/><rect x="6" y="37" width="1" height="1"/><rect x="7" y="37" width="1" height="1"/><rect x="8" y="37" width="1" height="1"/><rect x="10" y="37" width="1" height="1"/><rect x="14" y="37" width="1" height="1"/><rect x="15" y="37" width="1" height="1"/><rect x="18" y="37" width="1" height="1"/><rect x="24" y="37" width="1" height="1"/><rect x="28" y="37" width="1" height="1"/><rect x="31" y="37" width="1" height="1"/><rect x="32" y="37" width="1" height="1"/><rect x="35" y="37" width="1" height="1"/><rect x="36" y="37" width="1" height="1"/><rect x="38" y="37" width="1" height="1"/><rect x="4" y="38" width="1" height="1"/><rect x="6" y="38" width="1" height="1"/><rect x="7" y="38" width="1" height="1"/><rect x="8" y="38" width="1" height="1"/><rect x="10" y="38" width="1" height="1"/><rect x="12" y="38" width="1" height="1"/><rect x="13" y="38" width="1" height="1"/><rect x="14" y="38" width="1" height="1"/><rect x="17" y="38" width="1" height="1"/><rect x="20" y="38" width="1" height="1"/><rect x="26" y="38" width="1" height="1"/><rect x="29" y="38" width="1" height="1"/><rect x="31" y="38" width="1" height="1"/><rect x="32" y="38" width="1" height="1"/><rect x="35" y="38" width="1" height="1"/><rect x="36" y="38" width="1" height="1"/><rect x="39" y="38" width="1" height="1"/><rect x="40" y="38" width="1" height="1"/><rect x="4" y="39" width="1" height="1"/><rect x="10" y="39" width="1" height="1"/><rect x="12" y="39" width="1" height="1"/><rect x="14" y="39" width="1" height="1"/><rect x="15" y="39" width="1" height="1"/><rect x="21" y="39" width="1" height="1"/><rect x="22" y="39" width="1" height="1"/><rect x="23" y="39" width="1" height="1"/><rect x="24" y="39" width="1" height="1"/><rect x="25" y="39" width="1" height="1"/><rect x="26" y="39" width="1" height="1"/><rect x="28" y="39" width="1" height="1"/><rect x="29" y="39" width="1" height="1"/><rect x="30" y="39" width="1" height="1"/><rect x="32" y="39" width="1" height="1"/><rect x="36" y="39" width="1" height="1"/><rect x="39" y="39" width="1" height="1"/><rect x="4" y="40" width="1" height="1"/><rect x="5" y="40" width="1" height="1"/><rect x="6" y="40" width="1" height="1"/><rect x="7" y="40" width="1" height="1"/><rect x="8" y="40" width="1" height="1"/><rect x="9" y="40" width="1" height="1"/><rect x="10" y="40" width="1" height="1"/><rect x="12" y="40" width="1" height="1"/><rect x="13" y="40" width="1" height="1"/><rect x="14" y="40" width="1" height="1"/><rect x="16" y="40" width="1" height="1"/><rect x="21" y="40" width="1" height="1"/><rect x="22" y="40" width="1" height="1"/><rect x="23" y="40" width="1" height="1"/><rect x="24" y="40" width="1" height="1"/><rect x="25" y="40" width="1" height="1"/><rect x="26" y="40" width="1" height="1"/><rect x="28" y="40" width="1" height="1"/><rect x="29" y="40" width="1" height="1"/><rect x="31" y="40" width="1" height="1"/><rect x="32" y="40" width="1" height="1"/><rect x="33" y="40" width="1" height="1"/><rect x="34" y="40" width="1" height="1"/><rect x="36" y="40" width="1" height="1"/><rect x="39" y="40" width="1" height="1"/><rect x="40" y="40" width="1" height="1"/>
+  </g>
+</svg>`;
 
-  canvas.width = width;
-  canvas.height = height;
-  const isWide = width > height;
-  const cleanName = (callsign || 'EXPLORER').trim().slice(0, 26).toUpperCase() || 'EXPLORER';
-  const seed = hashSeed(`${cleanName}:${role}:DF26`);
-
-  // Deep navy cosmic backing
-  const bg = ctx.createLinearGradient(0, 0, width, height);
-  bg.addColorStop(0, '#04071d');
-  bg.addColorStop(0.55, '#0b0f3a');
-  bg.addColorStop(1, '#100a2e');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, width, height);
-
-  // Subtle aurora ribbons
-  const glowA = ctx.createRadialGradient(width * 0.2, height * 0.18, 10, width * 0.2, height * 0.18, width * 0.6);
-  glowA.addColorStop(0, 'rgba(94, 243, 255, 0.24)');
-  glowA.addColorStop(1, 'rgba(94, 243, 255, 0)');
-  ctx.fillStyle = glowA;
-  ctx.fillRect(0, 0, width, height);
-
-  const glowB = ctx.createRadialGradient(width * 0.85, height * 0.78, 10, width * 0.85, height * 0.78, width * 0.55);
-  glowB.addColorStop(0, 'rgba(155, 92, 255, 0.26)');
-  glowB.addColorStop(1, 'rgba(155, 92, 255, 0)');
-  ctx.fillStyle = glowB;
-  ctx.fillRect(0, 0, width, height);
-
-  // Outer HUD architectural border & chamfer corners
-  const pad = Math.round(Math.min(width, height) * 0.048);
-  ctx.strokeStyle = 'rgba(94, 243, 255, 0.55)';
-  ctx.lineWidth = Math.max(1.5, width * 0.0022);
-  ctx.strokeRect(pad, pad, width - pad * 2, height - pad * 2);
-
-  // Deterministic generative Kolam motif from engine
-  const kolamSize = isWide ? Math.round(height * 0.62) : Math.round(width * 0.52);
-  const spec = generateKolamSpec({
-    gridRadius: 3,
-    size: kolamSize,
-    seed,
-    complexity: 0.72,
-  });
-
-  const kx = isWide ? width - pad * 2 - kolamSize : Math.round((width - kolamSize) * 0.5);
-  const ky = isWide ? Math.round((height - kolamSize) * 0.5) : Math.round(height * 0.21);
-
-  ctx.save();
-  ctx.translate(kx, ky);
-  const gradStroke = ctx.createLinearGradient(0, 0, kolamSize, kolamSize);
-  gradStroke.addColorStop(0, '#5ef3ff');
-  gradStroke.addColorStop(0.55, '#f3f6ff');
-  gradStroke.addColorStop(1, '#9b5cff');
-
-  (spec.paths || []).forEach((loop, idx) => {
-    const p2d = new Path2D(loop.d);
-    ctx.strokeStyle = idx % 2 === 0 ? gradStroke : 'rgba(155, 92, 255, 0.88)';
-    ctx.lineWidth = Math.max(2, kolamSize * 0.008);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.stroke(p2d);
-  });
-
-  ctx.fillStyle = '#f3f6ff';
-  (spec.dots || []).forEach((dot) => {
-    ctx.beginPath();
-    ctx.arc(dot.x, dot.y, Math.max(2.2, kolamSize * 0.009), 0, Math.PI * 2);
-    ctx.fill();
-  });
-  ctx.restore();
-
-  // Mission Control typography overlay
-  ctx.textBaseline = 'top';
-  const leftX = pad * 1.75;
-  ctx.fillStyle = '#5ef3ff';
-  ctx.font = `${Math.round(height * 0.022)}px "Orbe Mono", monospace`;
-  ctx.fillText('GDG MADURAI // DEVFEST MADURAI 2026', leftX, pad * 1.65);
-
-  ctx.fillStyle = 'rgba(243, 246, 255, 0.65)';
-  ctx.font = `${Math.round(height * 0.017)}px "Orbe Mono", monospace`;
-  ctx.fillText(`KOLAM HASH // 0x${seed.toString(16).toUpperCase().padStart(8, '0')}`, leftX, pad * 2.35);
-
-  const nameY = isWide ? Math.round(height * 0.36) : Math.round(height * 0.69);
-  const nameSize = isWide ? Math.round(height * 0.088) : Math.round(width * 0.072);
-  ctx.fillStyle = '#f3f6ff';
-  ctx.font = `${nameSize}px "Orbe Mono", monospace`;
-  ctx.fillText(cleanName, leftX, nameY, isWide ? width * 0.52 : width - leftX * 2);
-
-  ctx.fillStyle = '#9b5cff';
-  ctx.font = `${Math.round(height * 0.025)}px "Orbe Mono", monospace`;
-  ctx.fillText(`TRACK // ${role}`, leftX, nameY + nameSize * 1.24);
-
-  // Bottom bar metadata
-  const footY = height - pad * 2.15;
-  ctx.strokeStyle = 'rgba(243, 246, 255, 0.2)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(leftX, footY - 14);
-  ctx.lineTo(width - leftX, footY - 14);
-  ctx.stroke();
-
-  ctx.fillStyle = '#f3f6ff';
-  ctx.font = `${Math.round(height * 0.02)}px "Orbe Mono", monospace`;
-  ctx.fillText('12 DEC 2026 · MADURAI · WHERE CURIOSITY MEETS CREATION.', leftX, footY);
-}
-
-export function renderTicketsSection(ticketsData, links) {
+export function renderTicketsSection(ticketsData) {
   return `
     <section id="tickets" class="stage-section tkt-stage" data-waypoint="5" aria-labelledby="heading-tickets">
       <div class="tkt-header">
@@ -137,182 +28,99 @@ export function renderTicketsSection(ticketsData, links) {
         <p class="stage-lead">${esc(ticketsData.copy)}</p>
       </div>
 
-      <div class="tkt-split-grid">
-        <!-- Holographic Boarding Pass -->
-        <div class="tkt-pass-card" id="tkt-boarding-pass">
-          <div class="tkt-foil-layer" aria-hidden="true"></div>
-          <div class="tkt-pass-main">
-            <div class="tkt-pass-top">
-              <span class="tkt-pass-code">OFFICIAL PASS // DEVFEST 2026</span>
-              <span class="orbe-badge-tba">12 DEC 2026</span>
-            </div>
+      <div class="tkt-banner-showcase">
+        <div class="tkt-banner-stage" id="tkt-banner-stage">
+          <picture class="tkt-banner-picture">
+            <source type="image/webp" srcset="/assets/tickets/registration-banner.webp" />
+            <img
+              class="tkt-banner-img"
+              src="/assets/tickets/registration-banner.png"
+              width="2000"
+              height="668"
+              loading="eager"
+              decoding="async"
+              alt="GDG Madurai DevFest 2026 — Registration Open. Register Now and fasten your spots for 12 December 2026, 9:30 AM to 5:00 PM IST in Madurai, Tamil Nadu."
+            />
+          </picture>
 
-            <div class="tkt-pass-title-wrap">
-              <span class="tkt-pass-kicker">GDG MADURAI PRESENTS</span>
-              <h3 class="tkt-pass-title">DEVFEST MADURAI 2026</h3>
-              <p class="tkt-pass-meta">${esc(ticketsData.metaLine)}</p>
-            </div>
+          <!-- Functional REGISTER NOW CTA Overlay positioned over the banner button -->
+          <a
+            class="tkt-banner-cta-hotspot"
+            href="${esc(OFFICIAL_REGISTRATION_URL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Register Now for GDG Madurai DevFest 2026 (opens in a new tab)"
+          >
+            <span class="sr-only">Register Now for GDG Madurai DevFest 2026</span>
+          </a>
 
-            <div class="tkt-pass-cta">
-              ${renderDiscoverButton({
-                label: ticketsData.ctaLabel,
-                ariaLabel: 'Get Your Tickets',
-                href: links.tickets,
-                external: true,
-                inline: true,
-              })}
-            </div>
-          </div>
-
-          <div class="tkt-pass-stub" aria-hidden="true">
-            <div id="tkt-kolam-stub" class="tkt-kolam-stub"></div>
-            <span class="tkt-stub-serial">09.92N // 78.12E</span>
-          </div>
+          <!-- Real, Scannable & Clickable QR Code positioned over the QR bracket area -->
+          <a
+            class="tkt-banner-qr-hotspot"
+            href="${esc(OFFICIAL_REGISTRATION_URL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Scan or click QR code to open official GDG Madurai DevFest 2026 registration page (opens in a new tab)"
+            title="Scan or click to register for DevFest Madurai 2026"
+          >
+            ${QR_SVG_MARKUP}
+          </a>
         </div>
 
-        <!-- Client-Side Holographic Mission Badge Studio (S5) -->
-        <aside class="tkt-badge-studio" aria-label="Mission Badge Studio">
-          <div class="tkt-studio-head">
-            <span class="stage-eyebrow">HOLOGRAPHIC MISSION BADGE</span>
-            <p class="tkt-local-note">Generated locally on your device — zero server upload.</p>
-          </div>
+        <!-- Mobile-friendly companion bar for small viewports -->
+        <div class="tkt-mobile-companion" aria-label="Mobile quick registration and QR code">
+          <a
+            class="tkt-mobile-register-btn"
+            href="${esc(OFFICIAL_REGISTRATION_URL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Register Now for GDG Madurai DevFest 2026 (opens in a new tab)"
+          >
+            <span>REGISTER NOW</span>
+            <span class="tkt-mobile-register-arrows" aria-hidden="true">&raquo;</span>
+          </a>
 
-          <div class="tkt-studio-body">
-            <div class="tkt-preview-wrap">
-              <canvas id="badge-preview-canvas" width="360" height="450" class="tkt-badge-canvas" aria-label="Live Kolam Mission Badge preview"></canvas>
+          <a
+            class="tkt-mobile-qr-card"
+            href="${esc(OFFICIAL_REGISTRATION_URL)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Scan or tap QR code to register for GDG Madurai DevFest 2026 (opens in a new tab)"
+          >
+            <div class="tkt-mobile-qr-frame">
+              ${QR_SVG_MARKUP}
             </div>
-
-            <div class="tkt-controls">
-              <label class="tkt-field-label" for="badge-callsign-input">CALLSIGN / NAME</label>
-              <input type="text" id="badge-callsign-input" class="tkt-input" maxlength="26" placeholder="YOUR NAME OR HANDLE" value="EXPLORER" />
-
-              <label class="tkt-field-label" for="badge-role-select">MISSION TRACK</label>
-              <select id="badge-role-select" class="tkt-select">
-                ${BADGE_ROLES.map((r) => `<option value="${esc(r)}">${esc(r)}</option>`).join('')}
-              </select>
-
-              <div class="tkt-export-actions">
-                <button type="button" id="badge-dl-portrait" class="tkt-export-btn">EXPORT PNG (1080×1350)</button>
-                <button type="button" id="badge-dl-og" class="tkt-export-btn tkt-export-btn-alt">EXPORT OG CARD (1200×630)</button>
-                <button type="button" id="badge-share-btn" class="tkt-share-btn">SHARE MISSION PASS</button>
-              </div>
-              <div id="badge-status-msg" class="tkt-status-msg" aria-live="polite"></div>
+            <div class="tkt-mobile-qr-meta">
+              <span class="tkt-mobile-qr-tag">OFFICIAL REGISTRATION QR</span>
+              <strong class="tkt-mobile-qr-title">Scan or tap to register</strong>
+              <span class="tkt-mobile-qr-sub">12 Dec 2026 · 9:30 AM – 5:00 PM IST · Madurai</span>
             </div>
-          </div>
-        </aside>
+          </a>
+        </div>
       </div>
     </section>
   `;
 }
 
 export function mountTicketsSection() {
-  const passEl = document.getElementById('tkt-boarding-pass');
-  const stubKolamEl = document.getElementById('tkt-kolam-stub');
-  const previewCanvas = document.getElementById('badge-preview-canvas');
-  const nameInput = document.getElementById('badge-callsign-input');
-  const roleSelect = document.getElementById('badge-role-select');
-  const dlPortraitBtn = document.getElementById('badge-dl-portrait');
-  const dlOgBtn = document.getElementById('badge-dl-og');
-  const shareBtn = document.getElementById('badge-share-btn');
-  const statusEl = document.getElementById('badge-status-msg');
-
-  const cleanups = [];
+  const stageEl = document.getElementById('tkt-banner-stage');
   const reduced = prefersReducedMotion();
+  if (!stageEl || reduced) return () => {};
 
-  if (stubKolamEl) {
-    const kolam = mountInteractiveKolamSvg(stubKolamEl, {
-      gridRadius: 2,
-      size: 160,
-      seed: 202612,
-      drawOnScroll: true,
-    });
-    cleanups.push(() => kolam.destroy());
-  }
+  const onMove = (e) => {
+    const r = stageEl.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / Math.max(1, r.width) - 0.5;
+    const ny = (e.clientY - r.top) / Math.max(1, r.height) - 0.5;
+    stageEl.style.transform = `perspective(1200px) rotateY(${(nx * 2.5).toFixed(2)}deg) rotateX(${(-ny * 2.2).toFixed(2)}deg)`;
+  };
+  const onLeave = () => {
+    stageEl.style.transform = '';
+  };
 
-  // Holographic boarding pass tilt + foil sheen
-  if (passEl && !reduced) {
-    const onMove = (e) => {
-      const r = passEl.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / Math.max(1, r.width) - 0.5;
-      const ny = (e.clientY - r.top) / Math.max(1, r.height) - 0.5;
-      passEl.style.setProperty('--foil-x', `${(50 + nx * 70).toFixed(1)}%`);
-      passEl.style.setProperty('--foil-y', `${(50 + ny * 70).toFixed(1)}%`);
-      passEl.style.transform = `perspective(1000px) rotateY(${(nx * 6).toFixed(2)}deg) rotateX(${(-ny * 5).toFixed(2)}deg)`;
-    };
-    const onLeave = () => {
-      passEl.style.transform = '';
-    };
-    passEl.addEventListener('pointermove', onMove);
-    passEl.addEventListener('pointerleave', onLeave);
-    cleanups.push(() => {
-      passEl.removeEventListener('pointermove', onMove);
-      passEl.removeEventListener('pointerleave', onLeave);
-    });
-  }
-
-  function redrawPreview() {
-    if (!previewCanvas) return;
-    drawBadgeCanvas(previewCanvas, {
-      callsign: nameInput?.value || 'EXPLORER',
-      role: roleSelect?.value || BADGE_ROLES[0],
-      width: 540,
-      height: 675,
-    });
-  }
-
-  nameInput?.addEventListener('input', redrawPreview);
-  roleSelect?.addEventListener('change', redrawPreview);
-  redrawPreview();
-
-  function exportPng(width, height, filename) {
-    const offscreen = document.createElement('canvas');
-    drawBadgeCanvas(offscreen, {
-      callsign: nameInput?.value || 'EXPLORER',
-      role: roleSelect?.value || BADGE_ROLES[0],
-      width,
-      height,
-    });
-    const url = offscreen.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    if (statusEl) statusEl.textContent = `Downloaded ${filename} locally on your device.`;
-  }
-
-  dlPortraitBtn?.addEventListener('click', () => exportPng(1080, 1350, 'devfest-madurai-2026-badge.png'));
-  dlOgBtn?.addEventListener('click', () => exportPng(1200, 630, 'devfest-madurai-2026-og-card.png'));
-
-  shareBtn?.addEventListener('click', async () => {
-    const offscreen = document.createElement('canvas');
-    drawBadgeCanvas(offscreen, {
-      callsign: nameInput?.value || 'EXPLORER',
-      role: roleSelect?.value || BADGE_ROLES[0],
-      width: 1080,
-      height: 1350,
-    });
-    const blob = await new Promise((resolve) => offscreen.toBlob(resolve, 'image/png'));
-    const file = blob ? new File([blob], 'devfest-madurai-2026-badge.png', { type: 'image/png' }) : null;
-
-    if (file && navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({
-          title: 'DevFest Madurai 2026 — Mission Badge',
-          text: 'GDG Madurai presents DevFest Madurai 2026 · 12 December 2026.',
-          files: [file],
-        });
-        if (statusEl) statusEl.textContent = 'Shared via device share sheet.';
-        return;
-      } catch {
-        // User cancelled or share blocked — fall back quietly to download
-      }
-    }
-    exportPng(1080, 1350, 'devfest-madurai-2026-badge.png');
-  });
-
+  stageEl.addEventListener('pointermove', onMove);
+  stageEl.addEventListener('pointerleave', onLeave);
   return () => {
-    cleanups.forEach((fn) => fn());
+    stageEl.removeEventListener('pointermove', onMove);
+    stageEl.removeEventListener('pointerleave', onLeave);
   };
 }
