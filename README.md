@@ -357,7 +357,7 @@ Connect with the GDG Madurai community:
 - **Instagram:** [@gdg_madurai](https://www.instagram.com/gdg_madurai/)
 - **LinkedIn:** [company/gdg-madurai](https://www.linkedin.com/company/gdg-madurai/)
 - **YouTube:** [@gdgmadurai](https://www.youtube.com/@gdgmadurai)
-- **GitHub:** [github.com/Cyrilthetecchieee/DevFest-Madurai-2026](https://github.com/Cyrilthetecchieee/DevFest-Madurai-2026)
+- **GitHub:** [github.com/Oenforge-Laboratory](https://github.com/Oenforge-Laboratory)
 - **Email:** [contact@gdgmadurai.in](mailto:contact@gdgmadurai.in)
 
 ---

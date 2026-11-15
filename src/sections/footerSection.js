@@ -44,8 +44,8 @@ export function renderStageFooter() {
             <li><a href="/" data-spa-link="true" class="ftr-link">HOME // MISSION CONTROL</a></li>
             <li><a href="/speakers" data-spa-link="true" class="ftr-link">SPEAKERS CONSTELLATION</a></li>
             <li><a href="/memories" data-spa-link="true" class="ftr-link">MEMORIES ARCHIVE</a></li>
-            <li><a href="/#about" class="ftr-link">ABOUT &amp; PILLARS</a></li>
-            <li><a href="/#agenda" class="ftr-link">AGENDA &amp; MY DAY</a></li>
+            <li><a href="/#about" data-spa-link="true" class="ftr-link">ABOUT &amp; PILLARS</a></li>
+            <li><a href="/#agenda" data-spa-link="true" class="ftr-link">AGENDA &amp; MY DAY</a></li>
           </ul>
         </div>
 
@@ -53,8 +53,8 @@ export function renderStageFooter() {
           <span class="ftr-col-label">PARTICIPATION</span>
           <ul class="ftr-link-list">
             <li><a href="${esc(links.tickets)}" target="_blank" rel="noopener noreferrer" class="ftr-link">GET YOUR TICKETS.</a></li>
-            <li><a href="/#venue" class="ftr-link">VENUE &amp; COUNTDOWN</a></li>
-            <li><a href="/#sponsors" class="ftr-link">SPONSORS &amp; PARTNERS</a></li>
+            <li><a href="/#venue" data-spa-link="true" class="ftr-link">VENUE &amp; COUNTDOWN</a></li>
+            <li><a href="/#sponsors" data-spa-link="true" class="ftr-link">SPONSORS &amp; PARTNERS</a></li>
           </ul>
         </div>
 
@@ -112,7 +112,13 @@ export function mountStageFooter(root = document) {
   const cleanups = [];
 
   if (topBtn) {
-    const onTop = () => window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    const onTop = () => {
+      if (window.__devfestLenis) {
+        window.__devfestLenis.scrollTo(0, { immediate: reduced });
+      } else {
+        window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      }
+    };
     topBtn.addEventListener('click', onTop);
     cleanups.push(() => topBtn.removeEventListener('click', onTop));
   }

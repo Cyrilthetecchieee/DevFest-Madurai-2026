@@ -54,7 +54,10 @@ export function createRouter({ viewRoot, hud, lenis }) {
 
     lenis.refresh();
     if (hash) {
-      window.requestAnimationFrame(() => lenis.scrollTo(hash, { immediate: false }));
+      window.requestAnimationFrame(() => {
+        lenis.scrollTo(hash, { immediate: false });
+        setTimeout(() => lenis.scrollTo(hash, { immediate: false }), 120);
+      });
     } else {
       lenis.scrollTo(0, { immediate: true });
     }
@@ -92,14 +95,23 @@ export function createRouter({ viewRoot, hud, lenis }) {
         applyRoute(nextKey, nextHash);
       });
       await transition.finished.catch(() => {});
+      if (token === navToken && nextHash) {
+        window.requestAnimationFrame(() => lenis.scrollTo(nextHash, { immediate: false }));
+      }
     } else if (!prefersReducedMotion()) {
       const { default: gsap } = await import('gsap');
       await gsap.to(viewRoot, { opacity: 0, duration: 0.16, ease: 'power2.out' });
       if (token !== navToken) return;
       applyRoute(nextKey, nextHash);
       await gsap.to(viewRoot, { opacity: 1, duration: 0.24, ease: 'power2.out' });
+      if (token === navToken && nextHash) {
+        window.requestAnimationFrame(() => lenis.scrollTo(nextHash, { immediate: false }));
+      }
     } else {
       applyRoute(nextKey, nextHash);
+      if (nextHash) {
+        window.requestAnimationFrame(() => lenis.scrollTo(nextHash, { immediate: false }));
+      }
     }
   }
 
@@ -116,12 +128,13 @@ export function createRouter({ viewRoot, hud, lenis }) {
     const url = new URL(href, window.location.origin);
     if (url.origin !== window.location.origin) return;
 
-    const isKnownRoute = url.pathname === '/' ||
-      url.pathname === '/index.html' ||
-      url.pathname === '/speakers' ||
-      url.pathname === '/speakers.html' ||
-      url.pathname === '/memories' ||
-      url.pathname === '/memories.html';
+    const normalizedPath = (url.pathname || '/').toLowerCase().replace(/\/+$/, '') || '/';
+    const isKnownRoute = normalizedPath === '/' ||
+      normalizedPath === '/index.html' ||
+      normalizedPath === '/speakers' ||
+      normalizedPath === '/speakers.html' ||
+      normalizedPath === '/memories' ||
+      normalizedPath === '/memories.html';
 
     if (anchor.dataset.spaLink === 'true' || href.startsWith('#') || isKnownRoute) {
       e.preventDefault();

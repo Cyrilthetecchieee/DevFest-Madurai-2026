@@ -72,12 +72,25 @@ export function createLenisController() {
     else lenis.start();
   }
 
-  function scrollTo(target, { immediate = false } = {}) {
+  function scrollTo(target, { immediate = false, offset } = {}) {
     if (typeof target === 'string') {
-      const el = document.querySelector(target);
+      const cleanTarget = target.trim();
+      if (!cleanTarget || cleanTarget === '#' || cleanTarget === '#top' || cleanTarget === '#home') {
+        if (lenis && !immediate) lenis.scrollTo(0, { duration: 0.85 });
+        else window.scrollTo({ top: 0, behavior: immediate ? 'auto' : 'smooth' });
+        return true;
+      }
+      let el = null;
+      try {
+        el = document.querySelector(cleanTarget);
+      } catch {
+        return false;
+      }
       if (el) {
+        const computedMargin = parseFloat(window.getComputedStyle(el).scrollMarginTop) || 0;
+        const targetOffset = offset !== undefined ? offset : (computedMargin ? -computedMargin : -76);
         if (lenis && !immediate) {
-          lenis.scrollTo(el, { duration: 1.05 });
+          lenis.scrollTo(el, { duration: 1.05, offset: targetOffset });
         } else {
           el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth' });
         }
@@ -86,7 +99,17 @@ export function createLenisController() {
     }
     if (typeof target === 'number') {
       if (lenis && !immediate) lenis.scrollTo(target, { duration: 0.75 });
-      else window.scrollTo({ top: target, behavior: 'auto' });
+      else window.scrollTo({ top: target, behavior: immediate ? 'auto' : 'smooth' });
+      return true;
+    }
+    if (target && target.nodeType === 1) {
+      const computedMargin = parseFloat(window.getComputedStyle(target).scrollMarginTop) || 0;
+      const targetOffset = offset !== undefined ? offset : (computedMargin ? -computedMargin : -76);
+      if (lenis && !immediate) {
+        lenis.scrollTo(target, { duration: 1.05, offset: targetOffset });
+      } else {
+        target.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth' });
+      }
       return true;
     }
     return false;

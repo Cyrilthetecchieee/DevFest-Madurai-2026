@@ -47,13 +47,26 @@ const lenis = (() => {
     scrollTo(target, opts = {}) {
       if (controller) return controller.scrollTo(target, opts);
       if (typeof target === 'string') {
-        const el = document.querySelector(target);
+        const cleanTarget = target.trim();
+        if (!cleanTarget || cleanTarget === '#' || cleanTarget === '#top' || cleanTarget === '#home') {
+          window.scrollTo({ top: 0, behavior: opts.immediate ? 'auto' : 'smooth' });
+          return true;
+        }
+        let el = null;
+        try {
+          el = document.querySelector(cleanTarget);
+        } catch {
+          return false;
+        }
         if (el) {
           el.scrollIntoView({ behavior: opts.immediate ? 'auto' : 'smooth' });
           return true;
         }
       } else if (typeof target === 'number') {
-        window.scrollTo({ top: target, behavior: 'auto' });
+        window.scrollTo({ top: target, behavior: opts.immediate ? 'auto' : 'smooth' });
+        return true;
+      } else if (target && target.nodeType === 1) {
+        target.scrollIntoView({ behavior: opts.immediate ? 'auto' : 'smooth' });
         return true;
       }
       return false;
@@ -66,6 +79,8 @@ const lenis = (() => {
     },
   };
 })();
+
+window.__devfestLenis = lenis;
 
 let glStage = null;
 const viewRoot = document.getElementById('app-view');
