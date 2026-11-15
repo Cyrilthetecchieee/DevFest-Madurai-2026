@@ -135,19 +135,40 @@ const FS_SKY = /* glsl */ `
       texture2D(uMainTex, uvB).b
     );
 
-    // Domain-warped FBM aurora curtains within #0b0f3a / #5ef3ff / #9b5cff palette
+    // Deep midnight-blue zenith depth preserving the original sky plate
+    float zenithDepth = smoothstep(0.48, 0.98, v.y);
+    col = mix(col, col * vec3(0.88, 0.91, 1.04) + vec3(0.012, 0.018, 0.065), zenithDepth * 0.45);
+
+    // Domain-warped FBM nebula & aurora curtains (#0b0f3a / #5ef3ff / #9b5cff palette)
     vec2 aUv = v * vec2(2.8, 1.9) + vec2(uTime * 0.035, -uScrollProgress * 0.45);
     vec2 q = vec2(fbm3(aUv), fbm3(aUv + vec2(4.2, 1.7)));
     float aurora = fbm3(aUv + 1.85 * q + vec2(uTime * 0.022));
-    float auroraBand = smoothstep(0.32, 0.78, aurora) * smoothstep(0.08, 0.88, v.y);
-    vec3 auroraCol = mix(vec3(0.369, 0.953, 1.0), vec3(0.608, 0.361, 1.0), clamp(q.y * 1.2 + uScrollProgress * 0.4, 0.0, 1.0));
-    col += auroraCol * auroraBand * (0.14 + uAuroraGain * 0.24);
+    float auroraBand = smoothstep(0.32, 0.78, aurora) * smoothstep(0.16, 0.88, v.y);
+    vec3 violetNebula = vec3(0.608, 0.361, 1.0);
+    vec3 cyanHighlight = vec3(0.369, 0.953, 1.0);
+    vec3 auroraCol = mix(violetNebula, cyanHighlight, clamp(q.x * 0.85 + 0.15 - uScrollProgress * 0.25, 0.0, 1.0));
+    col += auroraCol * auroraBand * (0.11 + uAuroraGain * 0.18);
 
-    // Dual-depth parallax twinkling starfield
+    // Natural cloud depth & soft atmospheric horizon scatter along cloud tops
+    float cloudCrest = smoothstep(0.12, 0.28, v.y) * (1.0 - smoothstep(0.28, 0.46, v.y));
+    col += mix(violetNebula, cyanHighlight, 0.42) * cloudCrest * (0.045 + 0.025 * q.y);
+
+    // Gentle ambient illumination around the character and cyan orbital ring
+    float heroPresence = 1.0 - smoothstep(0.0, 0.28, uScrollProgress);
+    vec2 charDelta = (v - vec2(0.48, 0.44)) * vec2(1.35, 1.0);
+    vec2 ringDelta = (v - vec2(0.48, 0.63)) * vec2(1.35, 1.0);
+    float charGlow = exp(-dot(charDelta, charDelta) * 7.5);
+    float ringGlow = exp(-dot(ringDelta, ringDelta) * 14.0);
+    col += (violetNebula * 0.055 * charGlow + cyanHighlight * 0.065 * ringGlow) * heroPresence;
+
+    // Tri-depth parallax twinkling starfield (masked cleanly above lower foreground clouds)
+    float skyMask = smoothstep(0.22, 0.44, v.y);
+    float starsDeep = starLayer(v, 64.0, 0.007, 53.9);
     float starsFar = starLayer(v, 36.0, 0.014, 13.7);
     float starsNear = starLayer(v, 19.0, 0.032, 91.3);
-    col += vec3(0.92, 0.96, 1.0) * starsFar * 0.55;
-    col += mix(vec3(0.37, 0.95, 1.0), vec3(0.95, 0.96, 1.0), 0.6) * starsNear * 0.75;
+    col += vec3(0.84, 0.90, 1.0) * starsDeep * 0.42 * skyMask;
+    col += vec3(0.92, 0.96, 1.0) * starsFar * 0.55 * skyMask;
+    col += mix(cyanHighlight, vec3(0.95, 0.96, 1.0), 0.6) * starsNear * 0.72 * skyMask;
 
     // Cursor fluid ripple tint & luminescence
     vec3 tint = col * vec3(1.08, 0.98, 1.15) + vec3(0.05, 0.03, 0.09);

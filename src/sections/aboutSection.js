@@ -1,9 +1,9 @@
 /**
  * About Section (#13):
  * - Asymmetric 2-column editorial intro with interactive Kolam backdrop (S2).
- * - Desktop pinned horizontal 6-pillar architectural rail (01-06 counter, hairline progress bar,
- *   bespoke geometric SVG emblem per pillar).
- * - Mobile / reduced-motion horizontal snap-scroll carousel.
+ * - Responsive 3-column (desktop) / 2-column (tablet) / 1-column (mobile) HUD Experience Pillars grid
+ *   with angular clipped corners, cyan identifiers, minimal outline icons, technical captions,
+ *   and partial bottom accent bars.
  */
 import { esc } from '../utils/dom.js';
 import { prefersReducedMotion } from '../utils/env.js';
@@ -11,54 +11,72 @@ import { mountInteractiveKolamSvg } from '../visuals/kolamEngine.js';
 
 const PILLAR_EMBLEMS = [
   // 01 Roadshows: concentric radar propagation arcs
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 4"/>
-    <circle cx="32" cy="32" r="14" stroke="#5ef3ff" stroke-width="1.5"/>
-    <circle cx="32" cy="32" r="4" fill="#9b5cff"/>
-    <line x1="32" y1="2" x2="32" y2="12" stroke="#5ef3ff" stroke-width="1.5"/>
-    <line x1="32" y1="52" x2="32" y2="62" stroke="#5ef3ff" stroke-width="1.5"/>
-    <line x1="2" y1="32" x2="12" y2="32" stroke="#5ef3ff" stroke-width="1.5"/>
-    <line x1="52" y1="32" x2="62" y2="32" stroke="#5ef3ff" stroke-width="1.5"/>
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="1.3" stroke-dasharray="3 3"/>
+    <circle cx="24" cy="24" r="10.5" stroke="#5ef3ff" stroke-width="1.4"/>
+    <circle cx="24" cy="24" r="2.8" fill="#5ef3ff"/>
+    <line x1="24" y1="2" x2="24" y2="9" stroke="#5ef3ff" stroke-width="1.4"/>
+    <line x1="24" y1="39" x2="24" y2="46" stroke="#5ef3ff" stroke-width="1.4"/>
+    <line x1="2" y1="24" x2="9" y2="24" stroke="#5ef3ff" stroke-width="1.4"/>
+    <line x1="39" y1="24" x2="46" y2="24" stroke="#5ef3ff" stroke-width="1.4"/>
   </svg>`,
   // 02 Build Sessions: isometric architectural cube wireframe
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <polygon points="32,8 54,20 54,44 32,56 10,44 10,20" stroke="#5ef3ff" stroke-width="1.5"/>
-    <polyline points="10,20 32,32 54,20" stroke="currentColor" stroke-width="1.4"/>
-    <line x1="32" y1="32" x2="32" y2="56" stroke="#9b5cff" stroke-width="1.5"/>
-    <circle cx="32" cy="32" r="3" fill="#5ef3ff"/>
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <polygon points="24,6 40,15 40,33 24,42 8,33 8,15" stroke="#5ef3ff" stroke-width="1.4"/>
+    <polyline points="8,15 24,24 40,15" stroke="currentColor" stroke-width="1.3"/>
+    <line x1="24" y1="24" x2="24" y2="42" stroke="currentColor" stroke-width="1.3"/>
+    <circle cx="24" cy="24" r="2.4" fill="#5ef3ff"/>
   </svg>`,
   // 03 Competitions: twin orthogonal chevrons & apex prism
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <polygon points="32,8 50,32 32,56 14,32" stroke="#9b5cff" stroke-width="1.5"/>
-    <polyline points="20,24 32,14 44,24" stroke="#5ef3ff" stroke-width="1.5"/>
-    <polyline points="20,40 32,50 44,40" stroke="#5ef3ff" stroke-width="1.5"/>
-    <line x1="8" y1="32" x2="56" y2="32" stroke="currentColor" stroke-width="1.2" opacity="0.6"/>
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <polygon points="24,6 38,24 24,42 10,24" stroke="currentColor" stroke-width="1.3"/>
+    <polyline points="15,18 24,11 33,18" stroke="#5ef3ff" stroke-width="1.4"/>
+    <polyline points="15,30 24,37 33,30" stroke="#5ef3ff" stroke-width="1.4"/>
+    <line x1="6" y1="24" x2="42" y2="24" stroke="currentColor" stroke-width="1.1" opacity="0.6"/>
   </svg>`,
   // 04 Tech Talks: harmonic carrier waves
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <path d="M6 32 C14 14, 22 14, 32 32 C42 50, 50 50, 58 32" stroke="#5ef3ff" stroke-width="1.6"/>
-    <path d="M6 32 C14 50, 22 50, 32 32 C42 14, 50 14, 58 32" stroke="#9b5cff" stroke-width="1.4" opacity="0.85"/>
-    <line x1="4" y1="32" x2="60" y2="32" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <path d="M5 24 C11 10, 17 10, 24 24 C31 38, 37 38, 43 24" stroke="#5ef3ff" stroke-width="1.5"/>
+    <path d="M5 24 C11 38, 17 38, 24 24 C31 10, 37 10, 43 24" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
+    <line x1="4" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="1" stroke-dasharray="2.5 2.5" opacity="0.6"/>
   </svg>`,
   // 05 Networking: geodesic graph node lattice
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <circle cx="32" cy="14" r="3.5" fill="#5ef3ff"/>
-    <circle cx="14" cy="44" r="3.5" fill="#9b5cff"/>
-    <circle cx="50" cy="44" r="3.5" fill="#5ef3ff"/>
-    <circle cx="32" cy="34" r="4" stroke="currentColor" stroke-width="1.4"/>
-    <line x1="32" y1="14" x2="14" y2="44" stroke="currentColor" stroke-width="1.3" opacity="0.75"/>
-    <line x1="14" y1="44" x2="50" y2="44" stroke="#5ef3ff" stroke-width="1.3"/>
-    <line x1="50" y1="44" x2="32" y2="14" stroke="#9b5cff" stroke-width="1.3"/>
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <circle cx="24" cy="10" r="2.8" fill="#5ef3ff"/>
+    <circle cx="10" cy="34" r="2.8" stroke="#5ef3ff" stroke-width="1.4"/>
+    <circle cx="38" cy="34" r="2.8" fill="#5ef3ff"/>
+    <circle cx="24" cy="25" r="3.2" stroke="currentColor" stroke-width="1.3"/>
+    <line x1="24" y1="10" x2="10" y2="34" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
+    <line x1="10" y1="34" x2="38" y2="34" stroke="#5ef3ff" stroke-width="1.3"/>
+    <line x1="38" y1="34" x2="24" y2="10" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
   </svg>`,
-  // 06 Community: 3x3 kolam pulli dot loop
-  `<svg viewBox="0 0 64 64" width="56" height="56" fill="none" aria-hidden="true">
-    <path d="M20 12 C28 12, 28 24, 32 24 C36 24, 36 12, 44 12 C52 12, 52 24, 44 32 C52 40, 52 52, 44 52 C36 52, 36 40, 32 40 C28 40, 28 52, 20 52 C12 52, 12 40, 20 32 C12 24, 12 12, 20 12 Z" stroke="#5ef3ff" stroke-width="1.5"/>
-    <circle cx="22" cy="22" r="2" fill="#f3f6ff"/>
-    <circle cx="42" cy="22" r="2" fill="#f3f6ff"/>
-    <circle cx="32" cy="32" r="2.5" fill="#9b5cff"/>
-    <circle cx="22" cy="42" r="2" fill="#f3f6ff"/>
-    <circle cx="42" cy="42" r="2" fill="#f3f6ff"/>
+  // 06 Community: geometric kolam pulli loop
+  `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" aria-hidden="true">
+    <path d="M15 9 C21 9, 21 18, 24 18 C27 18, 27 9, 33 9 C39 9, 39 18, 33 24 C39 30, 39 39, 33 39 C27 39, 27 30, 24 30 C21 30, 21 39, 15 39 C9 39, 9 30, 15 24 C9 18, 9 9, 15 9 Z" stroke="#5ef3ff" stroke-width="1.4"/>
+    <circle cx="16.5" cy="16.5" r="1.6" fill="currentColor"/>
+    <circle cx="31.5" cy="16.5" r="1.6" fill="currentColor"/>
+    <circle cx="24" cy="24" r="2" fill="#5ef3ff"/>
+    <circle cx="16.5" cy="31.5" r="1.6" fill="currentColor"/>
+    <circle cx="31.5" cy="31.5" r="1.6" fill="currentColor"/>
   </svg>`,
+];
+
+const PILLAR_CAPTIONS = [
+  'G_01 // OUTREACH',
+  'G_02 // DEVELOPMENT',
+  'G_03 // CHALLENGE',
+  'G_04 // KNOWLEDGE',
+  'G_05 // COMMUNITY',
+  'G_06 // CONNECTION',
+];
+
+const PILLAR_COORDS = [
+  '09.92N · 01',
+  '09.92N · 02',
+  '09.92N · 03',
+  '09.92N · 04',
+  '09.92N · 05',
+  '09.92N · 06',
 ];
 
 function parsePillarParts(rawTitle) {
@@ -108,17 +126,28 @@ export function renderAboutSection(aboutData) {
           <div class="about-rail-viewport" id="about-rail-viewport">
             <div class="about-rail-track" id="about-rail-track">
               ${pillars.map((pillar, i) => {
-                const { code, full } = parsePillarParts(pillar.title);
+                const { code, name } = parsePillarParts(pillar.title);
                 const emblem = PILLAR_EMBLEMS[i % PILLAR_EMBLEMS.length];
+                const caption = PILLAR_CAPTIONS[i] || `G_${code} // PILLAR`;
+                const coord = PILLAR_COORDS[i] || `09.92N · ${code}`;
                 return `
-                  <article class="about-pillar-card${i === 0 ? ' is-active' : ''}" data-pillar-index="${i}" tabindex="0">
+                  <article class="about-pillar-card${i === 0 ? ' is-active' : ''}" data-pillar-index="${i}" style="--ci:${i}" tabindex="0">
+                    <span class="about-pillar-corners" aria-hidden="true"></span>
                     <div class="about-pillar-top">
-                      <span class="about-pillar-num">G_${code}</span>
+                      <span class="about-pillar-num" aria-hidden="true">${code}</span>
                       <div class="about-pillar-emblem">${emblem}</div>
                     </div>
-                    <h3 class="about-pillar-title" data-hover-glyph="true">${esc(full)}</h3>
-                    <p class="about-pillar-body">${esc(pillar.body)}</p>
-                    <span class="about-pillar-rule" aria-hidden="true"></span>
+                    <div class="about-pillar-content">
+                      <h3 class="about-pillar-title" data-hover-glyph="true">${esc(name)}</h3>
+                      <p class="about-pillar-body">${esc(pillar.body)}</p>
+                    </div>
+                    <footer class="about-pillar-foot">
+                      <div class="about-pillar-caption">${esc(caption)}</div>
+                      <div class="about-pillar-bottom">
+                        <span class="about-pillar-rule" aria-hidden="true"></span>
+                        <span class="about-pillar-coord" aria-hidden="true">${esc(coord)}</span>
+                      </div>
+                    </footer>
                   </article>
                 `;
               }).join('')}
@@ -132,8 +161,6 @@ export function renderAboutSection(aboutData) {
 
 export function mountAboutSection() {
   const kolamStage = document.getElementById('about-kolam-stage');
-  const pinEl = document.getElementById('about-rail-pin');
-  const viewportEl = document.getElementById('about-rail-viewport');
   const trackEl = document.getElementById('about-rail-track');
   const indexEl = document.getElementById('about-pillar-index');
   const progressFill = document.getElementById('about-rail-progress-fill');
@@ -156,6 +183,7 @@ export function mountAboutSection() {
 
   let activeIdx = 0;
   function setActivePillar(nextIdx) {
+    if (!cards.length) return;
     const clamped = Math.max(0, Math.min(cards.length - 1, nextIdx));
     activeIdx = clamped;
     if (indexEl) indexEl.textContent = String(clamped + 1).padStart(2, '0');
@@ -166,88 +194,59 @@ export function mountAboutSection() {
   }
 
   function stepCarousel(dir) {
-    const targetIdx = Math.max(0, Math.min(cards.length - 1, activeIdx + dir));
+    if (!cards.length) return;
+    const targetIdx = (activeIdx + dir + cards.length) % cards.length;
     setActivePillar(targetIdx);
     const card = cards[targetIdx];
-    if (!card || !viewportEl) return;
-    if (window.innerWidth <= 820 || prefersReducedMotion()) {
-      card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-    } else if (stInstance) {
-      const targetScroll = stInstance.start + (stInstance.end - stInstance.start) * (targetIdx / Math.max(1, cards.length - 1));
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    }
+    card?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
   }
 
-  prevBtn?.addEventListener('click', () => stepCarousel(-1));
-  nextBtn?.addEventListener('click', () => stepCarousel(1));
+  const onPrevClick = () => stepCarousel(-1);
+  const onNextClick = () => stepCarousel(1);
+  prevBtn?.addEventListener('click', onPrevClick);
+  nextBtn?.addEventListener('click', onNextClick);
+  cleanups.push(() => {
+    prevBtn?.removeEventListener('click', onPrevClick);
+    nextBtn?.removeEventListener('click', onNextClick);
+  });
 
-  // Mobile snap scroll telemetry sync
-  const onViewportScroll = () => {
-    if (!viewportEl || !cards.length) return;
-    const maxScroll = Math.max(1, viewportEl.scrollWidth - viewportEl.clientWidth);
-    const p = viewportEl.scrollLeft / maxScroll;
-    const idx = Math.round(p * (cards.length - 1));
-    setActivePillar(idx);
-    if (progressFill) {
-      progressFill.style.transform = `scaleX(${Math.max(0.08, p)})`;
-    }
-  };
-  viewportEl?.addEventListener('scroll', onViewportScroll, { passive: true });
-  cleanups.push(() => viewportEl?.removeEventListener('scroll', onViewportScroll));
+  cards.forEach((card, idx) => {
+    const onActivate = () => setActivePillar(idx);
+    card.addEventListener('pointerenter', onActivate);
+    card.addEventListener('focus', onActivate);
+    card.addEventListener('click', onActivate);
+    cleanups.push(() => {
+      card.removeEventListener('pointerenter', onActivate);
+      card.removeEventListener('focus', onActivate);
+      card.removeEventListener('click', onActivate);
+    });
+  });
 
-  let gsCtx = null;
-  let stInstance = null;
-  let cancelled = false;
-
-  async function initPinnedRail() {
-    if (cancelled || prefersReducedMotion() || window.innerWidth <= 820 || !pinEl || !trackEl || !viewportEl) {
-      setActivePillar(0);
-      return;
-    }
-
-    const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-      import('gsap'),
-      import('gsap/ScrollTrigger'),
-    ]);
-    if (cancelled) return;
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsCtx = gsap.context(() => {
-      const getTravel = () => Math.max(0, trackEl.scrollWidth - viewportEl.clientWidth);
-      if (getTravel() <= 16) return;
-
-      const tween = gsap.to(trackEl, {
-        x: () => -getTravel(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: pinEl,
-          pin: true,
-          scrub: 0.75,
-          start: 'top 64px',
-          end: () => `+=${Math.max(540, getTravel() * 0.92)}`,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            stInstance = self;
-            const p = self.progress;
-            const idx = Math.round(p * (cards.length - 1));
-            activeIdx = idx;
-            if (indexEl) indexEl.textContent = String(idx + 1).padStart(2, '0');
-            if (progressFill) progressFill.style.transform = `scaleX(${Math.max(0.08, p)})`;
-            cards.forEach((c, cIdx) => c.classList.toggle('is-active', cIdx === idx));
-          },
+  // Subtle numbering & card reveal when entering viewport
+  if (cards.length) {
+    if (prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
+      cards.forEach((c) => c.classList.add('is-in-view'));
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in-view');
+              io.unobserve(entry.target);
+            }
+          }
         },
-      });
-      stInstance = tween.scrollTrigger;
-    }, pinEl);
+        { threshold: 0.15, rootMargin: '0px 0px -6% 0px' }
+      );
+      cards.forEach((c) => io.observe(c));
+      cleanups.push(() => io.disconnect());
+    }
   }
 
-  // Idle-defer pin setup slightly so initial paint stays instant while ready before user reaches About
-  const setupTimer = window.setTimeout(initPinnedRail, 220);
+  setActivePillar(0);
+  if (trackEl) trackEl.style.transform = '';
 
   return () => {
-    cancelled = true;
-    window.clearTimeout(setupTimer);
-    gsCtx?.revert();
     cleanups.forEach((fn) => fn());
   };
 }

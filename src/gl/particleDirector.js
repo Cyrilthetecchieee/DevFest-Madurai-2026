@@ -1,13 +1,12 @@
 /**
  * GPU Particle Morph Director (S4)
  * - 46,000 (HIGH) / 22,000 (MEDIUM) / 7,500 (LOW) GPU point cloud.
- * - Morphs cleanly via scroll checkpoints: dust -> G -> DEVFEST -> kolam -> gopuram -> CREATE.
+ * - Morphs cleanly via scroll checkpoints: dust -> G -> DEVFEST -> kolam -> cosmic orbit -> CREATE.
  * - Features GPU curl/simplex turbulence, pointer/touch repulsion force field,
  *   and velocity-driven scatter that re-forms smoothly on scroll rest.
  */
 import * as THREE from 'three';
 import { generateKolamSpec } from '../visuals/kolamEngine.js';
-import { sampleGopuramPoints } from '../visuals/gopuramBuilder.js';
 
 const TIER_COUNTS = Object.freeze({
   HIGH: 46000,
@@ -159,6 +158,28 @@ function sampleKolamPoints(count) {
   return out;
 }
 
+function sampleCosmicOrbitPoints(count) {
+  const out = new Float32Array(count * 3);
+  let ptr = 0;
+  for (let i = 0; i < count; i++) {
+    const a = ((i * 7919) % 10000) / 10000;
+    const b = ((i * 15485863) % 10000) / 10000;
+    const c = ((i * 32452843) % 10000) / 10000;
+    const theta = a * Math.PI * 2;
+    const ring = i % 3 === 0 ? 1.85 : i % 3 === 1 ? 3.1 : 4.4;
+    const spread = (b - 0.5) * 0.42;
+    const r = ring + spread;
+    const tilt = (i % 3 - 1) * 0.28;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r * 0.55;
+    const y = Math.sin(theta) * r * tilt + (c - 0.5) * 0.32;
+    out[ptr++] = x;
+    out[ptr++] = y;
+    out[ptr++] = z;
+  }
+  return out;
+}
+
 export function createParticleDirector(scene, { tier = 'HIGH' } = {}) {
   const MAX = TIER_COUNTS.HIGH;
   const targets = [
@@ -166,7 +187,7 @@ export function createParticleDirector(scene, { tier = 'HIGH' } = {}) {
     sampleWordmarkPoints('G', MAX, { scaleX: 2.3, scaleY: 2.3, fontScale: 1.1 }),
     sampleWordmarkPoints('DEVFEST', MAX, { scaleX: 4.1, scaleY: 1.35, fontScale: 1 }),
     sampleKolamPoints(MAX),
-    sampleGopuramPoints(MAX),
+    sampleCosmicOrbitPoints(MAX),
     sampleWordmarkPoints('CREATE.', MAX, { scaleX: 3.9, scaleY: 1.35, fontScale: 0.96 }),
   ];
 
@@ -247,7 +268,7 @@ export function createParticleDirector(scene, { tier = 'HIGH' } = {}) {
     mat.uniforms.uPointerStrength.value = Math.min(1.3, 0.45 + pointerSpeed * 0.9);
 
     // Hero stays lighter behind crisp bust; deep scroll brightens particle sculpture
-    mat.uniforms.uOpacity.value = Math.min(0.86, 0.34 + scrollProgress * 0.65);
+    mat.uniforms.uOpacity.value = Math.min(0.84, 0.22 + scrollProgress * 0.65);
     points.rotation.y = Math.sin(time * 0.18) * 0.12;
   }
 
