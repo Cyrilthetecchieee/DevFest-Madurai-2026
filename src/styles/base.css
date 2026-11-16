@@ -65,21 +65,9 @@ body {
   top: 16px;
 }
 
-/* Persistent WebGL Canvas — lives OUTSIDE #app-view View Transitions root */
+/* Persistent WebGL Canvas */
 #gl-stage {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  z-index: var(--z-gl);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.75s var(--ease-expo);
-  display: block;
-}
-
-#gl-stage.ready {
-  opacity: 1;
+  display: none !important;
 }
 
 /* Static First-Paint / LCP Poster Stack (behind gl-stage until WebGL takes over) */
@@ -95,34 +83,27 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  --cu: max(100cqw / 2048, 100cqh / 1360);
-  width: calc(2048 * var(--cu));
-  height: calc(1360 * var(--cu));
+  --cu: max(100cqw / 1720, 100cqh / 864);
+  width: calc(1720 * var(--cu));
+  height: calc(864 * var(--cu));
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
 #stage-bg {
   z-index: var(--z-bg);
-  transition: opacity 0.65s ease 0.2s;
+  opacity: 1;
 }
 
 #stage-hl {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: var(--z-hl);
-  transition: opacity 0.65s ease 0.2s;
+  display: none;
 }
 
 #stage-fig-fallback {
-  z-index: var(--z-fig);
-  transition: opacity 0.65s ease 0.2s;
+  display: none;
 }
 
-#lcp-poster,
-#figure-poster {
+#lcp-poster {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -130,12 +111,6 @@ body {
   object-fit: cover;
   display: block;
   pointer-events: none;
-}
-
-html.gl-active #stage-hl,
-html.gl-active #stage-fig-fallback,
-html.gl-active #stage-bg {
-  opacity: 0;
 }
 
 /* Route View Transition root (keeps WebGL canvas and HUD stationary & flicker-free) */

@@ -10,6 +10,7 @@ import { renderAgendaSection, mountAgendaSection } from '../sections/agendaSecti
 import { renderTicketsSection, mountTicketsSection } from '../sections/ticketsBadgeSection.js';
 import { renderSponsorsSection } from '../sections/sponsorsSection.js';
 import { renderHomeMemoriesSection, mountMemoriesInteraction } from '../sections/memoriesFilmstrip.js';
+import { mountHeroEffects } from '../motion/heroEffects.js';
 
 export const HOME_META = {
   title: 'GDG MADURAI — DevFest Madurai 2026',
@@ -46,6 +47,7 @@ export function renderHomePage() {
 export function mountHomePage() {
   const view = document.getElementById('app-view') || document;
   const stopMotion = initSectionMotion(view);
+  const stopHero = mountHeroEffects();
   const stopAbout = mountAboutSection();
   const stopVenue = mountVenueSection();
   const stopSpeakers = mountSpeakersExperience({ id: 'speakers', isPage: false });
@@ -61,6 +63,7 @@ export function mountHomePage() {
     stopSpeakers();
     stopVenue();
     stopAbout();
+    stopHero();
     stopMotion();
   };
 }

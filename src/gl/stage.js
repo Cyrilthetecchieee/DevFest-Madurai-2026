@@ -22,10 +22,11 @@ export async function mountWebGLStage({ canvas, quality }) {
   try {
     renderer = new THREE.WebGLRenderer({
       canvas,
-      alpha: false,
+      alpha: true,
       antialias: initialTier !== 'LOW',
       powerPreference: 'high-performance',
     });
+    renderer.setClearColor(0x000000, 0);
   } catch (err) {
     console.warn('[stage] WebGL init failed; keeping static poster fallback:', err);
     return null;

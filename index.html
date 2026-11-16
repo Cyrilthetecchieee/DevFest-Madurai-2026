@@ -7,7 +7,7 @@
   <meta name="description" content="GDG Madurai presents DevFest Madurai 2026 — Where Curiosity Meets Creation. 12 December 2026 · Madurai, Tamil Nadu, India.">
   <meta name="theme-color" content="#0b0f3a">
   <link rel="canonical" href="https://devfest-madurai-2026.vercel.app/">
-  <!-- GDG Madurai bracket favicon set (?v= busts any cached legacy icon) -->
+  <!-- Favicon set -->
   <link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2">
@@ -22,24 +22,23 @@
   <meta property="og:title" content="GDG MADURAI — DevFest Madurai 2026">
   <meta property="og:description" content="Where Curiosity Meets Creation. Build. Learn. Connect. Create. 12 December 2026 · Madurai, Tamil Nadu, India.">
   <meta property="og:url" content="https://devfest-madurai-2026.vercel.app/">
-  <meta property="og:image" content="/assets/hero/sky-plate-1920.webp">
+  <meta property="og:image" content="/assets/layers/layer1_bg_clean.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GDG MADURAI — DevFest Madurai 2026">
   <meta name="twitter:description" content="Where Curiosity Meets Creation. 12 December 2026 · Madurai, Tamil Nadu, India.">
-  <meta name="twitter:image" content="/assets/hero/sky-plate-1920.webp">
+  <meta name="twitter:image" content="/assets/layers/layer1_bg_clean.webp">
 
-  <!-- Preload Self-Hosted Fonts & LCP Poster -->
-  <link rel="preload" as="font" type="font/woff2" href="/fonts/orbe-mono.woff2" crossorigin="anonymous">
-  <link rel="preload" as="font" type="font/woff2" href="/fonts/orbe-mono-zero.woff2" crossorigin="anonymous">
-  <link rel="preload" as="image" type="image/avif" href="/assets/hero/sky-plate-960.avif" imagesrcset="/assets/hero/sky-plate-960.avif 960w, /assets/hero/sky-plate-1920.avif 1920w" imagesizes="100vw">
-  <link rel="preload" as="image" type="image/avif" href="/assets/hero/figure-poster-960.avif" imagesrcset="/assets/hero/figure-poster-960.avif 960w, /assets/hero/figure-poster-1920.avif 1920w" imagesizes="100vw" fetchpriority="high">
+  <!-- Preload Critical Visual Assets -->
+  <link rel="preload" as="image" type="image/webp" href="/assets/layers/layer1_bg_clean.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" href="/assets/layers/layer4_character.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" href="/assets/layers/layer5_portal.webp">
 
-  <!-- Non-Hero Modern Sans Typography (Space Grotesk + Inter) -->
+  <!-- Google Fonts: Inter & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
 
-  <!-- Verified Event Structured Data (no unconfirmed venue/price invented) -->
+  <!-- Event Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -52,7 +51,7 @@
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "location": {
       "@type": "Place",
-      "name": "To be announced.",
+      "name": "Madurai",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Madurai",
@@ -72,106 +71,54 @@
 <body>
   <a href="#devfest-content" class="skip-link">Skip to content</a>
 
-  <!-- Persistent First-Paint LCP & Fallback Layers (OUTSIDE #app-view View Transitions root) -->
+  <!-- Layer 1: Background Environment Layer (Clean sky, moon, stars, trees, Meenakshi temple, lake) -->
   <div id="stage-bg" class="cover-stage" aria-hidden="true">
     <div class="cover-box">
-      <picture>
-        <source type="image/avif" srcset="/assets/hero/sky-plate-960.avif 960w, /assets/hero/sky-plate-1920.avif 1920w" sizes="100vw">
-        <source type="image/webp" srcset="/assets/hero/sky-plate-960.webp 960w, /assets/hero/sky-plate-1920.webp 1920w" sizes="100vw">
-        <img id="lcp-poster" src="/assets/hero/sky-plate-960.webp" alt="DevFest Madurai 2026 night sky horizon" width="2048" height="1360" fetchpriority="high" decoding="sync">
-      </picture>
+      <img id="lcp-poster" src="/assets/layers/layer1_bg_clean.webp" alt="DevFest Madurai 2026 night sky horizon and Meenakshi Amman Temple" width="1720" height="864" fetchpriority="high" decoding="sync">
     </div>
   </div>
 
-  <!-- Traced Glyph Marquee (visible on first paint & source for WebGL MarqueePlane) -->
-  <div id="stage-hl" aria-hidden="true">
-    <div class="headline-container">
-      <svg id="marquee-svg-template" class="headline-svg" viewBox="0 100 8000 260" preserveAspectRatio="xMinYMin meet">
-        <defs>
-          <path id="traced-glyph-mask" fill-rule="evenodd" fill="#f3f6ff" d="M 741.234 18.425 C 733.564 21.016, 733.500 21.259, 733.500 47.835 L 733.500 71.609 737.261 79.217 C 744.570 93.999, 744.282 93.814, 813.142 128.005 C 838.639 140.665, 863.775 153.156, 869 155.762 C 876.492 159.498, 878.847 161.195, 880.143 163.789 C 881.287 166.081, 889.925 173.278, 908.643 187.534 L 935.500 207.989 1025.750 207.995 L 1116 208 1116 193 L 1116 178 1079.250 177.891 C 1041.674 177.779, 1029.642 177.665, 1010.750 177.241 L 1000 177 1000 168.500 L 1000 160 992.201 160 L 984.402 160 984.810 156.500 C 985.173 153.396, 984.959 153, 982.918 153 C 980.760 153, 980.730 153.082, 982.435 154.329 C 983.942 155.431, 984.054 156.030, 983.091 157.829 C 980.384 162.887, 975.755 159.293, 976.186 152.467 C 976.489 147.670, 976.611 147.489, 979.750 147.187 C 981.576 147.011, 983 147.339, 983 147.937 C 983 148.521, 983.466 149, 984.035 149 C 984.737 149, 984.726 148.356, 984 147 C 982.723 144.614, 977.839 144.284, 976.032 146.462 C 975.280 147.368, 974.948 150.219, 975.159 153.964 L 975.500 160.004 972.250 160.002 L 969 160 969 143.200 C 969 131.467, 969.362 126.038, 970.200 125.200 C 971.111 124.289, 988.689 124, 1043.200 124 L 1115 124 1115 109.081 L 1115 94.161 1043.535 93.831 C 978.006 93.527, 971.930 93.359, 970.379 91.808 C 968.364 89.793, 967.379 60.882, 969.134 55.266 C 971.548 47.540, 966.702 48, 1045.635 48 L 1116 48 1116 33 L 1116 18 1079.750 17.898 C 1059.813 17.842, 1026.175 17.729, 1005 17.648 L 966.500 17.500 960.831 20.373 C 953.545 24.065, 946.071 31.528, 942.397 38.780 L 939.500 44.500 939.224 115.773 L 938.949 187.046 925.525 176.798 L 912.101 166.551 910.534 159.525 C 909.672 155.661, 907.654 150.206, 906.051 147.403 C 899.844 136.556, 897.653 135.243, 829.205 101.361 C 757.190 65.713, 763 69.737, 763 55.501 L 763 47.938 820.750 48.219 C 885.100 48.532, 882.486 48.242, 885.985 55.470 C 887.861 59.344, 888 61.606, 888 88.187 L 888 116.742 892.750 115.860 C 902.414 114.065, 910.239 108.284, 914.808 99.563 C 917.371 94.673, 917.473 93.830, 917.819 74.870 C 918.103 59.318, 917.848 53.956, 916.593 49.055 C 912.389 32.649, 899.967 21.439, 883.371 19.078 C 873.358 17.653, 745.260 17.065, 741.234 18.425 M 1958.786 18.030 C 1944.136 20.498, 1931.874 33.493, 1928.872 49.733 C 1928.254 53.080, 1927.965 64.943, 1928.173 78.467 C 1928.594 105.785, 1929.771 109.934, 1939.659 118.971 C 1949.231 127.720, 1952.295 128.418, 1982.750 128.796 L 2009 129.121 2009 113.561 L 2009 98 1987.016 98 L 1965.032 98 1961.766 95.082 L 1958.500 92.164 1958.500 73.601 L 1958.500 55.038 1961.767 51.769 L 1965.034 48.500 1987.017 48.196 L 2009 47.892 2009 33.098 L 2009 18.304 1998.344 17.652 C 1984.708 16.818, 1964.854 17.007, 1958.786 18.030 M 0 33 L 0 48 35.073 48 L 70.147 48 69.861 33 L 69.575 18 34.788 18 L 0 18 0 33 M 88.759 71.250 C 88.616 100.538, 88.855 126.975, 89.289 130 C 90.600 139.136, 94.812 146.520, 105.594 158.587 C 111.042 164.684, 121.036 176.042, 127.802 183.825 C 142.389 200.606, 144.755 202.594, 154 205.833 C 158.328 207.349, 230.647 207.057, 237.667 205.495 C 254.827 201.677, 267.863 186.957, 270.939 167.923 C 271.587 163.913, 271.976 134.548, 271.976 89.750 L 271.975 18 256.488 18 L 241 18 241 91.852 L 241 165.704 238.750 169.010 C 233.490 176.739, 234.811 176.500, 197.308 176.500 L 163.764 176.500 156.210 168.500 C 133.893 144.867, 120.248 128.988, 119.639 125.943 C 119.287 124.187, 119 99.181, 119 70.375 L 119 18 104.009 18 L 89.018 18 88.759 71.250 M 292 33.500 L 292 49 316.750 49.005 C 340.629 49.010, 341.630 49.089, 345.204 51.255 C 350.011 54.169, 450.945 154.775, 452.112 157.815 C 452.600 159.088, 453 170.676, 453 183.565 L 453 207 468.593 207 L 484.187 207 483.843 179.250 L 483.500 151.500 480.215 144.563 C 477.226 138.252, 474.521 135.266, 450.215 111.454 C 435.522 97.059, 410 71.890, 393.500 55.524 C 354.293 16.634, 357.187 18.021, 315.250 18.008 L 292 18 292 33.500 M 388.617 29.251 C 388.681 35.438, 388.794 42.413, 388.867 44.750 L 389 49 446.500 49 L 504 49 504 33.500 L 504 18 446.250 18.001 L 388.500 18.003 388.617 29.251 M 520 72.790 C 520 140.272, 519.579 137.818, 534.208 155.500 C 573.054 202.452, 571.101 200.301, 578 203.742 L 584.500 206.985 625.201 206.992 C 651.172 206.997, 667.819 206.599, 671.201 205.891 C 683.284 203.363, 696.339 193.318, 701.374 182.675 C 707.080 170.614, 707 171.899, 707 91.790 L 707 18 692.500 18 L 678 18 677.990 34.750 C 677.985 43.963, 677.709 76.925, 677.377 108 C 676.787 163.221, 676.725 164.589, 674.637 168.449 C 670.281 176.499, 670.277 176.500, 629.331 176.500 L 593.161 176.500 590.473 174 C 583.946 167.929, 551.382 129.607, 550.289 126.710 C 549.424 124.418, 549.077 113.352, 549.074 88 C 549.072 68.475, 549.055 44.737, 549.035 35.250 L 549 18 534.500 18 L 520 18 520 72.790 M 1282.219 20.379 C 1270.370 24.891, 1263.308 31.662, 1258.785 42.847 L 1256.500 48.500 1256.218 127.750 L 1255.936 207 1270.950 207 L 1285.963 207 1286.232 130.413 L 1286.500 53.826 1289.306 51.413 C 1291.771 49.292, 1293.105 48.997, 1300.306 48.976 L 1308.500 48.953 1345.802 86.726 C 1366.318 107.502, 1383.756 125.948, 1384.552 127.718 C 1385.734 130.345, 1386 137.916, 1386 168.968 L 1386 207 1401.040 207 L 1416.079 207 1415.790 163.147 L 1415.500 119.294 1412 112.599 C 1408.985 106.831, 1402.955 100.346, 1368.500 65.820 C 1320.462 17.682, 1322.115 18.846, 1301 18.307 C 1289.780 18.020, 1287.857 18.232, 1282.219 20.379 M 1353 33.500 L 1353 49 1387.599 49 C 1416.665 49, 1422.716 49.246, 1425.440 50.538 C 1427.223 51.384, 1441.734 65.222, 1457.687 81.288 C 1484.264 108.055, 1486.789 110.893, 1487.846 115.193 C 1488.628 118.375, 1489 133.910, 1489 163.443 L 1489 207 1503.534 207 L 1518.069 207 1517.784 155.250 L 1517.500 103.500 1514.638 97.760 C 1511.078 90.622, 1501.670 80.577, 1469.801 49.888 C 1435.308 16.671, 1438.863 18.044, 1387.250 18.017 L 1353 18 1353 33.500 M 1611.016 19.534 C 1537.366 32.857, 1507.880 119.752, 1557.677 176.718 C 1596.662 221.315, 1677.779 217.822, 1713.706 170 C 1731.664 146.097, 1737.171 109.409, 1727.081 80.896 C 1717.763 54.565, 1695.419 32.878, 1667.887 23.442 C 1652.820 18.279, 1627.553 16.543, 1611.016 19.534 M 1747 33.395 L 1747 48.904 1772.584 49.202 L 1798.167 49.500 1801.257 53 C 1802.956 54.925, 1824.856 77.356, 1849.923 102.846 C 1877.950 131.347, 1895.952 150.407, 1896.674 152.346 C 1899.552 160.079, 1896.972 169.744, 1890.867 174.099 L 1887.500 176.500 1817.250 176.770 L 1747 177.039 1747 192.020 L 1747 207 1816.364 207 C 1859.362 207, 1887.773 206.612, 1891.109 205.979 C 1907.202 202.927, 1919.552 191.973, 1925.101 175.829 C 1928 167.396, 1928.329 150.179, 1925.751 141.851 C 1923.008 132.990, 1918.250 127.680, 1865.295 74.395 C 1821.985 30.816, 1814.719 23.913, 1809.500 21.395 L 1803.500 18.500 1775.250 18.193 L 1747 17.886 1747 33.395 M 1611.162 51.032 C 1596.187 54.955, 1579.817 66.975, 1572.637 79.321 C 1554.288 110.868, 1566.893 154.919, 1598.838 170.891 C 1610.702 176.823, 1614.123 177.502, 1632 177.476 C 1648.450 177.453, 1648.527 177.442, 1657.500 173.953 C 1695.756 159.079, 1712.730 118.027, 1694.823 83.686 C 1690.014 74.462, 1676.469 61.322, 1666.966 56.661 C 1651.140 48.898, 1628.159 46.580, 1611.162 51.032 M 0.439 99.298 C 0.165 100.012, 0.067 106.875, 0.220 114.548 L 0.500 128.500 34.750 128.784 L 69 129.068 69 113.534 L 69 98 34.969 98 C 7.993 98, 0.834 98.269, 0.439 99.298 M 1943 192 L 1943 207 1976 207 L 2009 207 2009 192 L 2009 177 1976 177 L 1943 177 1943 192" />
-          <symbol id="glyph-t" viewBox="291 0 213 220"><use href="#traced-glyph-mask" /></symbol>
-          <symbol id="glyph-o" viewBox="1532 0 200 220"><use href="#traced-glyph-mask" /></symbol>
-          <symbol id="glyph-d" viewBox="1746 0 182 220"><use href="#traced-glyph-mask" /></symbol>
-
-          <g id="marquee-period">
-            <g transform="translate(20, 105)">
-              <use href="#glyph-d" x="-95" y="0" width="182" height="220" />
-              <use href="#glyph-t" x="1080" y="0" width="213" height="220" />
-              <use href="#glyph-o" x="1605" y="0" width="200" height="220" />
-            </g>
-            <g transform="translate(20, 105)" fill="none" stroke="#f3f6ff" stroke-width="30" stroke-linejoin="round" stroke-linecap="butt">
-              <path transform="translate(-838, 0)" d="M1115,32.5 H963.5 A10,10 0 0 0 953.5,42.5 V181.5 A10,10 0 0 0 963.5,191.5 H1115 M953.5,108.5 H1114" />
-              <path d="M312,18 V126 L388,191.5 H408 L484,126 V18" />
-              <path transform="translate(618, 0)" d="M69,32.5 H-82.5 A10,10 0 0 0 -92.5,42.5 V206.5 M-92.5,108.5 H68" />
-              <path transform="translate(-232, 0)" d="M1115,32.5 H963.5 A10,10 0 0 0 953.5,42.5 V181.5 A10,10 0 0 0 963.5,191.5 H1115 M953.5,108.5 H1114" />
-              <path d="M1062,32.5 H924 A10,10 0 0 0 914,42.5 V98.5 A10,10 0 0 0 924,108.5 H1052 A10,10 0 0 1 1062,118.5 V181.5 A10,10 0 0 1 1052,191.5 H910" />
-              <path d="M1410,32.5 H1552 A10,10 0 0 1 1562,42.5 V98.5 A10,10 0 0 1 1552,108.5 H1420 A10,10 0 0 0 1410,118.5 V191.5 H1566" />
-              <path d="M1838,32.5 H1980 A10,10 0 0 1 1990,42.5 V98.5 A10,10 0 0 1 1980,108.5 H1848 A10,10 0 0 0 1838,118.5 V191.5 H1994" />
-              <path d="M2188,32.5 H2046 A10,10 0 0 0 2036,42.5 V181.5 A10,10 0 0 0 2046,191.5 H2178 A10,10 0 0 0 2188,181.5 V118.5 A10,10 0 0 0 2178,108.5 H2036" />
-            </g>
-            <g font-family="'Orbe Mono', ui-monospace, monospace" font-size="24" fill="#f3f6ff" letter-spacing="0">
-              <text x="185" y="268">G_021</text>
-              <text x="312" y="308">G_020</text>
-              <text x="618" y="268">G_021</text>
-              <text x="778" y="310" transform="rotate(-90 778 310)">G_018</text>
-              <text x="993" y="268">G_005</text>
-              <text x="930" y="352">G_005</text>
-              <text x="1338" y="310" transform="rotate(-90 1338 310)">G_0013</text>
-              <text x="1605" y="253">G_003</text>
-              <text x="1768" y="268">G_004</text>
-              <text x="1963" y="268">G_005</text>
-            </g>
-          </g>
-        </defs>
-        <g class="marquee-track">
-          <use href="#marquee-period" x="0" y="0" />
-          <use href="#marquee-period" x="2352" y="0" />
-          <use href="#marquee-period" x="4704" y="0" />
-        </g>
-      </svg>
-    </div>
-  </div>
-
-  <!-- Pre-keyed Hero Figure Fallback Poster (rendered immediately above marquee until WebGL mounts) -->
-  <div id="stage-fig-fallback" class="cover-stage" aria-hidden="true">
-    <div class="cover-box">
-      <picture>
-        <source type="image/avif" srcset="/assets/hero/figure-poster-960.avif 960w, /assets/hero/figure-poster-1920.avif 1920w" sizes="100vw">
-        <source type="image/webp" srcset="/assets/hero/figure-poster-960.webp 960w, /assets/hero/figure-poster-1920.webp 1920w" sizes="100vw">
-        <img id="figure-poster" src="/assets/hero/figure-poster-960.webp" alt="" width="2048" height="1360" fetchpriority="high" decoding="sync">
-      </picture>
-    </div>
-  </div>
-
-  <!-- ONE Persistent WebGL Stage Canvas (lives OUTSIDE #app-view View Transitions root) -->
+  <!-- Persistent WebGL / Canvas Stage for Ambient Particles & Atmosphere -->
   <canvas id="gl-stage" aria-hidden="true"></canvas>
 
   <div id="archive-progress" aria-hidden="true"></div>
 
-  <!-- View Transitions Root (swapped cleanly across /, /speakers, /memories) -->
+  <!-- View Transitions Root (Hero Stage + Page Content) -->
   <div id="app-view"></div>
 
-  <!-- Persistent Mission Control HUD Chrome -->
+  <!-- Mission Control HUD Chrome (Futuristic Bezel Frame, Battery ON, GDG Tab, MENU, Coordinates) -->
   <div id="stage-hud">
     <svg id="hud-svg" aria-hidden="true"></svg>
-    <a href="/#home" data-spa-link="true" class="hud-text hud-brand">GDG MADURAI</a>
 
-    <button class="hud-motion-btn" id="motion-toggle" aria-pressed="false" aria-label="Motion on">
-      <svg class="hud-motion-badge" viewBox="0 0 68 22" aria-hidden="true">
-        <rect x="1" y="1" width="66" height="20" rx="5" fill="#0a0c14" stroke="#f3f6ff" stroke-width="1.4" />
-        <path d="M8,19 L14,3 H19 L13,19Z" fill="#f3f6ff" />
-        <path d="M20,19 L26,3 H31 L25,19Z" fill="#f3f6ff" />
-        <path d="M32,19 L38,3 H43 L37,19Z" fill="#f3f6ff" />
-        <path d="M44,19 L50,3 H55 L49,19Z" fill="#f3f6ff" />
-        <circle cx="60" cy="11" r="2.4" fill="#f3f6ff" />
-      </svg>
-      <span class="hud-motion-label" id="motion-label">ON</span>
+    <!-- Top Left: Battery-style ON indicator -->
+    <button class="hud-battery-btn" id="motion-toggle" aria-pressed="false" aria-label="Toggle motion effects">
+      <div class="hud-battery-badge">
+        <span class="bat-bar"></span>
+        <span class="bat-bar"></span>
+        <span class="bat-bar"></span>
+        <span class="bat-bar"></span>
+        <span class="bat-dot"></span>
+      </div>
+      <span class="hud-battery-label" id="motion-label">ON</span>
     </button>
 
-    <div class="hud-text hud-coords" id="coords-text">X.0052  //  Y.0053</div>
+    <!-- Top Center: GDG MADURAI in notch tab -->
+    <a href="/#home" data-spa-link="true" class="hud-top-tab">GDG MADURAI</a>
 
-    <button class="hud-menu-btn" id="menu-toggle" aria-expanded="false" aria-controls="hud-nav" aria-label="Menu">MENU</button>
+    <!-- Top Right: MENU = -->
+    <button class="hud-menu-btn" id="menu-toggle" aria-expanded="false" aria-controls="hud-nav" aria-label="Menu">
+      <span class="menu-label">MENU</span>
+      <span class="menu-icon-bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
 
+    <!-- Bottom Center: Coordinates in notch tab (tracks live cursor: X.0958 // Y.0784) -->
+    <div class="hud-bottom-tab" id="coords-text">X.0958 &nbsp;//&nbsp; Y.0784</div>
+
+    <!-- Navigation Drawer Panel -->
     <nav id="hud-nav" class="hud-nav-panel" aria-label="Primary">
       <ul class="hud-nav-list">
         <li><a href="/#home" data-route="home" class="hud-nav-link active"><span>Home</span><span>01</span></a></li>
@@ -182,20 +129,6 @@
         <li><a href="/memories" data-route="memories" class="hud-nav-link"><span>Memories</span><span>06</span></a></li>
       </ul>
     </nav>
-  </div>
-
-  <!-- Session-gated, non-blocking skippable Mission Control Loader -->
-  <div id="mc-loader" hidden>
-    <div class="mc-loader-shell">
-      <div id="mc-loader-kolam" class="mc-loader-kolam" aria-hidden="true"></div>
-      <span class="mc-loader-tag">MISSION CONTROL // GDG MADURAI 2026</span>
-      <div class="mc-loader-telemetry" aria-hidden="true">
-        <span id="mc-loader-pct">000%</span>
-        <span>FREQ 09.92N 78.12E</span>
-      </div>
-      <div class="mc-loader-bar" aria-hidden="true"><div class="mc-loader-fill"></div></div>
-      <button type="button" id="mc-loader-skip" class="mc-loader-skip">SKIP // ENTER STAGE</button>
-    </div>
   </div>
 
   <script type="module" src="/src/main.js"></script>
